@@ -26,19 +26,40 @@ struct USBContext::Private {
 
 struct USB_iCharger::Private {
 	libusb_device* device;
+ 	libusb_device_handle *handle;
+	int configuration;
 
-	Private() : device(0) {
+	Private() : device(0), handle(0), configuration(0) {
 	}
 
 	void unassign_device() {
+		if(handle)
+			libusb_close(handle);
+
 		if(device)
 			libusb_unref_device(device);
+
 		device = 0;
+		handle = 0;
+		configuration = 0;
 	}
 
-	void assign_device(libusb_device* device_to_own) {
+	int assign_device(libusb_device* device_to_own) {
 		unassign_device();	
+
+		if(!device_to_own)
+			return LIBUSB_ERROR_NO_DEVICE;
+
 		device = libusb_ref_device(device_to_own);
+
+		int r = libusb_open(device, &handle);
+		if(r != 0)
+			return r;
+
+		if(handle) 
+			r = libusb_get_configuration(handle, &configuration);
+
+		return r;
 	}
 
 	~Private() {
@@ -80,13 +101,13 @@ USB_iChargerPtrList USBContext::chargers() {
 			if(desc.idVendor == ICHARGER_VENDOR &&
                            desc.idProduct == ICHARGER_4010DUO_PRODUCT_ID) {
 				USB_iChargerPtr obj(new USB_iCharger());
-				obj->_p->assign_device(devs[index]);
-				ichargers.push_back(obj);
+				if(!obj->_p->assign_device(devs[index]))
+					ichargers.push_back(obj);
 			}
     		}
 	}
 
-	libusb_free_device_list(devs, 1);
+	libusb_free_device_list(devs, 1 /* unref all elements please */);
 
 	return ichargers;
 }
