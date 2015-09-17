@@ -9,6 +9,9 @@ class USB_iCharger;
 typedef QSharedPointer<USB_iCharger> USB_iChargerPtr;
 typedef QList<USB_iChargerPtr> USB_iChargerPtrList;
 
+#define ICHARGER_VENDOR_ID 0x0483
+#define ICHARGER_PRODUCT_ID 0x5751
+
 class USBContext { 
 public:
 	USBContext();
@@ -31,7 +34,11 @@ class USB_iCharger {
 public:
 	USB_iCharger();
 	virtual ~USB_iCharger();
+
 	bool connected() const { return false; }
+	int configuration() const;
+	int vendorID() const;
+	int productID() const;
 
 private:
 	class Private;

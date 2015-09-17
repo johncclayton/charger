@@ -3,9 +3,6 @@
 #include <libusb.h>
 #include <iostream>
 
-const int ICHARGER_VENDOR = 0x0483;
-const int ICHARGER_4010DUO_PRODUCT_ID = 0x5751;
-
 struct USBContext::Private {
 	libusb_context *ctx;
 
@@ -27,6 +24,7 @@ struct USBContext::Private {
 struct USB_iCharger::Private {
 	libusb_device* device;
  	libusb_device_handle *handle;
+
 	int configuration;
 
 	Private() : device(0), handle(0), configuration(0) {
@@ -98,8 +96,8 @@ USB_iChargerPtrList USBContext::chargers() {
 		libusb_device_descriptor desc;
     		int r = libusb_get_device_descriptor(devs[index], &desc);
     		if (r >= 0) {
-			if(desc.idVendor == ICHARGER_VENDOR &&
-                           desc.idProduct == ICHARGER_4010DUO_PRODUCT_ID) {
+			if(desc.idVendor == ICHARGER_VENDOR_ID &&
+                           desc.idProduct == ICHARGER_PRODUCT_ID) {
 				USB_iChargerPtr obj(new USB_iCharger());
 				if(!obj->_p->assign_device(devs[index]))
 					ichargers.push_back(obj);
@@ -123,3 +121,24 @@ USB_iCharger::USB_iCharger() : _p(0) {
 USB_iCharger::~USB_iCharger() {
 	delete _p;
 }
+
+int USB_iCharger::configuration() const { 
+	return _p->configuration;
+}
+
+int USB_iCharger::vendorID() const {
+	Q_ASSERT( _p->device );
+	libusb_device_descriptor desc;
+	if(!libusb_get_device_descriptor(_p->device, &desc))
+		return desc.idVendor;
+	return 0;
+}
+
+int USB_iCharger::productID() const {
+	Q_ASSERT( _p->device );
+	libusb_device_descriptor desc;
+	if(!libusb_get_device_descriptor(_p->device, &desc))
+		return desc.idProduct;
+	return 0;
+}
+

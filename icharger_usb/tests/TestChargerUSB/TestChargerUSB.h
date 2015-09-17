@@ -10,6 +10,7 @@ private slots:
 	void setUp();
 	void test_usb_context_init();
 	void test_icharger_can_be_found();
+	void test_configuration_state();
 
 private:
 	USBContext _ctx;
