@@ -1,0 +1,7 @@
+read_test.o: read_test.cpp /usr/local/include/modbus/modbus.h \
+ /usr/local/include/modbus/modbus-version.h \
+ /usr/local/include/modbus/modbus-tcp.h \
+ /usr/local/include/modbus/modbus.h \
+ /usr/local/include/modbus/modbus-rtu.h utils.h \
+ /usr/include/libusb-1.0/libusb.h
+utils.o: utils.cpp utils.h /usr/include/libusb-1.0/libusb.h
