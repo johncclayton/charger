@@ -142,3 +142,9 @@ int USB_iCharger::productID() const {
 	return 0;
 }
 
+SYSTEM USB_iCharger::readSystem() const { 
+	SYSTEM s;
+	memset(&s, 0, sizeof(s));
+	return s;
+}
+

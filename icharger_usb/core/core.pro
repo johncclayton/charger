@@ -1,7 +1,11 @@
 TEMPLATE = lib
 
-SOURCES += icharger.cpp 
-HEADERS += icharger.h
+SOURCES += \
+	icharger.cpp 
+
+HEADERS += \
+	icharger_msg.h \
+	icharger.h
 
 DESTDIR = ../build/lib
 DEFINES += CORE_LIBRARY

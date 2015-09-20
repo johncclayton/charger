@@ -4,6 +4,7 @@
 
 #include <QSharedPointer>
 #include <QList>
+#include "icharger_msg.h"
 
 class USB_iCharger;
 typedef QSharedPointer<USB_iCharger> USB_iChargerPtr;
@@ -35,10 +36,11 @@ public:
 	USB_iCharger();
 	virtual ~USB_iCharger();
 
-	bool connected() const { return false; }
 	int configuration() const;
 	int vendorID() const;
 	int productID() const;
+
+	SYSTEM readSystem() const;
 
 private:
 	class Private;
