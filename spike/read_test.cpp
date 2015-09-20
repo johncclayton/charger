@@ -1,4 +1,3 @@
-#include <modbus.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -66,7 +65,7 @@ struct response_header : public request {
 	response_header() : request(0) {}
 };
 
-int modbus_request(libusb_device_handle* handle, char func_code, int base_addr, int num_registers, char* dest) {
+int modbus_request(usb_device_ptr usb, char func_code, int base_addr, int num_registers, char* dest) {
 	// preps the request in mem (the PDU)
 	read_data_registers read_req(base_addr, num_registers);
 
@@ -78,15 +77,15 @@ int modbus_request(libusb_device_handle* handle, char func_code, int base_addr, 
 	data[1] = 0x30;
 	memcpy(data + 2, &read_req, sizeof(read_req));
 	
-	int r = usb_transfer(handle, END_POINT_ADDRESS_WRITE, data, sizeof(data));					  
+	int r = usb->usb_transfer(END_POINT_ADDRESS_WRITE, data, sizeof(data));					  
 	if(r != 0) {
 		error_exit("didnt write all of the request data", r);
 	} else {
 		response_header header;
-		if(usb_transfer(handle, END_POINT_ADDRESS_READ, (char *)&header, 2) == 0) {
+		if(usb->usb_transfer(END_POINT_ADDRESS_READ, (char *)&header, 2) == 0) {
 			printf("response payload has %d bytes in it\r\n", header.byte_count);
 			char *reply_payload = new char [header.byte_count];
-			r = usb_transfer(handle, END_POINT_ADDRESS_READ, reply_payload, header.byte_count);
+			r = usb->usb_transfer(END_POINT_ADDRESS_READ, reply_payload, header.byte_count);
 			if(r == 0) {
 				printf("reply received!\r\n");
 			}
@@ -105,70 +104,48 @@ int main(int argc, char *argv[]) {
 
 	libusb_set_debug(ctx, 4);
 
-        libusb_device* device = first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
-	if(! device)
+        usb_device_ptr device = usb_device::first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
+	if(! device.get())
 		error_exit("cannot find an iCharger device", -1);
 
-	libusb_device_handle* handle = 0;
-	r = libusb_open(device, &handle);
-	if(r != 0) {
-		libusb_unref_device(device);
-		error_exit("cannot open the device", r);
-	}
-
-	if(libusb_kernel_driver_active(handle, 0) == 1) {
+	if(libusb_kernel_driver_active(device->handle, 0) == 1) {
 		printf("the kernel has claimed this device, asking to detach it... ");
-		if(libusb_detach_kernel_driver(handle, 0) == 0)
+		if(libusb_detach_kernel_driver(device->handle, 0) == 0)
 			printf("detached\r\n");
 		else
 			error_exit("unable to detach the kernel from the device", 0);
 	}
 
 	int configuration = 0;
-	r = libusb_get_configuration(handle, &configuration);
+	r = libusb_get_configuration(device->handle, &configuration);
 	if(r != 0) {
-		libusb_close(handle);
-		libusb_unref_device(device);
 		error_exit("cannot obtain the current configuration: %d", r);
 	}
 
 	printf("active configuration: %d\r\n", configuration);
 
-	/*r = libusb_set_configuration(handle, 1);
-	if(r != 0) {
-		libusb_close(handle);
-		libusb_unref_device(device);
-		error_exit("cannot set the configuration to 1, err: %d", r);
-	}*/
-
- 	r = libusb_claim_interface(handle, 0); //claim interface 0 (the first) of device (mine had jsut 1)
+ 	r = libusb_claim_interface(device->handle, 0); //claim interface 0 (the first) of device (mine had jsut 1)
    	 if(r < 0) 
        		error_exit("cannot claim the interface, err: %d", r);
 
 	// find the right interface, it's the non-SD card one...a HID type.	
 	struct libusb_config_descriptor * config = 0;
-	r = libusb_get_active_config_descriptor(device, &config);
+	r = libusb_get_active_config_descriptor(device->device, &config);
 	if(r != 0) {
-		libusb_close(handle);
-		libusb_unref_device(device);
 		error_exit("cannot obtain the current configuration description", r);
 	}
 
 	struct device_only dev_only;
 	memset(&dev_only, 0, sizeof(device_only));
-
 	printf("size of bytes for device_only: %d\r\n", sizeof(dev_only));
 
-	if(modbus_request(handle, 0x04 /* read only */, 0x0000, sizeof(device_only), (char*)&dev_only))
+	if(modbus_request(device, 0x04 /* read only */, 0x0000, sizeof(device_only), (char*)&dev_only))
 		printf("failed to read modbus information for device only read area\r\n");
 	else {
 		printf("I did something\r\n");
 	}
 
 	libusb_free_config_descriptor(config);
-	libusb_close(handle);
-	libusb_unref_device(device);
-
 	libusb_exit(ctx);
 
 	return 0;

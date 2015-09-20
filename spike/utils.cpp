@@ -19,38 +19,26 @@ void error_exit(const char* msg, int rc, ...) {
         exit(1);
 }
 
-libusb_device* first_charger(libusb_context* ctx, int vendor, int product) {
-        libusb_device **devs;
-        size_t cnt = libusb_get_device_list(ctx, &devs);
+usb_device::usb_device(libusb_device* d) : 
+	device(d),
+	handle(0),
+	is_open(false)
+{
+        int r = libusb_open(device, &handle);
+ 	is_open = handle && r == 0; 
+}
 
-        libusb_device* found = 0;
-
-        for(size_t index = 0; index < cnt && !found; ++index) {
-                struct libusb_device_descriptor desc;
-                int r = libusb_get_device_descriptor(devs[index], &desc);
-                if (r >= 0) {
-                        if(desc.idVendor == vendor &&
-                           desc.idProduct == product) {
-                                found = devs[index];
-                        }
-                }
-        }
-
-        if(found)
-                libusb_ref_device(found);
-
-        libusb_free_device_list(devs, 1 /* unref all elements please */);
-
-        return found;
+usb_device::~usb_device() 
+{
+	libusb_close(handle);
 }
 
 /* same as the library version, but automatically handles retry on timeout */
-int usb_transfer(libusb_device_handle *handle,
-                 unsigned char endpoint_address,
-                 char* data,
-                 int length,
-                 int* total_transferred,
-                 unsigned int timeout_ms)
+int usb_device::usb_transfer(unsigned char endpoint_address,
+                 		char* data,
+                 		int length,
+                 		int* total_transferred,
+                 		unsigned int timeout_ms)
 {
         int r = 0;
 
@@ -58,13 +46,15 @@ int usb_transfer(libusb_device_handle *handle,
 	if(!total_transferred)
 		total_transferred = &temp_total;
 
-	printf("length value is: %d\r\n", length);
-
         int bytes_transferred = 0;
         char* data_ptr = data;
 
         while(1) {
                 int transferred = 0;
+
+		printf("bytes already transferred: %d, length: %d\r\n", 
+			bytes_transferred, 	
+			length);
 
                 r = libusb_interrupt_transfer(
                                         handle,
@@ -73,7 +63,6 @@ int usb_transfer(libusb_device_handle *handle,
                                         length - bytes_transferred,
                                         &transferred,
                                         timeout_ms);
-
 		
                 *total_transferred += transferred;
                 printf("op %d, transferred bytes: %d, last result: %d/%s\r\n", 
@@ -93,3 +82,29 @@ int usb_transfer(libusb_device_handle *handle,
         }
 }
 
+usb_device_ptr usb_device::first_charger(libusb_context* ctx, int vendor, int product) {
+        libusb_device **devs;
+        size_t cnt = libusb_get_device_list(ctx, &devs);
+
+        libusb_device* found = 0;
+
+        for(size_t index = 0; index < cnt && !found; ++index) {
+                struct libusb_device_descriptor desc;
+                int r = libusb_get_device_descriptor(devs[index], &desc);
+                if (r >= 0) {
+                        if(desc.idVendor == vendor &&
+                           desc.idProduct == product) {
+                                found = devs[index];
+                        }
+                }
+        }
+
+	usb_device_ptr p;
+        if(found) {
+		p = usb_device_ptr(new usb_device(found));
+	}
+	
+        libusb_free_device_list(devs, 1 /* unref all elements please */);
+
+        return p;
+}
