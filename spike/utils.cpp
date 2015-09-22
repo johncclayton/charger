@@ -16,6 +16,8 @@
 #define MB_FUNC_WRITE_MULTIPLE_REGISTERS 0x10
 
 #define BASE_ADDR_DEVICE_ONLY 0x0000
+#define BASE_ADDR_CHANNEL_STATUS1 0x0100
+#define BASE_ADDR_CHANNEL_STATUS2 0x0100
 
 #define HID_PACK_MAX		64
 #define HID_PACK_LEN		0
@@ -130,7 +132,7 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 	for(int i = 0; i < data[HID_PACK_LEN] - 3; i++)
 		data[HID_PACK_MODBUS + 1 + i] = input[i];
 
-	dump_ascii_hex(data, data[HID_PACK_LEN]);
+	//dump_ascii_hex(data, data[HID_PACK_LEN]);
 
 	// write trans...
        	int r = usb_data_transfer(END_POINT_ADDRESS_WRITE, data, sizeof(data));
@@ -146,7 +148,7 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 				return -1;
 			}
 
-			dump_ascii_hex(data, data[HID_PACK_LEN]);	
+			//dump_ascii_hex(data, data[HID_PACK_LEN]);	
 
 			if(data[HID_PACK_MODBUS] == func_code) {
 				switch(func_code) {
@@ -158,9 +160,9 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 						}
 
 						// primitive byte swap.
-						for(int i = 0; i < data[HID_PACK_MODBUS]; i += 2) {
-							output[i] = data[HID_PACK_MODBUS + i + 1];
-							output[i + 1] = data[HID_PACK_MODBUS + i];
+						for(int i = 0; i < data[HID_PACK_MODBUS + 1]; i += 2) {
+							output[i] = data[HID_PACK_MODBUS+2+i+1];
+							output[i + 1] = data[HID_PACK_MODBUS+2+i];
 						}
 
 						break;
@@ -183,7 +185,7 @@ int usb_device::read_request(char func_code, int base_addr, int num_registers, c
 	printf("read request from base_addr: %x, for %d registers, sizeof read_req: %d\r\n", base_addr, num_registers, sizeof(read_data_registers));
 
 	for(int i = 0; i < num_registers / READ_REG_COUNT_MAX; ++i) {
-        	read_data_registers read_req(base_addr, num_registers);
+        	read_data_registers read_req(base_addr, READ_REG_COUNT_MAX);
 		r = modbus_request(func_code, (char *)&read_req, dest);
 		if(r != 0)
 			return r;
@@ -210,6 +212,20 @@ int usb_device::read_request(char func_code, int base_addr, int num_registers, c
 // 0x04 - read input registers at base address 0x0000
 int usb_device::get_device_only(struct device_only* output) {	
   	return read_request(MB_FUNC_READ_INPUT_REGISTER, BASE_ADDR_DEVICE_ONLY, sizeof(device_only) / 2, (char *)output); 
+}
+
+int usb_device::get_channel_status(int channel /* 0 or 1 */, channel_status* output) {
+	int addr = 0;
+
+	if(channel == 0)
+		addr = BASE_ADDR_CHANNEL_STATUS1;
+	else
+		addr = BASE_ADDR_CHANNEL_STATUS2;
+	
+	if(addr)
+		return read_request(MB_FUNC_READ_INPUT_REGISTER, addr, sizeof(channel_status) / 2, (char *)output);
+	
+	return 1;
 }
 
 usb_device_ptr usb_device::first_charger(libusb_context* ctx, int vendor, int product) {

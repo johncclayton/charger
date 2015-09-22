@@ -10,6 +10,10 @@ void error_exit(const char* msg, int rc, ...);
 struct usb_device;
 typedef std::auto_ptr<usb_device> usb_device_ptr;
 
+#define MAX_CELLS 16
+#define LIST_MEM_MAX 64
+#define MODEL_MAX 2
+
 typedef enum
 {
     MB_EOK = 0x00,				/*!< no error. */
@@ -38,7 +42,11 @@ typedef unsigned char   u8;
 typedef signed char     s8;
 
 union register16 {
-        u16 value;
+	union {
+        	u16 value;
+		s16 svalue;
+	};
+
         struct {
                 u8 high;
                 u8 low;
@@ -46,7 +54,11 @@ union register16 {
 } __attribute__ ((packed));
 
 union register32 {	
-	u32 value;	
+	union {
+		u32 value;	
+		s32 svalue;
+	};
+
 	struct {
 		register16 high;
 		register16 low;
@@ -56,7 +68,7 @@ union register32 {
 // available at base address: 0x0000
 struct device_only {
         register16   device_id;
-        s8           device_dn[12];
+        s8           device_sn[12];
         register16   sw_version;
         register16   hw_version;
         register16   system_length;
@@ -65,10 +77,11 @@ struct device_only {
         register16   ch2_status;
 } __attribute__ ((packed));
 
+
 // available at 0x0100 and 0x0200 (ch1 and ch2)
 struct channel_status {
 	register32 timestamp;
-	register32 ouput_power;
+	register32 output_power;
 	register16 output_current;
 	register16 input_voltage;
 	register16 output_voltage;
@@ -77,9 +90,9 @@ struct channel_status {
 	register16 temp_internal;
 	register16 temp_external;
 
-	u16 cell_voltage[16];
-	u8 balance_status[16];
-	u16 cell_resistance[16];
+	u16 cell_voltage[MAX_CELLS];
+	u8 balance_status[MAX_CELLS];
+	u16 cell_resistance[MAX_CELLS];
 	u16 total_resistance;
 
 	u16 line_internal_resistance;
@@ -89,6 +102,59 @@ struct channel_status {
 	u16 run_error;
 	u16 dialog_box_id;
 } __attribute__ ((packed));
+
+// system storage at 0x8400
+struct system_storage {
+	u16 temp_unit; 			// P1_1, 0 celcius, 1: fahrenheit
+	u16 temp_cutt_off; 		// P1_2, 60.0 - 75.0 default 75.0
+	u16 temp_fans_on; 		// P1_4, 30.0 - 50.0 default 40.0
+	u16 temp_power_reduce; 		// P1_3, 5.0 - 20.0 default 10.0
+	u16 reserved_1;
+	u16 fans_off_delay; 		// P1_5
+	u16 lcd_contrast; 		// P2_1
+	u16 backlight_value; 		// P2_2
+	u16 reserved_2;
+	u16 beep_type[4]; 		// long, short, continuous P3_3
+	u16 beep_enabled[4];		// same shit?  P3_1
+	u16 beep_volume[4];		// P3_2
+	u16 reserved_3;
+	u16 calibration;		// P4_1 - whatever this means?
+	u16 reserved_4;
+	u16 input_soruce;		// 0:dc, 1:bat P5_1
+	u16 dc_input_low_volt;		// DC input low voltage protection P6_1
+	u16 dc_input_over_volt;		// 
+	u16 dc_input_current_limit; 	// DC input current max P6_2
+	u16 batt_input_low_volt;	// BATT input low volt protection P7_1
+	u16 batt_input_over_volt;	// 
+	s16 batt_input_current_limit;	// input current max limit P7_2
+	u16 regenerative_enable;	// P7_3
+	u16 regenerative_volt_limit;	// P7_4
+	s16 regenerative_current_limit;	// P7_5
+	u16 charger_power[MODEL_MAX];	// P8_1 and P8_3
+	u16 discharge_power[MODEL_MAX]; // P8_2 and P8_4
+	u16 power_priority;
+	u16 logging_sample_interval;	// P9_1
+	u16 logging_save_to_sdcard;	// 0:no output, 1: output to SD log P9_2
+	
+	u16 servo_type;			// P10_1
+	u16 servo_user_center;		// servo pulse center P10_2
+	u16 server_user_rate;		// servo frame refresh rate P10_3
+	u16 servo_user_op_angle;	// 45 deg. pulse width P10_4
+	
+	u16 modbus_model;		// P11_1 - presume USB or serial?
+	u16 modbus_serial_addr;		// serial comms address P11_4
+	u16 modbus_server_baud_rate;	// serial comms baud rate P11_2
+	u16 modbus_serial_parity_bits;	// serial comms parity P11_3
+
+	u16 reserved_end[8];
+};
+
+struct MEM_HEAD {
+	u16 Count; 			//0—LIST_MEM_MAX
+	u8 Index[LIST_MEM_MAX]; 	//0xff-- empty 0xfe--hidden 0-LIST_MEM_MAX 
+};
+
+#define MEM_HEAD_DEFAULT {7,{0,1,2,3,4,5,6}}
 
 struct read_data_registers {
         register16 starting_address;
@@ -112,6 +178,7 @@ struct usb_device {
 	~usb_device();
 
 	int get_device_only(device_only* output);	
+	int get_channel_status(int channel /* 0 or 1 */, channel_status* output);
 	
 	static usb_device_ptr first_charger(libusb_context* ctx, int vendor, int product);
 

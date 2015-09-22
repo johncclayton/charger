@@ -59,18 +59,53 @@ int main(int argc, char *argv[]) {
 
 		r = device->get_device_only(&dev_only);
 		if(r == 0) {
-			printf("device id : %x\r\n", dev_only.device_id.value);
-			printf("device dn : %12s\r\n", dev_only.device_dn);
-			printf("sw_version: %x\r\n", dev_only.sw_version.value);
-			printf("hw_version: %x\r\n", dev_only.hw_version.value);
-			printf("sys length: %x\r\n", dev_only.system_length.value);
-			printf("mem length: %x\r\n", dev_only.memory_length.value);
-			printf("ch1 state : %x\r\n", dev_only.ch1_status.value);
-			printf("ch2 state : %x\r\n", dev_only.ch2_status.value);
+			printf("device id : %d\r\n", dev_only.device_id.value);
+			printf("device dn : %12s\r\n", dev_only.device_sn);
+			printf("sw_version: %d\r\n", dev_only.sw_version.value);
+			printf("hw_version: %d\r\n", dev_only.hw_version.value);
+			printf("sys length: %d\r\n", dev_only.system_length.value);
+			printf("mem length: %d\r\n", dev_only.memory_length.value);
+			printf("ch1 state : %d\r\n", dev_only.ch1_status.value);
+			printf("ch2 state : %d\r\n", dev_only.ch2_status.value);
 	
 		} else {
 			printf("got error code: %d\r\n", r);
 		}
+
+		struct channel_status status;
+		memset(&status, 0, sizeof(status));
+	
+		r = device->get_channel_status(0, &status);
+		if(r == 0) {
+			printf("timestamp      : %ld\r\n", status.timestamp.value);
+
+			printf("output pwr     : %ld\r\n", status.output_power.value);
+			printf("output current : %ld\r\n", status.output_current.svalue);
+
+			printf("input voltage  : %ld\r\n", status.input_voltage.value);
+			printf("output voltage : %ld\r\n", status.output_voltage.value);
+			printf("output capacity: %ld\r\n", status.output_capacity.value);
+
+			printf("internal temp  : %ld\r\n", status.temp_internal.value);
+			printf("external temp  : %ld\r\n", status.temp_external.value);
+
+			for(int i = 0; i < MAX_CELLS; ++i) {
+				printf("%d: cell voltage   : %ld\r\n", i, status.cell_voltage[i]);
+				printf("%d: cell balance   : %d\r\n", i, status.balance_status[i]);
+				printf("%d: cell resistance: %ld\r\n", i, status.cell_resistance[i]);
+			}
+
+			printf("total resistance: %ld\r\n", status.total_resistance);
+			printf("line resistance : %ld\r\n", status.line_internal_resistance);
+
+			printf("cycle count     : %ld\r\n", status.cycle_count);
+			printf("control status  : %ld\r\n", status.control_status);
+			printf("run status      : %ld\r\n", status.run_status);
+			printf("run error       : %ld\r\n", status.run_error);
+			printf("dialog box id   : %ld\r\n", status.dialog_box_id);
+
+	
+		} 
 	}
 
 	libusb_exit(ctx);
