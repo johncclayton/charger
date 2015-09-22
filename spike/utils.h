@@ -68,9 +68,9 @@ struct read_data_registers : public request {
 
         read_data_registers(int base_addr, int num_registers) : request(0x04) {
                 starting_address.high = base_addr >> 8;
-                starting_address.low = base_addr & 0xff;
+                starting_address.low = (char)(base_addr & 0xff);
                 quantity_to_read.high = num_registers >> 8;
-                quantity_to_read.low = num_registers & 0xff;
+                quantity_to_read.low = (char)(num_registers & 0xff);
         }
 } __attribute__ ((packed));
 

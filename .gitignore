@@ -1,5 +1,4 @@
 *.o
-Makefile
 build/
 moc_*.cpp
 .depend
