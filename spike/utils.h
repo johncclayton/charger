@@ -13,6 +13,7 @@ typedef std::auto_ptr<usb_device> usb_device_ptr;
 #define MAX_CELLS 16
 #define LIST_MEM_MAX 64
 #define MODEL_MAX 2
+#define VALUE_ORDER_KEY		0x55aa
 
 typedef enum
 {
@@ -152,6 +153,16 @@ struct system_storage {
 struct MEM_HEAD {
 	u16 Count; 			//0—LIST_MEM_MAX
 	u8 Index[LIST_MEM_MAX]; 	//0xff-- empty 0xfe--hidden 0-LIST_MEM_MAX 
+};
+
+struct control_register {
+	u16 operation;
+	u16 select_memory; // values 0-63
+	u16 select_channel; // 0 or 1
+	u16 order_lock; // 0x55aa unlocks
+	u16 order; // see also enum ORDER
+	u16 limit_current;
+	u16 limit_voltage;
 };
 
 #define MEM_HEAD_DEFAULT {7,{0,1,2,3,4,5,6}}

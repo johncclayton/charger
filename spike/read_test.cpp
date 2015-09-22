@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 		struct channel_status status;
 		memset(&status, 0, sizeof(status));
 	
-		r = device->get_channel_status(0, &status);
+		r = device->get_channel_status(1, &status);
 		if(r == 0) {
 			printf("timestamp      : %ld\r\n", status.timestamp.value);
 
