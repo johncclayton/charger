@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	libusb_set_debug(ctx, 4);
 
 	{
-        	usb_device_ptr device = usb_device::first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
+        	icharger_usb_ptr device = icharger_usb::first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
 		if(! device.get())
 			error_exit("cannot find an iCharger device", -1);
 
@@ -77,6 +77,7 @@ int main(int argc, char *argv[]) {
 	
 		r = device->get_channel_status(1, &status);
 		if(r == 0) {
+			printf("Channel Status\r\n");
 			printf("timestamp      : %ld\r\n", status.timestamp.value);
 
 			printf("output pwr     : %ld\r\n", status.output_power.value);
@@ -103,9 +104,58 @@ int main(int argc, char *argv[]) {
 			printf("run status      : %ld\r\n", status.run_status);
 			printf("run error       : %ld\r\n", status.run_error);
 			printf("dialog box id   : %ld\r\n", status.dialog_box_id);
+		} else {
+			printf("unable to fetch the status of channel 1\r\n");
+		}
 
-	
-		} 
+		struct system_storage sys_storage;
+		memset(&sys_storage, 0, sizeof(sys_storage));
+		r = device->get_system_storage(&sys_storage);
+		if(r == 0) {
+			printf("System Storage\r\n");
+			printf("unit temp           : %d\r\n", sys_storage.temp_unit);	
+			printf("temp cut off        : %d\r\n", sys_storage.temp_cut_off);	
+			printf("temp fans on        : %d\r\n", sys_storage.temp_fans_on);	
+			printf("temp power reduce   : %d\r\n", sys_storage.temp_power_reduce);	
+			printf("fans off delay      : %d\r\n", sys_storage.fans_off_delay);	
+			printf("lcd_contrast        : %d\r\n", sys_storage.lcd_contrast);	
+			printf("backlight value     : %d\r\n", sys_storage.backlight_value);	
+			printf("calibration         : %d\r\n", sys_storage.calibration);	
+			printf("input source        : %d\r\n", sys_storage.input_source);	
+			
+			printf("dc input low volt   : %d\r\n", sys_storage.dc_input_low_volt);	
+			printf("dc input over volt  : %d\r\n", sys_storage.dc_input_over_volt);	
+			printf("dc input curr limit : %d\r\n", sys_storage.dc_input_current_limit);	
+
+			printf("bat input low volt  : %d\r\n", sys_storage.batt_input_low_volt);	
+			printf("bat input over volt : %d\r\n", sys_storage.batt_input_over_volt);	
+			printf("bat input curr limit: %d\r\n", sys_storage.batt_input_current_limit);	
+
+			printf("regen enabled       : %d\r\n", sys_storage.regenerative_enable);
+			printf("regen volt limit    : %d\r\n", sys_storage.regenerative_volt_limit);
+			printf("regen curr limit    : %d\r\n", sys_storage.regenerative_current_limit);
+
+			for(int i = 0; i < MODEL_MAX; ++i) {
+				printf("%d: charger power   : %d\r\n", i, sys_storage.charger_power[i]);
+				printf("%d: discharge powe  : %d\r\n", i, sys_storage.discharge_power[i]);
+			}
+
+			printf("power priority      : %d\r\n", sys_storage.power_priority);
+			printf("logging sample rate : %d\r\n", sys_storage.logging_sample_interval);
+			printf("logging save to sd  : %d\r\n", sys_storage.logging_save_to_sdcard);
+
+			printf("servo type          : %d\r\n", sys_storage.servo_type);
+			printf("servo user center   : %d\r\n", sys_storage.servo_user_center);
+			printf("servo user rate     : %d\r\n", sys_storage.servo_user_rate);
+			printf("servo user op angle : %d\r\n", sys_storage.servo_user_op_angle);
+			 
+			printf("modbus model        : %d\r\n", sys_storage.modbus_model);
+			printf("modbus serial addr  : %d\r\n", sys_storage.modbus_serial_addr);
+			printf("modbus server baud  : %d\r\n", sys_storage.modbus_serial_baud_rate);
+			printf("modbus serial parity: %d\r\n", sys_storage.modbus_serial_parity_bits);
+		} else {
+			printf("unable to fetch the system storage data\r\n");
+		}
 	}
 
 	libusb_exit(ctx);

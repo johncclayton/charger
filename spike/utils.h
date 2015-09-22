@@ -1,14 +1,14 @@
 
-#ifndef __UTILS_H
-#define __UTILS_H
+#ifndef __iCharger_USB_H
+#define __iCharger_USB_H
 
 #include <libusb.h>
 #include <memory>
 
 void error_exit(const char* msg, int rc, ...);
 
-struct usb_device;
-typedef std::auto_ptr<usb_device> usb_device_ptr;
+struct icharger_usb;
+typedef std::auto_ptr<icharger_usb> icharger_usb_ptr;
 
 #define MAX_CELLS 16
 #define LIST_MEM_MAX 64
@@ -78,7 +78,6 @@ struct device_only {
         register16   ch2_status;
 } __attribute__ ((packed));
 
-
 // available at 0x0100 and 0x0200 (ch1 and ch2)
 struct channel_status {
 	register32 timestamp;
@@ -107,7 +106,7 @@ struct channel_status {
 // system storage at 0x8400
 struct system_storage {
 	u16 temp_unit; 			// P1_1, 0 celcius, 1: fahrenheit
-	u16 temp_cutt_off; 		// P1_2, 60.0 - 75.0 default 75.0
+	u16 temp_cut_off; 		// P1_2, 60.0 - 75.0 default 75.0
 	u16 temp_fans_on; 		// P1_4, 30.0 - 50.0 default 40.0
 	u16 temp_power_reduce; 		// P1_3, 5.0 - 20.0 default 10.0
 	u16 reserved_1;
@@ -121,7 +120,7 @@ struct system_storage {
 	u16 reserved_3;
 	u16 calibration;		// P4_1 - whatever this means?
 	u16 reserved_4;
-	u16 input_soruce;		// 0:dc, 1:bat P5_1
+	u16 input_source;		// 0:dc, 1:bat P5_1
 	u16 dc_input_low_volt;		// DC input low voltage protection P6_1
 	u16 dc_input_over_volt;		// 
 	u16 dc_input_current_limit; 	// DC input current max P6_2
@@ -139,18 +138,18 @@ struct system_storage {
 	
 	u16 servo_type;			// P10_1
 	u16 servo_user_center;		// servo pulse center P10_2
-	u16 server_user_rate;		// servo frame refresh rate P10_3
+	u16 servo_user_rate;		// servo frame refresh rate P10_3
 	u16 servo_user_op_angle;	// 45 deg. pulse width P10_4
 	
 	u16 modbus_model;		// P11_1 - presume USB or serial?
 	u16 modbus_serial_addr;		// serial comms address P11_4
-	u16 modbus_server_baud_rate;	// serial comms baud rate P11_2
+	u16 modbus_serial_baud_rate;	// serial comms baud rate P11_2
 	u16 modbus_serial_parity_bits;	// serial comms parity P11_3
 
 	u16 reserved_end[8];
 };
 
-struct MEM_HEAD {
+struct memory_header {
 	u16 Count; 			//0—LIST_MEM_MAX
 	u8 Index[LIST_MEM_MAX]; 	//0xff-- empty 0xfe--hidden 0-LIST_MEM_MAX 
 };
@@ -179,19 +178,19 @@ struct read_data_registers {
         }
 } __attribute__ ((packed));
 
-struct usb_device {
+struct icharger_usb {
 	libusb_device* device;
 	libusb_device_handle* handle;
-	bool is_open;	
 	int timeout_ms;
 
-	usb_device(libusb_device* d);
-	~usb_device();
+	icharger_usb(libusb_device* d);
+	~icharger_usb();
 
 	int get_device_only(device_only* output);	
 	int get_channel_status(int channel /* 0 or 1 */, channel_status* output);
+	int get_system_storage(system_storage* output);
 	
-	static usb_device_ptr first_charger(libusb_context* ctx, int vendor, int product);
+	static icharger_usb_ptr first_charger(libusb_context* ctx, int vendor, int product);
 
 private:
 	int usb_data_transfer(unsigned char endpoint_address,

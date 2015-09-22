@@ -18,6 +18,7 @@
 #define BASE_ADDR_DEVICE_ONLY 0x0000
 #define BASE_ADDR_CHANNEL_STATUS1 0x0100
 #define BASE_ADDR_CHANNEL_STATUS2 0x0200
+#define BASE_ADDR_SYSTEM_STORAGE 0x8400
 
 #define HID_PACK_MAX		64
 #define HID_PACK_LEN		0
@@ -38,21 +39,19 @@ void error_exit(const char* msg, int rc, ...) {
         exit(1);
 }
 
-usb_device::usb_device(libusb_device* d) : 
+icharger_usb::icharger_usb(libusb_device* d) : 
 	device(d),
 	handle(0),
-	is_open(false),
 	timeout_ms(1000)
 {
         int r = libusb_open(device, &handle);
- 	is_open = handle && r == 0; 
+ 	handle && r == 0; 
 }
 
-usb_device::~usb_device() {
+icharger_usb::~icharger_usb() {
 	if(handle)
 		libusb_close(handle);
 	handle = 0;
-	is_open = false;
 }
 
 void dump_ascii_hex(char* data, int len) {
@@ -65,7 +64,7 @@ void dump_ascii_hex(char* data, int len) {
 }
 
 /* same as the library version, but automatically handles retry on timeout */
-int usb_device::usb_data_transfer(unsigned char endpoint_address,
+int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
                                   char* data,
                                   int length,
                                   int* total_transferred)
@@ -79,7 +78,7 @@ int usb_device::usb_data_transfer(unsigned char endpoint_address,
         int bytes_transferred = 0;
         char* data_ptr = data;
 
-	printf("initiate usb transfer to/from endpoint: %d, for total of %d bytes\r\n", endpoint_address, length);
+	//printf("initiate usb transfer to/from endpoint: %d, for total of %d bytes\r\n", endpoint_address, length);
 
         while(1) {
                 int transferred = 0;
@@ -93,14 +92,14 @@ int usb_device::usb_data_transfer(unsigned char endpoint_address,
                                         timeout_ms);
 
                 *total_transferred += transferred;
-                printf("op %d, transferred bytes: %d, last result: %d/%s\r\n",
+                /*printf("op %d, transferred bytes: %d, last result: %d/%s\r\n",
                         endpoint_address,
                         *total_transferred,
                         r,
-                        libusb_error_name(r));
+                        libusb_error_name(r));*/
 
                 if(r == LIBUSB_ERROR_TIMEOUT) {
-                        printf("retrying...\r\n");
+                        //printf("retrying...\r\n");
                 } else if(r != 0) {
                         error_exit("an error was encountered during data transfer", r);
                 }
@@ -110,7 +109,7 @@ int usb_device::usb_data_transfer(unsigned char endpoint_address,
         }
 }
 
-int usb_device::modbus_request(char func_code, char* input, char *output) {
+int icharger_usb::modbus_request(char func_code, char* input, char *output) {
        	char data [HID_PACK_MAX];
        	memset(data, 0, sizeof(data));
 
@@ -141,10 +140,11 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 		memset(data, 0, sizeof(data));
 
                	if(usb_data_transfer(END_POINT_ADDRESS_READ, (char *)&data, sizeof(data)) == 0) {
-			printf("decoding returned data... data len: %d, modbus return is: %d\r\n", data[HID_PACK_LEN], data[HID_PACK_MODBUS]);
+			//printf("decoding returned data... data len: %d, modbus return is: %d\r\n", data[HID_PACK_LEN], data[HID_PACK_MODBUS]);
 
 			if(data[HID_PACK_LEN] > HID_PACK_MAX) {
-				printf("data length wrong - its greater than max pack len\r\n");
+				//printf("data length wrong - its greater than max pack len\r\n");	
+				// TODO: work out which error code to return.
 				return -1;
 			}
 
@@ -155,7 +155,6 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 					case MB_FUNC_READ_INPUT_REGISTER:
 					case MB_FUNC_READ_HOLDING_REGISTER:
 						if((data[HID_PACK_LEN] != data[HID_PACK_MODBUS + 1] + 4) || (data[HID_PACK_LEN] & 0x01)) {
-							printf("on read the return data doesnt seem to work\r\n");
 							return MB_ELEN;
 						}
 
@@ -179,10 +178,10 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 	return r;
 }
 
-int usb_device::read_request(char func_code, int base_addr, int num_registers, char* dest) {
+int icharger_usb::read_request(char func_code, int base_addr, int num_registers, char* dest) {
 	int r = 0;
 
-	printf("read request from base_addr: %x, for %d registers, sizeof read_req: %d\r\n", base_addr, num_registers, sizeof(read_data_registers));
+	//printf("read request from base_addr: %x, for %d registers, sizeof read_req: %d\r\n", base_addr, num_registers, sizeof(read_data_registers));
 
 	for(int i = 0; i < num_registers / READ_REG_COUNT_MAX; ++i) {
         	read_data_registers read_req(base_addr, READ_REG_COUNT_MAX);
@@ -199,7 +198,7 @@ int usb_device::read_request(char func_code, int base_addr, int num_registers, c
 		read_req.quantity_to_read.high = 0;
 		read_req.quantity_to_read.low = num_registers % READ_REG_COUNT_MAX;
 
-		printf("i'm going to read this many regs: %d\r\n", read_req.quantity_to_read.low);
+		//printf("i'm going to read this many regs: %d\r\n", read_req.quantity_to_read.low);
 
 		int r = modbus_request(func_code, (char *)&read_req, dest);
 		if(r != 0)
@@ -210,11 +209,11 @@ int usb_device::read_request(char func_code, int base_addr, int num_registers, c
 }
 
 // 0x04 - read input registers at base address 0x0000
-int usb_device::get_device_only(struct device_only* output) {	
+int icharger_usb::get_device_only(device_only* output) {	
   	return read_request(MB_FUNC_READ_INPUT_REGISTER, BASE_ADDR_DEVICE_ONLY, sizeof(device_only) / 2, (char *)output); 
 }
 
-int usb_device::get_channel_status(int channel /* 0 or 1 */, channel_status* output) {
+int icharger_usb::get_channel_status(int channel /* 0 or 1 */, channel_status* output) {
 	int addr = 0;
 
 	if(channel == 0)
@@ -228,7 +227,18 @@ int usb_device::get_channel_status(int channel /* 0 or 1 */, channel_status* out
 	return 1;
 }
 
-usb_device_ptr usb_device::first_charger(libusb_context* ctx, int vendor, int product) {
+int icharger_usb::get_system_storage(system_storage* output) {
+	device_only dev;
+	int r = get_device_only(&dev);
+	if(r == 0) {
+		return read_request(MB_FUNC_READ_HOLDING_REGISTER, BASE_ADDR_SYSTEM_STORAGE, 
+			sizeof(system_storage) / 2, (char *)output);
+	}
+
+	return r;	
+}
+
+icharger_usb_ptr icharger_usb::first_charger(libusb_context* ctx, int vendor, int product) {
         libusb_device **devs;
         size_t cnt = libusb_get_device_list(ctx, &devs);
 
@@ -245,9 +255,9 @@ usb_device_ptr usb_device::first_charger(libusb_context* ctx, int vendor, int pr
                 }
         }
 
-	usb_device_ptr p;
+	icharger_usb_ptr p;
         if(found) {
-		p = usb_device_ptr(new usb_device(found));
+		p = icharger_usb_ptr(new icharger_usb(found));
 	}
 	
         libusb_free_device_list(devs, 1 /* unref all elements */);
