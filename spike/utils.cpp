@@ -15,16 +15,9 @@
 #define MB_FUNC_READ_HOLDING_REGISTER 0x03
 #define MB_FUNC_WRITE_MULTIPLE_REGISTERS 0x10
 
+#define BASE_ADDR_DEVICE_ONLY 0x0000
+
 #define HID_PACK_MAX		64
-
-/*
-#define HID_PACK_CH		0
-#define HID_PACK_LEN		1
-#define HID_PACK_TYPE		2
-#define HID_PACK_MODBUS		3
-#define REPORT_ID		0
-*/
-
 #define HID_PACK_LEN		0
 #define HID_PACK_TYPE		1
 #define HID_PACK_MODBUS		2
@@ -62,8 +55,9 @@ usb_device::~usb_device() {
 
 void dump_ascii_hex(char* data, int len) {
 	printf("from addr: %d for %d bytes\r\n", data, len);
-	for(int i = 0; i < len; ++i)
-		printf("byte %02d: %d, %x\r\n", i, data[i], data[i]);
+	for(int i = 0; i < len; ++i) {
+		printf("%2d: %2x %c\r\n", i, data[i], data[i]);
+	}
 	printf("----\r\n");
 
 }
@@ -115,7 +109,6 @@ int usb_device::usb_data_transfer(unsigned char endpoint_address,
 }
 
 int usb_device::modbus_request(char func_code, char* input, char *output) {
-       	//char data [HID_PACK_MAX + 1 /* report-id */];
        	char data [HID_PACK_MAX];
        	memset(data, 0, sizeof(data));
 
@@ -137,7 +130,7 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 	for(int i = 0; i < data[HID_PACK_LEN] - 3; i++)
 		data[HID_PACK_MODBUS + 1 + i] = input[i];
 
-	dump_ascii_hex(data, 20);
+	dump_ascii_hex(data, data[HID_PACK_LEN]);
 
 	// write trans...
        	int r = usb_data_transfer(END_POINT_ADDRESS_WRITE, data, sizeof(data));
@@ -153,11 +146,13 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 				return -1;
 			}
 
+			dump_ascii_hex(data, data[HID_PACK_LEN]);	
+
 			if(data[HID_PACK_MODBUS] == func_code) {
 				switch(func_code) {
 					case MB_FUNC_READ_INPUT_REGISTER:
 					case MB_FUNC_READ_HOLDING_REGISTER:
-						if((data[HID_PACK_LEN] != data[HID_PACK_MODBUS] + 4) || (data[HID_PACK_LEN] & 0x01)) {
+						if((data[HID_PACK_LEN] != data[HID_PACK_MODBUS + 1] + 4) || (data[HID_PACK_LEN] & 0x01)) {
 							printf("on read the return data doesnt seem to work\r\n");
 							return MB_ELEN;
 						}
@@ -167,8 +162,6 @@ int usb_device::modbus_request(char func_code, char* input, char *output) {
 							output[i] = data[HID_PACK_MODBUS + i + 1];
 							output[i + 1] = data[HID_PACK_MODBUS + i];
 						}
-
-						printf("copied all data back...\r\n");
 
 						break;
 					case MB_FUNC_WRITE_MULTIPLE_REGISTERS:
@@ -191,9 +184,6 @@ int usb_device::read_request(char func_code, int base_addr, int num_registers, c
 
 	for(int i = 0; i < num_registers / READ_REG_COUNT_MAX; ++i) {
         	read_data_registers read_req(base_addr, num_registers);
-
-		dump_ascii_hex((char *)&read_req, sizeof(read_req));
-
 		r = modbus_request(func_code, (char *)&read_req, dest);
 		if(r != 0)
 			return r;
@@ -204,9 +194,10 @@ int usb_device::read_request(char func_code, int base_addr, int num_registers, c
 
 	if(num_registers % READ_REG_COUNT_MAX) {
         	read_data_registers read_req(base_addr, num_registers);
+		read_req.quantity_to_read.high = 0;
 		read_req.quantity_to_read.low = num_registers % READ_REG_COUNT_MAX;
 
-		dump_ascii_hex((char *)&read_req, sizeof(read_req));
+		printf("i'm going to read this many regs: %d\r\n", read_req.quantity_to_read.low);
 
 		int r = modbus_request(func_code, (char *)&read_req, dest);
 		if(r != 0)
@@ -217,9 +208,8 @@ int usb_device::read_request(char func_code, int base_addr, int num_registers, c
 }
 
 // 0x04 - read input registers at base address 0x0000
-
 int usb_device::get_device_only(struct device_only* output) {	
-  	return read_request(MB_FUNC_READ_INPUT_REGISTER, 0x0000, sizeof(device_only) / 2, (char *)output); 
+  	return read_request(MB_FUNC_READ_INPUT_REGISTER, BASE_ADDR_DEVICE_ONLY, sizeof(device_only) / 2, (char *)output); 
 }
 
 usb_device_ptr usb_device::first_charger(libusb_context* ctx, int vendor, int product) {

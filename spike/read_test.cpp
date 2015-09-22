@@ -59,10 +59,15 @@ int main(int argc, char *argv[]) {
 
 		r = device->get_device_only(&dev_only);
 		if(r == 0) {
-			printf("device id : %x\r\n", dev_only.device_id.word);
+			printf("device id : %x\r\n", dev_only.device_id.value);
 			printf("device dn : %12s\r\n", dev_only.device_dn);
-			printf("sw_version: %x\r\n", dev_only.sw_version.word);
-			printf("hw_version: %x\r\n", dev_only.hw_version.word);
+			printf("sw_version: %x\r\n", dev_only.sw_version.value);
+			printf("hw_version: %x\r\n", dev_only.hw_version.value);
+			printf("sys length: %x\r\n", dev_only.system_length.value);
+			printf("mem length: %x\r\n", dev_only.memory_length.value);
+			printf("ch1 state : %x\r\n", dev_only.ch1_status.value);
+			printf("ch2 state : %x\r\n", dev_only.ch2_status.value);
+	
 		} else {
 			printf("got error code: %d\r\n", r);
 		}

@@ -37,46 +37,69 @@ typedef signed short    s16;
 typedef unsigned char   u8;
 typedef signed char     s8;
 
-union data_register {
-        u16 word;
+union register16 {
+        u16 value;
         struct {
                 u8 high;
                 u8 low;
         } __attribute__ ((packed));
 } __attribute__ ((packed));
 
+union register32 {	
+	u32 value;	
+	struct {
+		register16 high;
+		register16 low;
+	} __attribute__ ((packed));
+} __attribute__ ((packed));	
+
 // available at base address: 0x0000
 struct device_only {
-        data_register   device_id;
-        s16             device_dn[12];
-        data_register   sw_version;
-        data_register   hw_version;
-        data_register   system_length;
-        data_register   memory_length;
-        data_register   ch1_status;
-        data_register   ch2_status;
+        register16   device_id;
+        s8           device_dn[12];
+        register16   sw_version;
+        register16   hw_version;
+        register16   system_length;
+        register16   memory_length;
+        register16   ch1_status;
+        register16   ch2_status;
 } __attribute__ ((packed));
 
-struct request {
-        u8 func_code;
-        request(char fc) : func_code(fc) {}
+// available at 0x0100 and 0x0200 (ch1 and ch2)
+struct channel_status {
+	register32 timestamp;
+	register32 ouput_power;
+	register16 output_current;
+	register16 input_voltage;
+	register16 output_voltage;
+	register32 output_capacity;
+
+	register16 temp_internal;
+	register16 temp_external;
+
+	u16 cell_voltage[16];
+	u8 balance_status[16];
+	u16 cell_resistance[16];
+	u16 total_resistance;
+
+	u16 line_internal_resistance;
+	u16 cycle_count;	
+	u16 control_status;
+	u16 run_status;
+	u16 run_error;
+	u16 dialog_box_id;
 } __attribute__ ((packed));
 
-struct read_data_registers : public request {
-        data_register starting_address;
-        data_register quantity_to_read;
+struct read_data_registers {
+        register16 starting_address;
+        register16 quantity_to_read;
 
-        read_data_registers(int base_addr, int num_registers) : request(0x04) {
+        read_data_registers(int base_addr, int num_registers) {
                 starting_address.high = base_addr >> 8;
                 starting_address.low = (char)(base_addr & 0xff);
                 quantity_to_read.high = num_registers >> 8;
                 quantity_to_read.low = (char)(num_registers & 0xff);
         }
-} __attribute__ ((packed));
-
-struct response_header : public request {
-        unsigned char byte_count;
-        response_header() : request(0) {}
 } __attribute__ ((packed));
 
 struct usb_device {
