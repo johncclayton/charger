@@ -11,17 +11,38 @@
 
 libusb_context* ctx = 0;
 
+void display_stuff(libusb* ctx) {
+}
+
 int main(int argc, char *argv[]) {
+	bool display_only = true;
+	ProgramType pt = RUNOP_CHARGE;
+	OrderAction oa = ORDER_STOP;
+	Channel ch = CHANNEL_1;	
+
+	for(int i = 0; i < argc; ++i) {
+		if(strcmp(argv[i], "-run") == 0) {
+			display_only = false;
+
+			if(strcmp(argv[i+1], "charge") == 0)
+				pt = RUNOP_CHARGE;
+			if(strcmp(argv[i+1], "storage") == 0)
+				pt = RUNOP_STORAGE;
+			if(strcmp(argv[i+1], "DISCHARGE") == 0)
+				pt = RUNOP_DISCHARGE;
+			if(strcmp(argv[i+1], "balance") == 0)
+				pt = RUNOP_BALANCE;
+		}		
+	}
+
 	int r = libusb_init(&ctx);
 	if(r != 0)
 		error_exit("failed to init libusb", r);
 
-	printf("size of device_only: %d\r\n", sizeof(device_only));
-
 	libusb_set_debug(ctx, 4);
 
 	{
-        icharger_usb_ptr device = icharger_usb::first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
+        	icharger_usb_ptr device = icharger_usb::first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
 		if(! device.get())
 			error_exit("cannot find an iCharger device", -1);
 

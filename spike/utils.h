@@ -16,9 +16,17 @@ typedef std::auto_ptr<icharger_usb> icharger_usb_ptr;
 
 #define VALUE_ORDER_KEY	0x55aa
 
-enum ORDER
+enum ProgramType {
+	RUNOP_CHARGE,
+	RUNOP_STORAGE,
+	RUNOP_DISCHARGE,
+	RUNOP_CYCLE,
+	RUNOP_BALANCE
+};
+
+enum OrderAction
 {
-	ORDER_STOP,	
+	ORDER_STOP=0,	
 	ORDER_RUN,
 	ORDER_MODIFY,	
 	ORDER_WRITE_SYS,
@@ -207,11 +215,6 @@ struct read_data_registers {
     }
 } __attribute__ ((packed));
 
-enum Action {
-	ACTION_START,
-	ACTION_STOP
-};
-
 enum Channel {
 	CHANNEL_1,
 	CHANNEL_2
@@ -226,7 +229,7 @@ struct icharger_usb {
     ModbusRequestError get_device_only(device_only* output);	
     ModbusRequestError get_channel_status(int channel /* 0 or 1 */, channel_status* output);
     ModbusRequestError get_system_storage(system_storage* output);
-    ModbusRequestError order(Action action, Channel ch, int progam_index, int selected_mem_index);
+    ModbusRequestError order(OrderAction action, Channel ch, ProgramType pt, int selected_mem_index);
     
     static icharger_usb_ptr first_charger(libusb_context* ctx, int vendor, int product);
     
