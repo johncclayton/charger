@@ -13,7 +13,30 @@ typedef std::auto_ptr<icharger_usb> icharger_usb_ptr;
 #define MAX_CELLS           16
 #define LIST_MEM_MAX        64
 #define MODEL_MAX           2
-#define VALUE_ORDER_KEY		0x55aa
+
+#define VALUE_ORDER_KEY	0x55aa
+
+enum ProgramType {
+	RUNOP_CHARGE,
+	RUNOP_STORAGE,
+	RUNOP_DISCHARGE,
+	RUNOP_CYCLE,
+	RUNOP_BALANCE
+};
+
+enum OrderAction
+{
+	ORDER_STOP=0,	
+	ORDER_RUN,
+	ORDER_MODIFY,	
+	ORDER_WRITE_SYS,
+	ORDER_WRITE_MEM_HEAD,
+	ORDER_WRITE_MEM,
+	ORDER_TRANS_LOG_ON,
+	ORDER_TRANS_LOG_OFF,
+	ORDER_MSGBOX_YES, 
+	ORDER_MSGBOX_NO, 
+};
 
 enum ModbusRequestError
 {
@@ -33,6 +56,20 @@ enum ModbusRequestError
     MB_ERETURN,                         /*!< protocol stack in illegal state. */
     MB_ELEN,                            /*!< pack len larg error. */
     MB_ETIMEDOUT                		/*!< timeout error occurred. */
+};
+
+#define REG_HOLDING_CTRL_START 0x8000
+#define REG_HOLDING_CTRL_NREGS 7
+
+enum RegistrySelectionOp
+{
+	REG_SEL_OP = REG_HOLDING_CTRL_START,
+	REG_SEL_MEM,	
+	REG_SEL_CHANNEL,		
+	REG_ORDER_KEY,
+	REG_ORDER,	
+	REG_CURRENT,
+	REG_VOLT
 };
 
 typedef unsigned long   u32;
@@ -178,6 +215,11 @@ struct read_data_registers {
     }
 } __attribute__ ((packed));
 
+enum Channel {
+	CHANNEL_1,
+	CHANNEL_2
+};
+
 struct icharger_usb {
     icharger_usb(libusb_device* d);
     ~icharger_usb();
@@ -187,6 +229,7 @@ struct icharger_usb {
     ModbusRequestError get_device_only(device_only* output);	
     ModbusRequestError get_channel_status(int channel /* 0 or 1 */, channel_status* output);
     ModbusRequestError get_system_storage(system_storage* output);
+    ModbusRequestError order(OrderAction action, Channel ch, ProgramType pt, int selected_mem_index);
     
     static icharger_usb_ptr first_charger(libusb_context* ctx, int vendor, int product);
     
