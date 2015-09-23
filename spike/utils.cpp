@@ -323,10 +323,9 @@ ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramTy
 		return write_request(REG_SEL_OP, 5, (char *)data);
         
 	case ORDER_STOP:
-		data[0] = 0;
-		data[1] = VALUE_ORDER_KEY;
-		data[2] = action;	
-		return write_request(REG_SEL_CHANNEL, 3, (char *)data);
+		data[0] = VALUE_ORDER_KEY;
+		data[1] = action;	
+		return write_request(REG_ORDER_KEY, 2, (char *)data);
 	}
 
 	return MB_EILLFUNCTION;

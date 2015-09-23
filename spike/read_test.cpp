@@ -180,9 +180,10 @@ int main(int argc, char *argv[]) {
 
         		ModbusRequestError r = device->order(oa, channel, pt, mem_idx);
         		if(r != 0)
-            			printf("failed to run command, exit code: %d\r\n", r);
-			else
+            			printf("failed to run command, exit code: %d / %x\r\n", r, r);
+			else {
 				printf("command executed ok\r\n");
+			}	
     		}
 	}
     
