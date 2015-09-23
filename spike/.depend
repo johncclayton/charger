@@ -1,2 +1,0 @@
-read_test.o: read_test.cpp utils.h /usr/include/libusb-1.0/libusb.h
-utils.o: utils.cpp utils.h /usr/include/libusb-1.0/libusb.h

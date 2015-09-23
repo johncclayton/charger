@@ -310,17 +310,18 @@ ModbusRequestError icharger_usb::get_system_storage(system_storage* output) {
     return MB_EX_ILLEGAL_DATA_ADDRESS;	
 }
 
-ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramType program, int selected_mem_index) {
+ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramType program, int mem_index) {
 	u16 data[5];
 
 	switch(action) {
 	case ORDER_RUN:
 		data[0] = program;
-		data[1] = 0;
+		data[1] = mem_index;
 		data[2] = (int)ch;
 		data[3] = VALUE_ORDER_KEY; 
 		data[4] = action;
 		return write_request(REG_SEL_OP, 5, (char *)data);
+        
 	case ORDER_STOP:
 		data[0] = 0;
 		data[1] = VALUE_ORDER_KEY;
