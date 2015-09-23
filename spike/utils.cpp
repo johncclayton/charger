@@ -208,6 +208,48 @@ int icharger_usb::read_request(char func_code, int base_addr, int num_registers,
 	return r;
 }
 
+int icharger_usb::write_request(int base_addr, int num_registers, char *input) {
+	int r;
+	char data[80];
+	for(int i = 0; i < num_registers / WRITE_REG_COUNT_MAX; i++) {
+		data[0] = (base_addr >> 8);
+		data[1] = (base_addr & 0xff);
+		data[2] = 0;
+		data[3] = WRITE_REG_COUNT_MAX;
+		data[4] = 2*WRITE_REG_COUNT_MAX;
+
+		for(int j = 0; j < data[4]; j += 2) {
+			data[5+j] = input[j+1];
+			data[5+j+1] = input[j];
+		}
+
+		r = modbus_request(MB_FUNC_WRITE_MULTIPLE_REGISTERS, data, NULL);
+		if(ret != 0)
+			return ret;
+	
+		RegStart += WRITE_REG_COUNT_MAX;
+		pIn += (2*WRITE_REG_COUNT_MAX);
+	}
+
+	if(RegCount%WRITE_REG_COUNT_MAX)
+	{
+		data[0] = (BYTE)(RegStart >> 8);
+		data[1] = (BYTE)(RegStart & 0xff);
+		data[2] = 0;
+		data[3] = (BYTE) RegCount%WRITE_REG_COUNT_MAX;
+		data[4] = 2*data[3];
+		for(j=0;j<data[4];j=j+2)
+		{
+			data[5+j] = pIn[j+1];
+			data[5+j+1] = pIn[j];
+		}
+		ret = MasterModBus(MB_FUNC_WRITE_MULTIPLE_REGISTERS,data,NULL,TIME_OUT);
+		if(ret != MB_EOK)return ret;
+	}
+	return ret;
+}
+}
+
 // 0x04 - read input registers at base address 0x0000
 int icharger_usb::get_device_only(device_only* output) {	
   	return read_request(MB_FUNC_READ_INPUT_REGISTER, BASE_ADDR_DEVICE_ONLY, sizeof(device_only) / 2, (char *)output); 
