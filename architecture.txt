@@ -1,0 +1,41 @@
+Architecture
+
+
+Linux Host (Rasp Pi etc)
+	iCharger USB Driver
+	ZeroMQ transport
+	Bonjour to publish service
+
+Any Gui:
+	Bonjour to find service
+	ZeroMQ - transport
+	QML - ui / transitions + platform independance
+
+
+UI Flow
+
+First Time Use:
+
+* Prompt for connectivity
+	- tell user we’re waiting if there is nothing found
+	- tell user we are waiting if there is no network
+	- auto complete if there is only one
+
+Once an iCharger is found:
+
+	Which CHANNEL?
+
+		Mix those 3 tabs together :-)
+
+		Start
+			Which charging mode?
+				Charge/Balance/etc
+				Yes/No
+
+		Info
+			Info from Channel X
+			Status on cells
+		
+	
+
+
