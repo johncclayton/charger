@@ -1,9 +1,0 @@
-icharger_usb/core/icharger.cpp
-icharger_usb/core/icharger.h
-icharger_usb/core/icharger_msg.h
-icharger_usb/tests/TestChargerUSB/TestChargerUSB.cpp
-icharger_usb/tests/TestChargerUSB/TestChargerUSB.h
-icharger_usb/tests/main.cpp
-spike/read_test.cpp
-spike/utils.cpp
-spike/utils.h
