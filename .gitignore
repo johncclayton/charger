@@ -2,3 +2,4 @@
 build/
 moc_*.cpp
 .depend
+read_test

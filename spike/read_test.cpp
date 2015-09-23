@@ -15,7 +15,7 @@ void display_channel_status(icharger_usb_ptr device, Channel ch) {
     struct channel_status status;
     memset(&status, 0, sizeof(status));
 
-    r = device->get_channel_status((int)ch, &status);
+    int r = device->get_channel_status((int)ch, &status);
     if(r == 0) {
         printf("Channel Status: %d\r\n", ch);
         printf("timestamp      : %ld\r\n", status.timestamp.value);
@@ -47,15 +47,13 @@ void display_channel_status(icharger_usb_ptr device, Channel ch) {
     } else {
         printf("unable to fetch the status of channel 1\r\n");
     }
-
-    
 }
 
 void display_stuff(icharger_usb_ptr device) {
     struct device_only dev_only;
     memset(&dev_only, 0, sizeof(device_only));
 
-    r = device->get_device_only(&dev_only);
+    int r = device->get_device_only(&dev_only);
     if(r == 0) {
         printf("device id : %d\r\n", dev_only.device_id.value);
         printf("device dn : %12s\r\n", dev_only.device_sn);
@@ -128,41 +126,67 @@ int main(int argc, char *argv[]) {
 	ProgramType pt = RUNOP_CHARGE;
 	OrderAction oa = ORDER_STOP;
 	Channel channel = CHANNEL_1;	
+	int mem_idx = 0;
 
 	for(int i = 0; i < argc; ++i) {
-		if(strcmp(argv[i], "-run") == 0) {
+		if(strcmp(argv[i], "-op") == 0) {
 			display_only = false;
 
 			if(strcmp(argv[i+1], "charge") == 0)
 				pt = RUNOP_CHARGE;
 			if(strcmp(argv[i+1], "storage") == 0)
 				pt = RUNOP_STORAGE;
-			if(strcmp(argv[i+1], "DISCHARGE") == 0)
+			if(strcmp(argv[i+1], "discharge") == 0)
 				pt = RUNOP_DISCHARGE;
 			if(strcmp(argv[i+1], "balance") == 0)
 				pt = RUNOP_BALANCE;
+			if(strcmp(argv[i+1], "cycle") == 0)
+				pt = RUNOP_CYCLE;
+			
 		}		
+
+		if(strcmp(argv[i], "-channel") == 0) {
+			if(atoi(argv[i + 1]) == 1)
+				channel = CHANNEL_1;	
+			if(atoi(argv[i + 1]) == 2)
+				channel = CHANNEL_2;	
+		}
+
+		if(strcmp(argv[i], "-stop") == 0)
+			oa = ORDER_STOP;
+		if(strcmp(argv[i], "-start") == 0)
+			oa = ORDER_RUN;
 	}
 
 	int r = libusb_init(&ctx);
 	if(r != 0)
 		error_exit("failed to init libusb", r);
 
-    icharger_usb_ptr device = icharger_usb::first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
-    if(! device.get())
-        error_exit("cannot find an iCharger device", -1);
+	{
+    		icharger_usb_ptr device = icharger_usb::first_charger(ctx, ICHARGER_VENDOR_ID, ICHARGER_PRODUCT_ID);
+    		if(! device.get())
+        		error_exit("cannot find an iCharger device", -1);
     
-	libusb_set_debug(ctx, 4);
+		libusb_set_debug(ctx, 4);
 
-    if(display_only)
-        display_stuff(device);
-    else {
-        ModbusRequestError r = device->order(oa, channel, pt);
-        if(r != 0)
-            printf("failed to run command, exit code: %d\r\n", r);
-    }
+    		if(display_only)
+        		display_stuff(device);
+    		else {
+			printf("command line: start/stop: %d, program: %d, channel: %d, mem index: %d\r\n",
+				oa,
+				pt,
+				channel,
+				mem_idx);
+
+        		ModbusRequestError r = device->order(oa, channel, pt, mem_idx);
+        		if(r != 0)
+            			printf("failed to run command, exit code: %d\r\n", r);
+			else
+				printf("command executed ok\r\n");
+    		}
+	}
     
-	ibusb_exit(ctx);
+	libusb_exit(ctx);
 
 	return 0;
 }
