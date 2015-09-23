@@ -200,7 +200,7 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
         return MB_EIO;
     }
     
-    return r;
+    return MB_EOK;
 }
 
 ModbusRequestError icharger_usb::read_request(char func_code, int base_addr, int num_registers, char* dest) {
@@ -232,7 +232,7 @@ ModbusRequestError icharger_usb::read_request(char func_code, int base_addr, int
 }
 
 ModbusRequestError icharger_usb::write_request(int base_addr, int num_registers, char *input) {
-    ModbusRequestError r;
+    ModbusRequestError r = MB_EOK;
     
     char data[80];
     memset(data, 0, sizeof(data));
@@ -250,8 +250,8 @@ ModbusRequestError icharger_usb::write_request(int base_addr, int num_registers,
         }
         
         r = modbus_request(MB_FUNC_WRITE_MULTIPLE_REGISTERS, data, NULL);
-        if(ret != MB_EOK)
-            return ret;
+        if(r != MB_EOK)
+            return r;
         
         base_addr += WRITE_REG_COUNT_MAX;
         input += (2 * WRITE_REG_COUNT_MAX);
@@ -265,9 +265,9 @@ ModbusRequestError icharger_usb::write_request(int base_addr, int num_registers,
         data[3] = num_registers % WRITE_REG_COUNT_MAX;
         data[4] = 2 * data[3];
         
-        for(j = 0; j < data[4]; j += 2) {
-            data[5+j] = pIn[j+1];
-            data[5+j+1] = pIn[j];
+        for(int j = 0; j < data[4]; j += 2) {
+            data[5+j] = input[j+1];
+            data[5+j+1] = input[j];
         }
         
         r = modbus_request(MB_FUNC_WRITE_MULTIPLE_REGISTERS, data, NULL);
@@ -316,8 +316,8 @@ icharger_usb_ptr icharger_usb::first_charger(libusb_context* ctx, int vendor, in
     
     for(size_t index = 0; index < cnt && !found; ++index) {
         struct libusb_device_descriptor desc;
-        ModbusRequestError r = libusb_get_device_descriptor(devs[index], &desc);
-        if (r >= MB_EOK) {
+        int r = libusb_get_device_descriptor(devs[index], &desc);
+        if (r >= 0) {
             if(desc.idVendor == vendor && desc.idProduct == product) {
                 found = devs[index];
             }
@@ -327,7 +327,7 @@ icharger_usb_ptr icharger_usb::first_charger(libusb_context* ctx, int vendor, in
     icharger_usb_ptr p;
     if(found) {
         p = icharger_usb_ptr(new icharger_usb(found));
-	if(!p->acquire())
+	if(p->acquire())
 		p = icharger_usb_ptr();
     }
     

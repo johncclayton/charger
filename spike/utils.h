@@ -202,7 +202,7 @@ private:
     
     ModbusRequestError modbus_request(char func_code, char* input, char *output);
     ModbusRequestError read_request(char func_code, int base_addr, int num_registers, char* dest);
-    ModbusRequestError write_request(char func_code, int base_addr, int num_registers, char* dest);
+    ModbusRequestError write_request(int base_addr, int num_registers, char* dest);
 };
 
 #endif
