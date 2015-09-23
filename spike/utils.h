@@ -15,7 +15,7 @@ typedef std::auto_ptr<icharger_usb> icharger_usb_ptr;
 #define MODEL_MAX           2
 #define VALUE_ORDER_KEY		0x55aa
 
-enum
+enum ModbusRequestError
 {
     MB_EOK = 0x00,                      /*!< no error. */
     MB_EX_ILLEGAL_FUNCTION = 0x01,
@@ -33,7 +33,7 @@ enum
     MB_ERETURN,                         /*!< protocol stack in illegal state. */
     MB_ELEN,                            /*!< pack len larg error. */
     MB_ETIMEDOUT                		/*!< timeout error occurred. */
-} ModbusRequestError;
+};
 
 typedef unsigned long   u32;
 typedef signed long     s32;
@@ -181,7 +181,9 @@ struct read_data_registers {
 struct icharger_usb {
     icharger_usb(libusb_device* d);
     ~icharger_usb();
-    
+   
+    int acquire();
+ 
     ModbusRequestError get_device_only(device_only* output);	
     ModbusRequestError get_channel_status(int channel /* 0 or 1 */, channel_status* output);
     ModbusRequestError get_system_storage(system_storage* output);

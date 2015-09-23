@@ -54,6 +54,36 @@ icharger_usb::~icharger_usb() {
     handle = 0;
 }
 
+int icharger_usb::acquire() {
+         if(libusb_kernel_driver_active(device->handle, 0) == 1) {
+                        printf("the kernel has claimed this device, asking to detach it... ");
+                        if(libusb_detach_kernel_driver(device->handle, 0) == 0)
+                                printf("detached\r\n");
+                        else
+                                error_exit("unable to detach the kernel from the device", 0);
+                }
+
+                int configuration = 0;
+                r = libusb_get_configuration(device->handle, &configuration);
+                if(r != 0) {
+                        error_exit("cannot obtain the current configuration: %d", r);
+                }
+
+                printf("active configuration: %d\r\n", configuration);
+
+                r = libusb_claim_interface(device->handle, 0);
+                if(r < 0)
+                        error_exit("cannot claim the interface, err: %d", r);
+
+                // find the right interface, it's the non-SD card one...a HID type.
+                struct libusb_config_descriptor * config = 0;
+                r = libusb_get_active_config_descriptor(device->device, &config);
+                if(r != 0) {
+                        error_exit("cannot obtain the current configuration description", r);
+                }
+
+}
+
 void dump_ascii_hex(char* data, int len) {
     printf("from addr: %d for %d bytes\r\n", data, len);
     for(int i = 0; i < len; ++i) {
@@ -297,6 +327,8 @@ icharger_usb_ptr icharger_usb::first_charger(libusb_context* ctx, int vendor, in
     icharger_usb_ptr p;
     if(found) {
         p = icharger_usb_ptr(new icharger_usb(found));
+	if(!p->acquire())
+		p = icharger_usb_ptr();
     }
     
     libusb_free_device_list(devs, 1 /* unref all elements */);
