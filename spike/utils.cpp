@@ -185,10 +185,12 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
                     data[HID_PACK_LEN] = 5 + (data[HID_PACK_MODBUS + 5] * 2 + 1);	
                     break;
                 }
+            } else {
+                if(data[HID_PACK_MODBUS] == (func_code | 0x80))
+                    return (ModbusRequestError) data[HID_PACK_MODBUS + 1];	
+                else
+                    return MB_ERETURN;
             }
-            
-            if(data[HID_PACK_MODBUS] == (func_code | 0x80))
-                return (ModbusRequestError) data[HID_PACK_MODBUS + 1];	
         } else {
             // failed to read for some reason, need to log and massage to request error
             printf("failed to read data from usb, %d/%s\r\n", r, libusb_error_name(r));
