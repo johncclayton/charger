@@ -26,16 +26,4 @@ private:
 
 };
 
-class Destroyer : public QObject
-{
-    Q_OBJECT
-    QThread *thread;
-    EventHandler *handler;
-
-public:
-    Destroyer(QThread *thread, EventHandler *handler, QObject *parent = 0);
-
-    ~Destroyer();
-};
-
 #endif // USB_EVENTHANDLER_H

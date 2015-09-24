@@ -176,8 +176,8 @@ void BonjourServiceBrowserThread::bonjourResponse(DNSServiceRef dnssref, DNSServ
     //this must happen in the thread as it is very slow
     Q_ASSERT(currentThread() == this);
 
-    QList<QPair<QString, BonjourRecord>> addedRecords, removedRecords;
-    QList<QPair<QString, int>> errors;
+    QList< QPair<QString, BonjourRecord> > addedRecords, removedRecords;
+    QList< QPair<QString, int> > errors;
     
     {
         QMutexLocker locker(&_mutex);

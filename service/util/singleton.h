@@ -23,7 +23,7 @@ namespace FW
         {
             if (!_instance)
             {
-                QMutexLocker guard{&_mutex};
+                QMutexLocker guard(&_mutex);
                 if (!_instance)
                 {
                     _instance = new T;

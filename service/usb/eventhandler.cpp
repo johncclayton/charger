@@ -19,15 +19,4 @@ void EventHandler::timerEvent(QTimerEvent *)
     QMetaObject::invokeMethod(this, "handle");
 }
 
-Destroyer::Destroyer(QThread *thread, EventHandler *handler, QObject *parent) :
-    QObject(parent), thread(thread), handler(handler) {}
-
-Destroyer::~Destroyer()
-{
-    handler->killTimer(handler->timer);
-    handler->deleteLater();
-    
-    thread->quit();
-    thread->deleteLater();
-}
 
