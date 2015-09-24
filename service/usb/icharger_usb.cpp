@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "icharger_usb.h"
+#include "usb/icharger_usb.h"
 
 #define END_POINT_ADDRESS_WRITE 0x01
 #define END_POINT_ADDRESS_READ 0x81
@@ -53,7 +53,8 @@ icharger_usb::icharger_usb(libusb_device* d) :
     timeout_ms(1000)
 {
     int r = libusb_open(device, &handle);
-    handle && r == 0; 
+    if(r != 0)
+        handle = 0;
 }
 
 icharger_usb::~icharger_usb() {
@@ -81,25 +82,17 @@ int icharger_usb::acquire() {
     if(r < 0)
         return r;
     
-    // find the right interface, it's the non-SD card one...a HID type.
-//    struct libusb_config_descriptor * config = 0;
-//    r = libusb_get_active_config_descriptor(device, &config);
-//    if(r != 0) {
-//        error_exit("cannot obtain the current configuration description", r);
-//    }
-//    libusb_free_config_descriptor(config);
-
     return 0;    
 }
 
-void dump_ascii_hex(char* data, int len) {
-    printf("from addr: %d for %d bytes\r\n", data, len);
-    for(int i = 0; i < len; ++i) {
-        printf("%2d: %2x %c\r\n", i, data[i], data[i]);
-    }
-    printf("----\r\n");
+//void dump_ascii_hex(char* data, int len) {
+//    printf("from addr: %d for %d bytes\r\n", (void *)data, len);
+//    for(int i = 0; i < len; ++i) {
+//        printf("%2d: %2x %c\r\n", i, data[i], data[i]);
+//    }
+//    printf("----\r\n");
     
-}
+//}
 
 /* same as the library version, but automatically handles retry on timeout */
 int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
@@ -334,9 +327,40 @@ ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramTy
 		data[0] = VALUE_ORDER_KEY;
 		data[1] = action;	
 		return write_request(REG_ORDER_KEY, 2, (char *)data);
+        
+    default:
+        return MB_EILLFUNCTION;
 	}
+}
 
-	return MB_EILLFUNCTION;
+charger_serial_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, int product) {
+    libusb_device **devs;
+    size_t cnt = libusb_get_device_list(ctx, &devs);
+    
+    charger_serial_list serial_numbers;
+    
+    for(size_t index = 0; index < cnt; ++index) {
+        struct libusb_device_descriptor desc;
+        int r = libusb_get_device_descriptor(devs[index], &desc);
+        if (r >= 0) {
+            if(desc.idVendor == vendor && desc.idProduct == product) {
+                // get this chargers serial number
+                icharger_usb_ptr dev(new icharger_usb(devs[index]));
+                if(dev.data() && dev->acquire() == 0) {
+                    device_only info;
+                    memset(&info, 0, sizeof(info));
+                    if(0 == dev->get_device_only(&info)) {
+                        QString serial_num = QString::fromLatin1((const char*)info.device_sn, 12);
+                        serial_numbers.append(serial_num);
+                    }
+                }
+            }
+        }
+    }
+    
+    libusb_free_device_list(devs, 1 /* unref all elements */);
+    
+    return serial_numbers;
 }
 
 icharger_usb_ptr icharger_usb::first_charger(libusb_context* ctx, int vendor, int product) {

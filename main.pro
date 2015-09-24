@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-SUBDIRS = service gui 
+SUBDIRS = service  
 
 tests.depends = service

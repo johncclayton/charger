@@ -2,7 +2,13 @@
 #ifndef __ICHARGER_USB_H
 #define __ICHARGER_USB_H
 
+extern "C" {
 #include <libusb.h>
+}
+
+#include <QList>
+#include <QSharedPointer>
+
 #include "icharger_data.h"
 
 #include <memory>
@@ -10,7 +16,9 @@
 void error_exit(const char* msg, int rc, ...);
 
 struct icharger_usb;
-typedef std::auto_ptr<icharger_usb> icharger_usb_ptr;
+typedef QSharedPointer<icharger_usb> icharger_usb_ptr;
+typedef QStringList charger_serial_list;
+
 
 struct usb_context { 
 	usb_context();
@@ -35,6 +43,7 @@ struct icharger_usb {
     ModbusRequestError get_system_storage(system_storage* output);
     ModbusRequestError order(OrderAction action, Channel ch, ProgramType pt, int selected_mem_index);
     
+    static charger_serial_list all_chargers(libusb_context* ctx, int vendor, int product);
     static icharger_usb_ptr first_charger(libusb_context* ctx, int vendor, int product);
     
 private:
