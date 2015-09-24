@@ -17,8 +17,11 @@ SOURCES = \
     usb/usb_hotpluglistener.cpp \
     usb/eventhandler.cpp
 
+unix:INCLUDEPATH += /usr/include/libusb-1.0
+unix:LIBS += -L/usr/lib -lusb-1.0
+
 macx:INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
-macx:LIBS += -L/usr/local/lib -lusb-1.0 -lzmq
+macx:LIBS += -L/usr/local/lib -lusb-1.0 -zmq
 
 HEADERS = \ 
     bonjour\bonjourrecord.h \
