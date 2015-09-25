@@ -84,6 +84,7 @@ int Controller::init() {
 
 void Controller::register_pub_port(int new_port) {
     _bon->registerService("_charger-service-pub._tcp", new_port);   
+    qDebug() << "port for pub/sub:" << new_port;
 }
 
 void Controller::notify_hotplug_event(bool added)  {
