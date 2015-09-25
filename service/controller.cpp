@@ -6,8 +6,6 @@
 #include <QScopedPointer>
 #include <QDebug>
 
-#include <QDebug>
-
 #include "usb/icharger_usb.h"
 #include "usb/hotplug_adapter.h"
 #include "usb/eventhandler.h"
@@ -18,6 +16,7 @@
 #include "bonjour/bonjourserviceregister.h"
 
 using namespace nzmqt;
+using namespace std;
 
 Controller::Controller(QObject *parent) : QObject(parent), 
     _ctx(0),
@@ -49,37 +48,49 @@ Controller::~Controller() {
 }
 
 int Controller::init() {
-    // ZeroMQ to send / receive messages - requires a context.
-    _ctx = createDefaultContext(this);
-    _ctx->start();
+    try {
+        // ZeroMQ to send / receive messages - requires a context.
+        _ctx = createDefaultContext(this);
+        _ctx->start();
+        
+        // Get the message infrastructure ready (pub/sub and messaging).
+        _pub = new ZMQ_Publisher(_ctx);
+        
+        // Bonjour system needs to publish our ZMQ publisher port
+        _bon = new BonjourServiceRegister;
+        
+        // Respond to changes to the publisher port
+        connect(_pub, SIGNAL(port_changed(int)), 
+                this, SLOT(register_pub_port(int)));
+        
+        // TODO: Respond to changes to the messaging port. 
+        
+        // bind the publisher to cause it to find a local ephemeral port and publish it
+        if(!_pub->bind()) {
+            qDebug() << "unable to bind the zmq publisher to its interface";
+            return 1;
+        }
+        
+        // Kick off a listener for USB hotplug events - so we keep our device list fresh
+        _hotplug = new HotplugEventAdapter(_usb.ctx);
+        QObject::connect(_hotplug, SIGNAL(hotplug_event(bool)), 
+                         this, SLOT(notify_hotplug_event(bool)));
     
-    // Get the message infrastructure ready (pub/sub and messaging).
-    _pub = new ZMQ_Publisher(_ctx);
+        // Primitive libsusb event handler.
+        _hotplug_handler = new UseQtEventDriver(_usb.ctx);
+        _hotplug_thread = new QThread();
+        _hotplug_handler->moveToThread(_hotplug_thread);
+        _hotplug_thread->start();
+        
+        return 0;
+    }
     
-    // Bonjour system needs to publish our ZMQ publisher port
-    _bon = new BonjourServiceRegister;
+    catch(zmq::error_t& ex) {
+        qDebug() << "failed to init zmq:" << ex.what();
+        return 1;
+    }
     
-    // Respond to changes to the publisher port
-    connect(_pub, SIGNAL(port_changed(int)), 
-            this, SLOT(register_pub_port(int)));
     
-    // TODO: Respond to changes to the messaging port. 
-    
-    // bind the publisher to cause it to find a local ephemeral port and publish it
-    _pub->bind();
-    
-    // Kick off a listener for USB hotplug events - so we keep our device list fresh
-    _hotplug = new HotplugEventAdapter(_usb.ctx);
-    QObject::connect(_hotplug, SIGNAL(hotplug_event(bool)), 
-                     this, SLOT(notify_hotplug_event(bool)));
-
-    // Primitive libsusb event handler.
-    _hotplug_handler = new UseQtEventDriver(_usb.ctx);
-    _hotplug_thread = new QThread();
-    _hotplug_handler->moveToThread(_hotplug_thread);
-    _hotplug_thread->start();
-    
-    return 0;
 }
 
 void Controller::register_pub_port(int new_port) {

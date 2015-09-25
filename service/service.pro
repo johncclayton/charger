@@ -34,8 +34,8 @@ unix:!macx {
 }
 
 macx {
-    INCLUDEPATH += /usr/local/include ../3rdparty/build/include/libusb-1.0
-    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq
+    INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
+    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq 
 }
 
 TARGET = service

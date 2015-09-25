@@ -3,7 +3,7 @@
 #define __ICHARGER_USB_H
 
 extern "C" {
-#include <libusb.h>
+    #include <libusb.h>
 }
 
 #include <QList>
