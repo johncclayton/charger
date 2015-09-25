@@ -18,8 +18,8 @@ SOURCES = \
     usb/eventhandler.cpp \
     controller.cpp
 
-unix:INCLUDEPATH += /usr/include/libusb-1.0
-unix:LIBS += -L/usr/lib -lusb-1.0
+unix:INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
+unix:LIBS += -L../3rdparty/build/lib -L/usr/lib/arm-linux-gnueabihf -lusb-1.0 -lzmq -ldns_sd
 
 macx:INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
 macx:LIBS += -L/usr/local/lib -lusb-1.0 -zmq

@@ -8,6 +8,7 @@ extern "C" {
 
 #include <QList>
 #include <QSharedPointer>
+#include <QStringList>
 
 #include "icharger_data.h"
 
