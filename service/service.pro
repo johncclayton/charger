@@ -3,9 +3,9 @@ TEMPLATE = app
 QT += network
 QT -= gui
 
-#CONFIG += c++11
 CONFIG += console
 CONFIG -= app_bundle
+CONFIG += debug
 
 SOURCES = \
     main.cpp \
@@ -30,11 +30,11 @@ HEADERS = \
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
-    LIBS += -L../3rdparty/build/lib -L/usr/lib/arm-linux-gnueabihf -lusb-1.0 -lzmq -ldns_sd
+    LIBS += ../3rdparty/build/lib/libusb-1.0.a -L/usr/lib/arm-linux-gnueabihf -lzmq -ldns_sd -lrt -ludev
 }
 
 macx {
-    INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
+    INCLUDEPATH += /usr/local/include ../3rdparty/build/include/libusb-1.0
     LIBS += -L/usr/local/lib -lusb-1.0 -lzmq
 }
 

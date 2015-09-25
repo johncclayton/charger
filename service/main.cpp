@@ -10,8 +10,10 @@
 // ALL configuration is via Bonjour - the app will publish its services there. 
 
 int main(int argc, char *argv[]) {
-	QCoreApplication app(argc, argv);
-    Controller main_controller;
+    QCoreApplication app(argc, argv);
+
+    try {
+    	Controller main_controller;
     main_controller.init();
     return app.exec();
 }

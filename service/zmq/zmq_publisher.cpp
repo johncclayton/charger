@@ -18,7 +18,7 @@ ZMQ_Publisher::~ZMQ_Publisher() {
 
 bool ZMQ_Publisher::bind() {
     _port = 0;
-    _socket->bindTo("tcp://127.0.0.1:*");
+    _socket->bindTo("tcp://*:*");
     
     char temp[255];
     size_t value_len = 255;

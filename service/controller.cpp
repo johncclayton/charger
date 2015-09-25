@@ -50,7 +50,7 @@ Controller::~Controller() {
 
 int Controller::init() {
     // ZeroMQ to send / receive messages - requires a context.
-    _ctx = createDefaultContext();
+    _ctx = createDefaultContext(this);
     _ctx->start();
     
     // Get the message infrastructure ready (pub/sub and messaging).
