@@ -1,4 +1,4 @@
-#include "usb/usb_hotpluglistener.h"
+#include "usb/hotplug_adapter.h"
 #include "libusb.h"
 
 int hotplug_callback(struct libusb_context *ctx, 
@@ -6,16 +6,19 @@ int hotplug_callback(struct libusb_context *ctx,
                      libusb_hotplug_event event, 
                      void *user_data) 
 {
+    Q_UNUSED(ctx);
+    Q_UNUSED(dev);
+    
 //    struct libusb_device_descriptor desc;
 //    libusb_get_device_descriptor(dev, &desc);
     
-    USB_HotPlugListener* obj = (USB_HotPlugListener*)(user_data);
+    HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
     obj->process_hotplug_event(event);
  
     return 0;
 }
 
-struct USB_HotPlugListener::Private {
+struct HotplugEventAdapter::Private {
     libusb_hotplug_callback_handle handle;
     
     Private() : handle(0) {
@@ -23,7 +26,7 @@ struct USB_HotPlugListener::Private {
     }
 };
 
-USB_HotPlugListener::USB_HotPlugListener(void* ctx, QObject *parent) : QObject(parent), _p(new Private)
+HotplugEventAdapter::HotplugEventAdapter(void* ctx, QObject *parent) : QObject(parent), _p(new Private)
 {
     libusb_hotplug_callback_handle h;
     
@@ -40,12 +43,12 @@ USB_HotPlugListener::USB_HotPlugListener(void* ctx, QObject *parent) : QObject(p
         _p->handle = h;
 }
 
-USB_HotPlugListener::~USB_HotPlugListener() {
+HotplugEventAdapter::~HotplugEventAdapter() {
     libusb_hotplug_deregister_callback(NULL, _p->handle);
     delete _p;
 }
 
-void USB_HotPlugListener::process_hotplug_event(int event_type) {
+void HotplugEventAdapter::process_hotplug_event(int event_type) {
     if (LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED == event_type) {
         hotplug_event(true);        
     } else if (LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT == event_type) {

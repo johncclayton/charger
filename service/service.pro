@@ -14,9 +14,9 @@ SOURCES = \
     bonjour/bonjourserviceregister.cpp \
 #    bonjour/bonjourserviceresolver.cpp \
     zmq/zmq_publisher.cpp \
-    usb/usb_hotpluglistener.cpp \
     usb/eventhandler.cpp \
-    controller.cpp
+    usb/hotplug_adapter.cpp \
+    controller.cpp 
 
 macx:INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
 macx:LIBS += -L/usr/local/lib -lusb-1.0 -lzmq
@@ -31,9 +31,9 @@ HEADERS = \
     bonjour/bonjourserviceregister.h \
 #    bonjour/bonjourserviceresolver.h \
     zmq/zmq_publisher.h \
-    usb/usb_hotpluglistener.h \
     usb/eventhandler.h \
-    controller.h
+    usb/hotplug_adapter.h \
+    controller.h 
 
 TARGET = service
 

@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include "usb/icharger_usb.h"
-#include "usb/usb_hotpluglistener.h"
+#include "usb/hotplug_adapter.h"
 #include "usb/eventhandler.h"
 
 #include "nzmqt/nzmqt.hpp"
@@ -37,8 +37,8 @@ private:
     
     BonjourServiceRegister* _bon;
     
-    USB_HotPlugListener* _hotplug;
-    EventHandler* _hotplug_handler;
+    HotplugEventAdapter* _hotplug;
+    UseQtEventDriver* _hotplug_handler;
     QThread* _hotplug_thread;
 };
 

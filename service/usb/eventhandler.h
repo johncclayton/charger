@@ -6,12 +6,12 @@
 struct libusb_context;
 class QThread;
 
-class EventHandler : public QObject
+class UseQtEventDriver : public QObject
 {
     Q_OBJECT
 
 public:
-    EventHandler(libusb_context *context, QObject *parent = 0);
+    UseQtEventDriver(libusb_context *context, QObject *parent = 0);
 
     int timer;
     libusb_context *context;

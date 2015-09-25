@@ -9,7 +9,7 @@
 #include <QDebug>
 
 #include "usb/icharger_usb.h"
-#include "usb/usb_hotpluglistener.h"
+#include "usb/hotplug_adapter.h"
 #include "usb/eventhandler.h"
 
 #include "nzmqt/nzmqt.hpp"
@@ -69,12 +69,12 @@ int Controller::init() {
     _pub->bind();
     
     // Kick off a listener for USB hotplug events - so we keep our device list fresh
-    _hotplug = new USB_HotPlugListener(_usb.ctx);
+    _hotplug = new HotplugEventAdapter(_usb.ctx);
     QObject::connect(_hotplug, SIGNAL(hotplug_event(bool)), 
                      this, SLOT(notify_hotplug_event(bool)));
 
     // Primitive libsusb event handler.
-    _hotplug_handler = new EventHandler(_usb.ctx);
+    _hotplug_handler = new UseQtEventDriver(_usb.ctx);
     _hotplug_thread = new QThread();
     _hotplug_handler->moveToThread(_hotplug_thread);
     _hotplug_thread->start();

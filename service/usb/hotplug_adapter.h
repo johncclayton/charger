@@ -3,12 +3,12 @@
 
 #include <QObject>
 
-class USB_HotPlugListener : public QObject
+class HotplugEventAdapter : public QObject
 {
     Q_OBJECT
 public:
-    explicit USB_HotPlugListener(void* ctx, QObject *parent = 0);
-    virtual ~USB_HotPlugListener();
+    explicit HotplugEventAdapter(void* ctx, QObject *parent = 0);
+    virtual ~HotplugEventAdapter();
     
     void process_hotplug_event(int event_type);
     
