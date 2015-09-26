@@ -81,8 +81,8 @@ int Controller::init() {
         
         // Kick off a listener for USB hotplug events - so we keep our device list fresh
         _hotplug = new HotplugEventAdapter();
-        QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, libusb_device*, int, int, int)), 
-                         this, SLOT(notify_hotplug_event(bool, libusb_device*, int, int, int)));
+        QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, int, int, QString)), 
+                         this, SLOT(notify_hotplug_event(bool, int, int, QString)));
         
         // Primitive libsusb event handler.
         _hotplug_handler = new UseQtEventDriver(_usb.ctx);
@@ -106,26 +106,10 @@ void Controller::register_pub_port(int new_port) {
     qCritical() << "pub/sub comms are being made on port number:" << new_port;
 }
 
-void Controller::notify_hotplug_event(bool added, libusb_device* dev, int vendor, int product, int sn_idx)  {
-    Q_UNUSED(sn_idx);
-    
-    if(vendor != ICHARGER_VENDOR_ID)
-        return;
-    
-    if(product == ICHARGER_PRODUCT_4010_DUO) {
-        icharger_usb_ptr icharger_device(new icharger_usb(dev));
-        if(!icharger_device->acquire()) {
-            qCritical() << "unable to open the device in order to get its serial number";
-            return;
-        }
-    
-        QString sn = icharger_device->serial_number();    
-        qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
-        if(added)
-            _registry->activate_device(dev, vendor, product, sn);
-        else
-            _registry->deactivate_device(dev, vendor, product, sn);
-    }  else {
-        qDebug() << "Not anything we know about - ignoring";
-    }   
+void Controller::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
+    qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+    if(added)
+        _registry->activate_device(vendor, product, sn);
+    else
+        _registry->deactivate_device(vendor, product, sn);
 }

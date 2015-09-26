@@ -9,18 +9,15 @@ DeviceRegistry::~DeviceRegistry() {
     
 }
 
-void DeviceRegistry::activate_device(libusb_device* dev, int vendor, int product, QString sn) {
-    Q_UNUSED(dev);
+void DeviceRegistry::activate_device(int vendor, int product, QString sn) {
     Q_UNUSED(vendor);
     Q_UNUSED(product);
     Q_UNUSED(sn);
     
 }
 
-void DeviceRegistry::deactivate_device(libusb_device* dev, int vendor, int product, QString sn) {
-    Q_UNUSED(dev);
+void DeviceRegistry::deactivate_device(int vendor, int product, QString sn) {
     Q_UNUSED(vendor);
     Q_UNUSED(product);
     Q_UNUSED(sn);
-    
 }

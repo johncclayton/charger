@@ -1,6 +1,7 @@
 #include <QDebug>
 
 #include "usb/hotplug_adapter.h"
+#include "usb/icharger_usb.h"
 #include "libusb.h"
 
 int hotplug_callback(struct libusb_context *ctx, 
@@ -14,8 +15,21 @@ int hotplug_callback(struct libusb_context *ctx,
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(dev, &desc);
         
-    HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
-    obj->process_hotplug_event(event, dev, desc.idVendor, desc.idProduct, desc.iSerialNumber);
+    if(desc.idVendor != ICHARGER_VENDOR_ID)
+        return 0;
+    
+    if(desc.idProduct == ICHARGER_PRODUCT_4010_DUO) {
+        icharger_usb_ptr icharger_device(new icharger_usb(dev));
+        if(!icharger_device->acquire()) {
+            qCritical() << "unable to open the device in order to get its serial number";
+            return 0;
+        }
+    
+        QString sn = icharger_device->serial_number();    
+    
+        HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
+        obj->process_hotplug_event(event, desc.idVendor, desc.idProduct, sn);
+    }
     
     return 0 /* this means we're expecting more events - don't remove the callback please */;
 }
@@ -54,10 +68,10 @@ HotplugEventAdapter::~HotplugEventAdapter() {
     delete _p;
 }
 
-void HotplugEventAdapter::process_hotplug_event(int event_type, libusb_device* dev, int vendor, int product, int sn_idx) {
+void HotplugEventAdapter::process_hotplug_event(int event_type, int vendor, int product, QString sn) {
     if (LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED == event_type) {
-        hotplug_event(true, dev, vendor, product, sn_idx);        
+        hotplug_event(true, vendor, product, sn);        
     } else if (LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT == event_type) {
-        hotplug_event(false, dev, vendor, product, sn_idx);
+        hotplug_event(false, vendor, product, sn);
     }
 }

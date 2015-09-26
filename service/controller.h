@@ -32,7 +32,7 @@ signals:
     
 public slots:
     void register_pub_port(int new_port);
-    void notify_hotplug_event(bool added, libusb_device* dev, int vendor, int product, int sn_idx);
+    void notify_hotplug_event(bool added, int vendor, int product, QString sn);
   
 private:
     usb_context _usb;
