@@ -91,6 +91,8 @@ int Controller::init() {
         _hotplug_thread->start();
         
         _hotplug->init(_usb.ctx);
+     
+        _registry = new DeviceRegistry(_usb.ctx);
         
         return 0;
     }
@@ -111,5 +113,5 @@ void Controller::notify_hotplug_event(bool added, int vendor, int product, QStri
     if(added)
         _registry->activate_device(vendor, product, sn);
     else
-        _registry->deactivate_device(vendor, product, sn);
+        _registry->deactivate_device(vendor, product);
 }

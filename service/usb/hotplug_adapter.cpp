@@ -13,23 +13,23 @@ int hotplug_callback(struct libusb_context *ctx,
     
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(dev, &desc);
-        
+    
     if(desc.idVendor != ICHARGER_VENDOR_ID)
         return 0;
     
     if(desc.idProduct == ICHARGER_PRODUCT_4010_DUO) {
-	QString sn;
-
-	{
-        	icharger_usb_ptr icharger_device(new icharger_usb(dev));
-        	sn = icharger_device->serial_number();    
-	}
-
+        QString sn;
+        
+        if(event == LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED) {
+            icharger_usb_ptr icharger_device(new icharger_usb(dev));
+            sn = icharger_device->serial_number();    
+        }
+        
         HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
         obj->process_hotplug_event(event, desc.idVendor, desc.idProduct, sn);
     }
     
-    return 0 /* this means we're expecting more events - don't remove the callback please */;
+    return 0;
 }
 
 struct HotplugEventAdapter::Private {

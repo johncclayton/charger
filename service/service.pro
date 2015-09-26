@@ -17,7 +17,8 @@ SOURCES = \
     usb/eventhandler.cpp \
     usb/hotplug_adapter.cpp \
     device_registry.cpp \
-    controller.cpp 
+    controller.cpp \ 
+    message_handler.cpp
 
 HEADERS = \ 
     bonjour\bonjourrecord.h \
@@ -30,7 +31,8 @@ HEADERS = \
     usb/eventhandler.h \
     usb/hotplug_adapter.h \
     device_registry.h \
-    controller.h
+    controller.h \
+    message_handler.h
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0

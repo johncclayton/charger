@@ -3,6 +3,13 @@
 
 #include <QObject>
 
+/**
+ * @brief The HotplugEventAdapter class is responsible to matching hotplug events to the USB driver code 
+ * for each known device.  When a hotplug event is detected for a device we know about, the serial number
+ * of the devic is obtained and a signal is fired indicating whether the device was attached or removed.
+ * 
+ * The serial number is only obtained for attachment events.
+ */
 class HotplugEventAdapter : public QObject
 {
     Q_OBJECT

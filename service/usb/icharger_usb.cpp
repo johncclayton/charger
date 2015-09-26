@@ -96,13 +96,24 @@ int icharger_usb::acquire() {
     
 //}
 
+int icharger_usb::vendorId() const {
+    struct libusb_device_descriptor desc;
+    libusb_get_device_descriptor(device, &desc);
+    return desc.idVendor;    
+}
+
+int icharger_usb::productId() const {
+    struct libusb_device_descriptor desc;
+    libusb_get_device_descriptor(device, &desc);
+    return desc.idProduct;    
+}
+
 QString icharger_usb::serial_number() { 
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(device, &desc);
     
     unsigned char serial_number[256];
     memset(serial_number, 0, sizeof(serial_number));
-    //int bytes = libusb_get_string_descriptor(handle, LIBUSB_DT_STRING, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
     int bytes = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
     if(bytes <= 0) {
         qDebug() << "unable to obtain serial number of device";
@@ -351,27 +362,21 @@ ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramTy
 	}
 }
 
-charger_serial_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, int product) {
+charger_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, int product, QString serial) {
     libusb_device **devs;
     size_t cnt = libusb_get_device_list(ctx, &devs);
     
-    charger_serial_list serial_numbers;
+    charger_list serial_numbers;
     
     for(size_t index = 0; index < cnt; ++index) {
         struct libusb_device_descriptor desc;
         int r = libusb_get_device_descriptor(devs[index], &desc);
         if (r >= 0) {
             if(desc.idVendor == vendor && desc.idProduct == product) {
-                // get this chargers serial number
                 icharger_usb_ptr dev(new icharger_usb(devs[index]));
-                if(dev.data() && dev->acquire() == 0) {
-                    device_only info;
-                    memset(&info, 0, sizeof(info));
-                    if(0 == dev->get_device_only(&info)) {
-                        QString serial_num = QString::fromLatin1((const char*)info.device_sn, 12);
-                        serial_numbers.append(serial_num);
-                    }
-                }
+                QString sn = dev->serial_number();
+                if(serial.isNull() || (!sn.isEmpty() && sn == serial))
+                    serial_numbers.append(dev);
             }
         }
     }
@@ -381,30 +386,3 @@ charger_serial_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, 
     return serial_numbers;
 }
 
-icharger_usb_ptr icharger_usb::first_charger(libusb_context* ctx, int vendor, int product) {
-    libusb_device **devs;
-    size_t cnt = libusb_get_device_list(ctx, &devs);
-    
-    libusb_device* found = 0;
-    
-    for(size_t index = 0; index < cnt && !found; ++index) {
-        struct libusb_device_descriptor desc;
-        int r = libusb_get_device_descriptor(devs[index], &desc);
-        if (r >= 0) {
-            if(desc.idVendor == vendor && desc.idProduct == product) {
-                found = devs[index];
-            }
-        }
-    }
-    
-    icharger_usb_ptr p;
-    if(found) {
-        p = icharger_usb_ptr(new icharger_usb(found));
-	if(p->acquire())
-		p = icharger_usb_ptr();
-    }
-    
-    libusb_free_device_list(devs, 1 /* unref all elements */);
-    
-    return p;
-}

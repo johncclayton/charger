@@ -18,7 +18,7 @@ void error_exit(const char* msg, int rc, ...);
 
 struct icharger_usb;
 typedef QSharedPointer<icharger_usb> icharger_usb_ptr;
-typedef QStringList charger_serial_list;
+typedef QList<icharger_usb_ptr> charger_list;
 
 #define ICHARGER_VENDOR_ID 0x483
 #define ICHARGER_PRODUCT_4010_DUO 0x5751
@@ -41,7 +41,10 @@ struct icharger_usb {
    
     int acquire();
  
-    // uses the device descriptor index to get the serial number, requires the device to be acquired first.
+    int vendorId() const;
+    int productId() const;
+    
+    // uses the device descriptor index to get the serial number
     QString serial_number();
     
     ModbusRequestError get_device_only(device_only* output);	
@@ -49,8 +52,7 @@ struct icharger_usb {
     ModbusRequestError get_system_storage(system_storage* output);
     ModbusRequestError order(OrderAction action, Channel ch, ProgramType pt, int selected_mem_index);
     
-    static charger_serial_list all_chargers(libusb_context* ctx, int vendor, int product);
-    static icharger_usb_ptr first_charger(libusb_context* ctx, int vendor, int product);
+    static charger_list all_chargers(libusb_context* ctx, int vendor, int product, QString serial = QString());
     
 private:
     libusb_device* device;
