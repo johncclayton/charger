@@ -8,7 +8,7 @@
 #include "usb/eventhandler.h"
 
 #include "nzmqt/nzmqt.hpp"
-#include "zmq/zmq_publisher.h"
+#include "zmq/publisher.h"
 
 #include "bonjour/bonjourserviceregister.h"
 #include "device_registry.h"
@@ -18,12 +18,12 @@ namespace nzmqt {
     class ZMQContext;
 }
 
-class Controller : public QObject
+class AppController : public QObject
 {
     Q_OBJECT
 public:
-    explicit Controller(QObject *parent = 0);
-    virtual ~Controller();
+    explicit AppController(QObject *parent = 0);
+    virtual ~AppController();
     
     int init();
 signals:
@@ -39,7 +39,7 @@ public slots:
 private:
     usb_context _usb;
     nzmqt::ZMQContext* _ctx;
-    ZMQ_Publisher* _pub;
+    Publisher_ptr _pub;
     
     // ensures we publish services via bonjour/zeroconf
     BonjourServiceRegister* _bon;

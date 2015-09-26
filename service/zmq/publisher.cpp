@@ -2,14 +2,14 @@
 #include <QStringList>
 //#include <QJsonDocument>
 
-#include "zmq/zmq_publisher.h"
+#include "zmq/publisher.h"
 
 using namespace nzmqt;
 
-ZMQ_Publisher::ZMQ_Publisher(ZMQContext* ctx, QObject* owner) : SocketBase(ctx, ZMQSocket::TYP_PUB, owner) {
+Publisher::Publisher(ZMQContext* ctx, QObject* owner) : SocketBase(ctx, ZMQSocket::TYP_PUB, owner) {
 }
 
-bool ZMQ_Publisher::bind() {
+bool Publisher::bind() {
     _socket->bindTo("tcp://*:*");
     
     char temp[255];

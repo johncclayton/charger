@@ -1,4 +1,4 @@
-#include "controller.h"
+#include "app_controller.h"
 
 #include <QtGlobal>
 #include <QDebug>
@@ -13,7 +13,7 @@
 #include "usb/eventhandler.h"
 
 #include "nzmqt/nzmqt.hpp"
-#include "zmq/zmq_publisher.h"
+#include "zmq/publisher.h"
 
 #include "bonjour/bonjourserviceregister.h"
 
@@ -22,7 +22,7 @@
 using namespace nzmqt;
 using namespace std;
 
-Controller::Controller(QObject *parent) : QObject(parent), 
+AppController::AppController(QObject *parent) : QObject(parent), 
     _ctx(0),
     _pub(0), 
     _hotplug(0),
@@ -33,7 +33,7 @@ Controller::Controller(QObject *parent) : QObject(parent),
 {
 }
 
-Controller::~Controller() {
+AppController::~AppController() {
     delete _msg_handler;
     _msg_handler = 0;
             
@@ -48,9 +48,6 @@ Controller::~Controller() {
     _hotplug_thread->deleteLater();    
     _hotplug_thread = 0;
     
-    delete _pub;
-    _pub = 0;
-    
     delete _bon;
     _bon = 0;
     
@@ -59,19 +56,19 @@ Controller::~Controller() {
     _ctx = 0;
 }
 
-int Controller::init() {
+int AppController::init() {
     try {
         // ZeroMQ to send / receive messages - requires a context.
         _ctx = createDefaultContext(this);
         _ctx->start();
         
         // Get the message infrastructure ready (pub/sub and messaging).
-        _pub = new ZMQ_Publisher(_ctx);
+        _pub = Publisher_ptr(new Publisher(_ctx));
         
         // Bonjour system needs to publish our ZMQ publisher port
         _bon = new BonjourServiceRegister;
 
-        _registry = new DeviceRegistry(_usb.ctx);
+        _registry = new DeviceRegistry(_usb.ctx, _pub);
         
         QObject::connect(_registry, SIGNAL(device_activated(QString)),
                          this, SLOT(device_added(QString)));
@@ -79,11 +76,9 @@ int Controller::init() {
                          this, SLOT(device_removed(QString)));
                
         // Respond to changes to the publisher port
-        connect(_pub, SIGNAL(port_changed(int)), 
+        connect(_pub.data(), SIGNAL(port_changed(int)), 
                 this, SLOT(register_pub_port(int)));
-        
-        // TODO: Respond to changes to the messaging port. 
-        
+                
         // bind the publisher to cause it to find a local ephemeral port and publish it
         if(!_pub->bind()) {
             qDebug() << "unable to bind the zmq publisher to its interface";
@@ -121,17 +116,17 @@ int Controller::init() {
     }
 }
 
-void Controller::register_pub_port(int new_port) {
+void AppController::register_pub_port(int new_port) {
     _bon->registerService("_charger-service-pub._tcp", new_port);   
-    qDebug() << "pub/sub comms are being made on port:" << new_port;
+    qDebug() << "pub service now available on port:" << new_port;
 }
 
-void Controller::register_msg_port(int new_port) {
+void AppController::register_msg_port(int new_port) {
     _bon->registerService("_charger-service-msg._tcp", new_port);   
-    qDebug() << "message handling comms is now available on port:" << new_port;
+    qDebug() << "message handling service is now available on port:" << new_port;
 }
 
-void Controller::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
+void AppController::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
     qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn << ", registry:" << _registry;
     if(added)
         _registry->activate_device(vendor, product, sn);
@@ -139,10 +134,10 @@ void Controller::notify_hotplug_event(bool added, int vendor, int product, QStri
         _registry->deactivate_device(vendor, product);
 }
 
-void Controller::device_added(QString key) {
+void AppController::device_added(QString key) {
     qDebug() << "a device was added to the registry:" << key;
 }
 
-void Controller::device_removed(QString key) {
+void AppController::device_removed(QString key) {
     qDebug() << "a device was removed from the registry:" << key;
 }

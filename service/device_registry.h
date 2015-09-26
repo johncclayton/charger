@@ -3,10 +3,12 @@
 
 #include <QObject>
 #include <QMap>
+#include <QPair>
 
-#include "usb/icharger_usb.h"
+#include "zmq/publisher.h"
+#include "icharger_controller.h"
 
-typedef QMap<QString, icharger_usb_ptr> DeviceMap;
+typedef QMap<QString, iCharger_DeviceController_ptr> DeviceMap;
 
 /**
  * Responsible for instantiating and keeping track of all currently
@@ -15,7 +17,7 @@ typedef QMap<QString, icharger_usb_ptr> DeviceMap;
 class DeviceRegistry : public QObject {
 Q_OBJECT
 public:
-    DeviceRegistry(libusb_context* ctx, QObject* owner = 0);
+    DeviceRegistry(libusb_context* ctx, Publisher_ptr pub, QObject* owner = 0);
     virtual ~DeviceRegistry();
     
     QString device_key(int vendor, int product, QString sn);
@@ -29,6 +31,7 @@ signals:
     
 private:
     libusb_context* _ctx;
+    Publisher_ptr _pub;
     DeviceMap _devices;
 };
 

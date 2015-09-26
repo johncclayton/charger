@@ -1,13 +1,13 @@
 #include <QCoreApplication>
 #include <iostream>
 
-#include "controller.h"
+#include "app_controller.h"
 
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
     
-    Controller main_controller;
-    int r = main_controller.init();
+    AppController app_controller;
+    int r = app_controller.init();
     if(r == 0)
         return app.exec();
     
