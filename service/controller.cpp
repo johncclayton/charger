@@ -114,7 +114,7 @@ void Controller::register_pub_port(int new_port) {
 }
 
 void Controller::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
-    qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+    qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn << ", registry:" << _registry;
     if(added)
         _registry->activate_device(vendor, product, sn);
     else
