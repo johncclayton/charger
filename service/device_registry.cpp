@@ -9,7 +9,7 @@ DeviceRegistry::~DeviceRegistry() {
 }
 
 QString DeviceRegistry::device_key(int vendor, int product, QString sn) {
-    return QString("%1-%2-%s").arg(vendor).arg(product).arg(sn);
+    return QString("%1-%2-%3").arg(vendor, 1, 16).arg(product, 1, 16).arg(sn).toUpper();
 }
 
 void DeviceRegistry::activate_device(int vendor, int product, QString sn) {
