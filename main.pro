@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-SUBDIRS = service  
+SUBDIRS = service \  
+    tester
 
 tests.depends = service

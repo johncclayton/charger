@@ -28,11 +28,15 @@ Controller::Controller(QObject *parent) : QObject(parent),
     _hotplug(0),
     _hotplug_handler(0),
     _hotplug_thread(0),
-    _registry(0)
+    _registry(0),
+    _msg_handler(0)
 {
 }
 
 Controller::~Controller() {
+    delete _msg_handler;
+    _msg_handler = 0;
+            
     delete _registry;
     _registry = 0;
     
@@ -86,6 +90,15 @@ int Controller::init() {
             return 1;
         }
         
+        _msg_handler = new MessageHandler(_ctx);
+        connect(_msg_handler, SIGNAL(port_changed(int)),
+                this, SLOT(register_msg_port(int)));
+        
+        if(!_msg_handler->bind()) {
+            qDebug() << "unable to bind the zmq message handler to its interface";
+            return 2;
+        }
+        
         // Kick off a listener for USB hotplug events - so we keep our device list fresh
         _hotplug = new HotplugEventAdapter();
         QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, int, int, QString)), 
@@ -110,7 +123,12 @@ int Controller::init() {
 
 void Controller::register_pub_port(int new_port) {
     _bon->registerService("_charger-service-pub._tcp", new_port);   
-    qDebug() << "pub/sub comms are being made on port number:" << new_port;
+    qDebug() << "pub/sub comms are being made on port:" << new_port;
+}
+
+void Controller::register_msg_port(int new_port) {
+    _bon->registerService("_charger-service-msg._tcp", new_port);   
+    qDebug() << "message handling comms is now available on port:" << new_port;
 }
 
 void Controller::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {

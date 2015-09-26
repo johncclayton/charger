@@ -1,7 +1,7 @@
 
 TEMPLATE = app
-QT += network
 QT -= gui
+QT += network
 
 OBJECTS_DIR=build/obj
 
@@ -18,7 +18,8 @@ SOURCES = \
     usb/hotplug_adapter.cpp \
     device_registry.cpp \
     controller.cpp \ 
-    message_handler.cpp
+    message_handler.cpp \
+    zmq/socketbase.cpp
 
 HEADERS = \ 
     bonjour\bonjourrecord.h \
@@ -32,7 +33,10 @@ HEADERS = \
     usb/hotplug_adapter.h \
     device_registry.h \
     controller.h \
-    message_handler.h
+    message_handler.h \
+    zmq/socketbase.h
+
+TARGET = service
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
@@ -43,8 +47,6 @@ macx {
     INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
     LIBS += -L/usr/local/lib -lusb-1.0 -lzmq 
 }
-
-TARGET = service
 
 include (../3rdparty/nzmqt/nzmqt.pri)
 

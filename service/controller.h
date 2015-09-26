@@ -2,7 +2,6 @@
 #define CONTROLLER_H
 
 #include <QObject>
-//#include <QLoggingCategory>
 
 #include "usb/icharger_usb.h"
 #include "usb/hotplug_adapter.h"
@@ -13,8 +12,7 @@
 
 #include "bonjour/bonjourserviceregister.h"
 #include "device_registry.h"
-
-//Q_DECLARE_LOGGING_CATEGORY(controller)
+#include "message_handler.h"
 
 namespace nzmqt {
     class ZMQContext;
@@ -32,6 +30,8 @@ signals:
     
 public slots:
     void register_pub_port(int new_port);
+    void register_msg_port(int new_port);
+    
     void notify_hotplug_event(bool added, int vendor, int product, QString sn);
     void device_added(QString key);
     void device_removed(QString key);
@@ -53,6 +53,9 @@ private:
     // then be sent over the wire to listeners.  Events update this model and we
     // then push parts or all of it over the wire via ZMQ in JSON
     DeviceRegistry* _registry;
+    
+    // the message handler talks with GUI processes 
+    MessageHandler* _msg_handler;
 };
 
 #endif // CONTROLLER_H
