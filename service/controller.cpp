@@ -94,6 +94,11 @@ int Controller::init() {
      
         _registry = new DeviceRegistry(_usb.ctx);
         
+        QObject::connect(_registry, SIGNAL(device_activated(QString)),
+                         this, SLOT(device_added(QString)));
+        QObject::connect(_registry, SIGNAL(device_deactivated(QString)),
+                         this, SLOT(device_removed(QString)));
+        
         return 0;
     }
     
@@ -109,9 +114,17 @@ void Controller::register_pub_port(int new_port) {
 }
 
 void Controller::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
-    qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+    qCritical() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
         _registry->activate_device(vendor, product, sn);
     else
         _registry->deactivate_device(vendor, product);
+}
+
+void Controller::device_added(QString key) {
+    qDebug() << "a device was added to the registry:" << key;
+}
+
+void Controller::device_removed(QString key) {
+    qDebug() << "a device was removed from the registry:" << key;
 }
