@@ -20,6 +20,8 @@ struct icharger_usb;
 typedef QSharedPointer<icharger_usb> icharger_usb_ptr;
 typedef QStringList charger_serial_list;
 
+#define ICHARGER_VENDOR_ID 0x483
+#define ICHARGER_PRODUCT_4010_DUO 0x5751
 
 struct usb_context { 
 	usb_context();

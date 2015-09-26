@@ -46,10 +46,10 @@ Controller::~Controller() {
     
     delete _pub;
     _pub = 0;
-
+    
     delete _bon;
     _bon = 0;
-
+    
     _ctx->stop();
     delete _ctx;
     _ctx = 0;
@@ -83,14 +83,14 @@ int Controller::init() {
         _hotplug = new HotplugEventAdapter();
         QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, libusb_device*, int, int, int)), 
                          this, SLOT(notify_hotplug_event(bool, libusb_device*, int, int, int)));
-    
+        
         // Primitive libsusb event handler.
         _hotplug_handler = new UseQtEventDriver(_usb.ctx);
         _hotplug_thread = new QThread();
         _hotplug_handler->moveToThread(_hotplug_thread);
         _hotplug_thread->start();
-
-	_hotplug->init(_usb.ctx);
+        
+        _hotplug->init(_usb.ctx);
         
         return 0;
     }
@@ -107,23 +107,27 @@ void Controller::register_pub_port(int new_port) {
 }
 
 void Controller::notify_hotplug_event(bool added, libusb_device* dev, int vendor, int product, int sn_idx)  {
+    
+    if(vendor != ICHARGER_VENDOR_ID)
+        return;
+    
     libusb_device_handle* handle = 0;
     int r = libusb_open(dev, &handle);
     if(!r) {
         qCritical() << "unable to open the device in order to get its serial number";
         return;
     }
-   
+    
     unsigned char serial_number[256];
     memset(serial_number, 0, sizeof(serial_number));
     r = libusb_get_descriptor(handle, LIBUSB_DT_STRING, sn_idx, serial_number, sizeof(serial_number) - 1);
     libusb_close(handle);
-
+    
     if(r != 0) {
         qCritical() << "unable to obtain serial number of device";
         return;
     }
-
+    
     QString sn = QString::fromLatin1((const char *)serial_number);
     
     qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
