@@ -3,6 +3,8 @@ TEMPLATE = app
 QT += network
 QT -= gui
 
+OBJECTS_DIR=build/obj
+
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG += debug
