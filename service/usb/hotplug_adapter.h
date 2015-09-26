@@ -8,9 +8,10 @@ class HotplugEventAdapter : public QObject
 {
     Q_OBJECT
 public:
-    explicit HotplugEventAdapter(void* ctx, QObject *parent = 0);
+    explicit HotplugEventAdapter(QObject *parent = 0);
     virtual ~HotplugEventAdapter();
-    
+
+    void init(void *ctx);    
     void process_hotplug_event(int event_type, libusb_device* dev, int vendor, int product, int sn_descriptor);
     
 signals:

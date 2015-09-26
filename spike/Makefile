@@ -1,8 +1,8 @@
 CXX=g++
 RM=rm -f
-CPPFLAGS=-g -I/usr/local/include/modbus -I/usr/include/libusb-1.0 
-LDFLAGS=-L/usr/local/lib -lusb-1.0 -lmodbus 
-LDLIBS=-lusb-1.0 -lmodbus 
+CPPFLAGS=-g -I/usr/local/include/modbus -I../3rdparty/build/include/libusb-1.0 
+LDFLAGS=-L/usr/local/lib  
+LDLIBS=-lusb-1.0 -lmodbus -l../3rdparty/build/lib/libusb-1.0.a
 
 SRCS=read_test.cpp utils.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))

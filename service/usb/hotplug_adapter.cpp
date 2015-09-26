@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "usb/hotplug_adapter.h"
 #include "libusb.h"
 
@@ -11,6 +13,8 @@ int hotplug_callback(struct libusb_context *ctx,
     
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(dev, &desc);
+
+    qDebug() << "got a hotplug event";
     
     HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
     obj->process_hotplug_event(event, dev, desc.idVendor, desc.idProduct, desc.iSerialNumber);
@@ -26,8 +30,11 @@ struct HotplugEventAdapter::Private {
     }
 };
 
-HotplugEventAdapter::HotplugEventAdapter(void* ctx, QObject *parent) : QObject(parent), _p(new Private)
+HotplugEventAdapter::HotplugEventAdapter(QObject *parent) : QObject(parent), _p(new Private)
 {
+}
+
+void HotplugEventAdapter::init(void *ctx) {
     libusb_hotplug_callback_handle h;
     
     int rc = libusb_hotplug_register_callback((libusb_context *)ctx,
@@ -44,7 +51,8 @@ HotplugEventAdapter::HotplugEventAdapter(void* ctx, QObject *parent) : QObject(p
 }
 
 HotplugEventAdapter::~HotplugEventAdapter() {
-    libusb_hotplug_deregister_callback(NULL, _p->handle);
+    if(_p->handle)
+    	libusb_hotplug_deregister_callback(NULL, _p->handle);
     delete _p;
 }
 

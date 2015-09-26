@@ -1,5 +1,6 @@
 #include "controller.h"
 
+#include <QtGlobal>
 #include <QDebug>
 #include <QThread>
 #include <QString>
@@ -79,7 +80,7 @@ int Controller::init() {
         }
         
         // Kick off a listener for USB hotplug events - so we keep our device list fresh
-        _hotplug = new HotplugEventAdapter(_usb.ctx);
+        _hotplug = new HotplugEventAdapter();
         QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, libusb_device*, int, int, int)), 
                          this, SLOT(notify_hotplug_event(bool, libusb_device*, int, int, int)));
     
@@ -88,6 +89,8 @@ int Controller::init() {
         _hotplug_thread = new QThread();
         _hotplug_handler->moveToThread(_hotplug_thread);
         _hotplug_thread->start();
+
+	_hotplug->init(_usb.ctx);
         
         return 0;
     }
@@ -123,7 +126,7 @@ void Controller::notify_hotplug_event(bool added, libusb_device* dev, int vendor
 
     QString sn = QString::fromLatin1((const char *)serial_number);
     
-    qInfo() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+    qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
         _registry->activate_device(dev, vendor, product, sn);
     else
