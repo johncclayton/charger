@@ -1,6 +1,6 @@
 #include <QDebug>
 #include <QStringList>
-#include <QJsonDocument>
+//#include <QJsonDocument>
 
 #include "nzmqt/nzmqt.hpp"
 #include "zmq/zmq_publisher.h"
