@@ -13,6 +13,11 @@ QString DeviceRegistry::device_key(int vendor, int product, QString sn) {
 }
 
 void DeviceRegistry::activate_device(int vendor, int product, QString sn) {
+    Q_ASSERT(_ctx != 0);
+    Q_ASSERT(vendor != 0);
+    Q_ASSERT(product != 0);
+    Q_ASSERT(!sn.isEmpty());
+    
     charger_list match = icharger_usb::all_chargers(_ctx, vendor, product, sn);
     if(match.size()) {
         icharger_usb_ptr ptr = match[0];    
