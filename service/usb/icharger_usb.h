@@ -41,6 +41,9 @@ struct icharger_usb {
    
     int acquire();
  
+    // uses the device descriptor index to get the serial number, requires the device to be acquired first.
+    QString serial_number();
+    
     ModbusRequestError get_device_only(device_only* output);	
     ModbusRequestError get_channel_status(int channel /* 0 or 1 */, channel_status* output);
     ModbusRequestError get_system_storage(system_storage* output);

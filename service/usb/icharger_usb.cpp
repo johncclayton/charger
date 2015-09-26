@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include <stdarg.h>
 #include <memory.h>
 #include <stdio.h>
@@ -93,6 +95,21 @@ int icharger_usb::acquire() {
 //    printf("----\r\n");
     
 //}
+
+QString icharger_usb::serial_number() { 
+    struct libusb_device_descriptor desc;
+    libusb_get_device_descriptor(device, &desc);
+    
+    unsigned char serial_number[256];
+    memset(serial_number, 0, sizeof(serial_number));
+    int r = libusb_get_descriptor(handle, LIBUSB_DT_STRING, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
+    if(r != 0) {
+        qDebug() << "unable to obtain serial number of device";
+        return QString();
+    }
+    
+    return QString::fromLatin1((const char *)serial_number);
+}    
 
 /* same as the library version, but automatically handles retry on timeout */
 int icharger_usb::usb_data_transfer(unsigned char endpoint_address,

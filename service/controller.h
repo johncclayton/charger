@@ -33,7 +33,7 @@ signals:
 public slots:
     void register_pub_port(int new_port);
     void notify_hotplug_event(bool added, libusb_device* dev, int vendor, int product, int sn_idx);
-    
+  
 private:
     usb_context _usb;
     nzmqt::ZMQContext* _ctx;

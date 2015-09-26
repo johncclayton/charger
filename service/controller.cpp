@@ -107,33 +107,25 @@ void Controller::register_pub_port(int new_port) {
 }
 
 void Controller::notify_hotplug_event(bool added, libusb_device* dev, int vendor, int product, int sn_idx)  {
+    Q_UNUSED(sn_idx);
     
     if(vendor != ICHARGER_VENDOR_ID)
         return;
     
-    libusb_device_handle* handle = 0;
-    int r = libusb_open(dev, &handle);
-    if(!r) {
-        qCritical() << "unable to open the device in order to get its serial number";
-        return;
-    }
+    if(product == ICHARGER_PRODUCT_4010_DUO) {
+        icharger_usb_ptr icharger_device(new icharger_usb(dev));
+        if(!icharger_device->acquire()) {
+            qCritical() << "unable to open the device in order to get its serial number";
+            return;
+        }
     
-    unsigned char serial_number[256];
-    memset(serial_number, 0, sizeof(serial_number));
-    r = libusb_get_descriptor(handle, LIBUSB_DT_STRING, sn_idx, serial_number, sizeof(serial_number) - 1);
-    libusb_close(handle);
-    
-    if(r != 0) {
-        qCritical() << "unable to obtain serial number of device";
-        return;
-    }
-    
-    QString sn = QString::fromLatin1((const char *)serial_number);
-    
-    qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
-    if(added)
-        _registry->activate_device(dev, vendor, product, sn);
-    else
-        _registry->deactivate_device(dev, vendor, product, sn);
-    
+        QString sn = icharger_device->serial_number();    
+        qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+        if(added)
+            _registry->activate_device(dev, vendor, product, sn);
+        else
+            _registry->deactivate_device(dev, vendor, product, sn);
+    }  else {
+        qDebug() << "Not anything we know about - ignoring";
+    }   
 }
