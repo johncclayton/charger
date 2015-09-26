@@ -96,8 +96,6 @@ int Controller::init() {
         qCritical()<< "failed to init zmq:" << ex.what();
         return 1;
     }
-    
-    
 }
 
 void Controller::register_pub_port(int new_port) {
@@ -125,7 +123,7 @@ void Controller::notify_hotplug_event(bool added, libusb_device* dev, int vendor
 
     QString sn = QString::fromLatin1((const char *)serial_number);
     
-    qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+    qInfo() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
         _registry->activate_device(dev, vendor, product, sn);
     else
