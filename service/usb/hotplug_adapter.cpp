@@ -13,13 +13,11 @@ int hotplug_callback(struct libusb_context *ctx,
     
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(dev, &desc);
-
-    qDebug() << "got a hotplug event";
-    
+        
     HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
     obj->process_hotplug_event(event, dev, desc.idVendor, desc.idProduct, desc.iSerialNumber);
- 
-    return 0;
+    
+    return 0 /* this means we're expecting more events - don't remove the callback please */;
 }
 
 struct HotplugEventAdapter::Private {
@@ -52,7 +50,7 @@ void HotplugEventAdapter::init(void *ctx) {
 
 HotplugEventAdapter::~HotplugEventAdapter() {
     if(_p->handle)
-    	libusb_hotplug_deregister_callback(NULL, _p->handle);
+        libusb_hotplug_deregister_callback(NULL, _p->handle);
     delete _p;
 }
 
