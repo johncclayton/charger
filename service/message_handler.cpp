@@ -1,5 +1,8 @@
-#include "message_handler.h"
 
+#include <QList>
+#include <QStringList>
+
+#include "message_handler.h"
 #include "nzmqt/nzmqt.hpp"
 using namespace nzmqt;
 
