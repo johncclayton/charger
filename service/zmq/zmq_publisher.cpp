@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QStringList>
+#include <QJsonDocument>
 
 #include "nzmqt/nzmqt.hpp"
 #include "zmq/zmq_publisher.h"
@@ -35,6 +36,8 @@ bool ZMQ_Publisher::bind() {
 int ZMQ_Publisher::port() const {
     return _port;
 }
+
+
     
 
 

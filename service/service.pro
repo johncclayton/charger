@@ -14,6 +14,7 @@ SOURCES = \
     zmq/zmq_publisher.cpp \
     usb/eventhandler.cpp \
     usb/hotplug_adapter.cpp \
+    device_registry.cpp \
     controller.cpp 
 
 HEADERS = \ 
@@ -26,7 +27,8 @@ HEADERS = \
     zmq/zmq_publisher.h \
     usb/eventhandler.h \
     usb/hotplug_adapter.h \
-    controller.h 
+    device_registry.h \
+    controller.h
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0

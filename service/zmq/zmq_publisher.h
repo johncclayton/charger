@@ -22,6 +22,7 @@ signals:
     void port_changed(int port);
     
 public slots:
+    //void publish_icharger_state(QString description, QString serial, bool connected);
     
 private:
     nzmqt::ZMQSocket* _socket;

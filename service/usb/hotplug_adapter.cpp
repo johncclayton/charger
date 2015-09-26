@@ -9,11 +9,11 @@ int hotplug_callback(struct libusb_context *ctx,
     Q_UNUSED(ctx);
     Q_UNUSED(dev);
     
-//    struct libusb_device_descriptor desc;
-//    libusb_get_device_descriptor(dev, &desc);
+    struct libusb_device_descriptor desc;
+    libusb_get_device_descriptor(dev, &desc);
     
     HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
-    obj->process_hotplug_event(event);
+    obj->process_hotplug_event(event, dev, desc.idVendor, desc.idProduct, desc.iSerialNumber);
  
     return 0;
 }
@@ -48,10 +48,10 @@ HotplugEventAdapter::~HotplugEventAdapter() {
     delete _p;
 }
 
-void HotplugEventAdapter::process_hotplug_event(int event_type) {
+void HotplugEventAdapter::process_hotplug_event(int event_type, libusb_device* dev, int vendor, int product, int sn_idx) {
     if (LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED == event_type) {
-        hotplug_event(true);        
+        hotplug_event(true, dev, vendor, product, sn_idx);        
     } else if (LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT == event_type) {
-        hotplug_event(false);
+        hotplug_event(false, dev, vendor, product, sn_idx);
     }
 }

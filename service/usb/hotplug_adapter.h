@@ -2,6 +2,7 @@
 #define USB_HOTPLUGLISTENER_H
 
 #include <QObject>
+struct libusb_device;
 
 class HotplugEventAdapter : public QObject
 {
@@ -10,10 +11,10 @@ public:
     explicit HotplugEventAdapter(void* ctx, QObject *parent = 0);
     virtual ~HotplugEventAdapter();
     
-    void process_hotplug_event(int event_type);
+    void process_hotplug_event(int event_type, libusb_device* dev, int vendor, int product, int sn_descriptor);
     
 signals:
-    void hotplug_event(bool device_arrived);
+    void hotplug_event(bool device_arrived, libusb_device* dev, int vendor, int product, int sn_descriptor);
     
 public slots:
     
