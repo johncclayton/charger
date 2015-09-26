@@ -10,7 +10,6 @@ int hotplug_callback(struct libusb_context *ctx,
                      void *user_data) 
 {
     Q_UNUSED(ctx);
-    Q_UNUSED(dev);
     
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(dev, &desc);
@@ -19,14 +18,13 @@ int hotplug_callback(struct libusb_context *ctx,
         return 0;
     
     if(desc.idProduct == ICHARGER_PRODUCT_4010_DUO) {
-        icharger_usb_ptr icharger_device(new icharger_usb(dev));
-        if(!icharger_device->acquire()) {
-            qCritical() << "unable to open the device in order to get its serial number";
-            return 0;
-        }
-    
-        QString sn = icharger_device->serial_number();    
-    
+	QString sn;
+
+	{
+        	icharger_usb_ptr icharger_device(new icharger_usb(dev));
+        	sn = icharger_device->serial_number();    
+	}
+
         HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
         obj->process_hotplug_event(event, desc.idVendor, desc.idProduct, sn);
     }

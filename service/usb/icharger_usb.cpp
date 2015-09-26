@@ -102,8 +102,9 @@ QString icharger_usb::serial_number() {
     
     unsigned char serial_number[256];
     memset(serial_number, 0, sizeof(serial_number));
-    int r = libusb_get_descriptor(handle, LIBUSB_DT_STRING, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
-    if(r != 0) {
+    //int bytes = libusb_get_string_descriptor(handle, LIBUSB_DT_STRING, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
+    int bytes = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
+    if(bytes <= 0) {
         qDebug() << "unable to obtain serial number of device";
         return QString();
     }
