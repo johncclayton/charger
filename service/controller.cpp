@@ -75,7 +75,7 @@ int Controller::init() {
         
         // bind the publisher to cause it to find a local ephemeral port and publish it
         if(!_pub->bind()) {
-            qCritical() << "unable to bind the zmq publisher to its interface";
+            qDebug() << "unable to bind the zmq publisher to its interface";
             return 1;
         }
         
@@ -103,18 +103,18 @@ int Controller::init() {
     }
     
     catch(zmq::error_t& ex) {
-        qCritical()<< "failed to init zmq:" << ex.what();
+        qDebug()<< "failed to init zmq:" << ex.what();
         return 1;
     }
 }
 
 void Controller::register_pub_port(int new_port) {
     _bon->registerService("_charger-service-pub._tcp", new_port);   
-    qCritical() << "pub/sub comms are being made on port number:" << new_port;
+    qDebug() << "pub/sub comms are being made on port number:" << new_port;
 }
 
 void Controller::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
-    qCritical() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+    qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
         _registry->activate_device(vendor, product, sn);
     else
