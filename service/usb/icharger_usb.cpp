@@ -363,10 +363,10 @@ ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramTy
 }
 
 charger_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, int product, QString serial) {
-    libusb_device **devs;
+    libusb_device **devs = 0;
     size_t cnt = libusb_get_device_list(ctx, &devs);
     
-    charger_list serial_numbers;
+    charger_list chargers;
     
     for(size_t index = 0; index < cnt; ++index) {
         struct libusb_device_descriptor desc;
@@ -375,14 +375,14 @@ charger_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, int pro
             if(desc.idVendor == vendor && desc.idProduct == product) {
                 icharger_usb_ptr dev(new icharger_usb(devs[index]));
                 QString sn = dev->serial_number();
-                if(serial.isNull() || (!sn.isEmpty() && sn == serial))
-                    serial_numbers.append(dev);
+                if(serial.isNull() || (sn == serial))
+                    chargers.append(dev);
             }
         }
     }
     
     libusb_free_device_list(devs, 1 /* unref all elements */);
     
-    return serial_numbers;
+    return chargers;
 }
 
