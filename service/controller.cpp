@@ -66,7 +66,14 @@ int Controller::init() {
         
         // Bonjour system needs to publish our ZMQ publisher port
         _bon = new BonjourServiceRegister;
+
+        _registry = new DeviceRegistry(_usb.ctx);
         
+        QObject::connect(_registry, SIGNAL(device_activated(QString)),
+                         this, SLOT(device_added(QString)));
+        QObject::connect(_registry, SIGNAL(device_deactivated(QString)),
+                         this, SLOT(device_removed(QString)));
+               
         // Respond to changes to the publisher port
         connect(_pub, SIGNAL(port_changed(int)), 
                 this, SLOT(register_pub_port(int)));
@@ -92,13 +99,6 @@ int Controller::init() {
         
         _hotplug->init(_usb.ctx);
      
-        _registry = new DeviceRegistry(_usb.ctx);
-        
-        QObject::connect(_registry, SIGNAL(device_activated(QString)),
-                         this, SLOT(device_added(QString)));
-        QObject::connect(_registry, SIGNAL(device_deactivated(QString)),
-                         this, SLOT(device_removed(QString)));
-        
         return 0;
     }
     
