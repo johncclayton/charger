@@ -2,7 +2,7 @@
 #define CONTROLLER_H
 
 #include <QObject>
-#include <QLoggingCategory>
+//#include <QLoggingCategory>
 
 #include "usb/icharger_usb.h"
 #include "usb/hotplug_adapter.h"
@@ -14,7 +14,7 @@
 #include "bonjour/bonjourserviceregister.h"
 #include "device_registry.h"
 
-Q_DECLARE_LOGGING_CATEGORY(controller)
+//Q_DECLARE_LOGGING_CATEGORY(controller)
 
 namespace nzmqt {
     class ZMQContext;

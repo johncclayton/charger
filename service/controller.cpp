@@ -16,7 +16,7 @@
 
 #include "bonjour/bonjourserviceregister.h"
 
-Q_LOGGING_CATEGORY(controller, "controller")
+//Q_LOGGING_CATEGORY(controller, "controller")
 
 using namespace nzmqt;
 using namespace std;
@@ -74,7 +74,7 @@ int Controller::init() {
         
         // bind the publisher to cause it to find a local ephemeral port and publish it
         if(!_pub->bind()) {
-            qCCritical(controller) << "unable to bind the zmq publisher to its interface";
+            qCritical() << "unable to bind the zmq publisher to its interface";
             return 1;
         }
         
@@ -93,7 +93,7 @@ int Controller::init() {
     }
     
     catch(zmq::error_t& ex) {
-        qCCritical(controller) << "failed to init zmq:" << ex.what();
+        qCritical()<< "failed to init zmq:" << ex.what();
         return 1;
     }
     
@@ -102,14 +102,14 @@ int Controller::init() {
 
 void Controller::register_pub_port(int new_port) {
     _bon->registerService("_charger-service-pub._tcp", new_port);   
-    qCInfo(controller) << "pub/sub comms are being made on port number:" << new_port;
+    qCritical() << "pub/sub comms are being made on port number:" << new_port;
 }
 
 void Controller::notify_hotplug_event(bool added, libusb_device* dev, int vendor, int product, int sn_idx)  {
     libusb_device_handle* handle = 0;
     int r = libusb_open(dev, &handle);
     if(!r) {
-        qCCritical(controller()) << "unable to open the device in order to get its serial number";
+        qCritical() << "unable to open the device in order to get its serial number";
         return;
     }
    
@@ -119,13 +119,13 @@ void Controller::notify_hotplug_event(bool added, libusb_device* dev, int vendor
     libusb_close(handle);
 
     if(r != 0) {
-        qCCritical(controller()) << "unable to obtain serial number of device";
+        qCritical() << "unable to obtain serial number of device";
         return;
     }
 
     QString sn = QString::fromLatin1((const char *)serial_number);
     
-    qCInfo(controller) << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
+    qCritical() << "a usb hotplug event occured, vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
         _registry->activate_device(dev, vendor, product, sn);
     else
