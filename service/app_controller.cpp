@@ -17,8 +17,6 @@
 
 #include "bonjour/bonjourserviceregister.h"
 
-//Q_LOGGING_CATEGORY(controller, "controller")
-
 using namespace nzmqt;
 using namespace std;
 

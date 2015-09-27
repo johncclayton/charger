@@ -2,8 +2,8 @@
 #define BONJOURSERVICERESOLVER_H
 
 #include <QObject>
+#include <QHostInfo>
 
-class QHostInfo;
 class BonjourRecord;
 
 class BonjourServiceResolver : public QObject

@@ -207,14 +207,18 @@ void BonjourServiceBrowserThread::bonjourResponse(DNSServiceRef dnssref, DNSServ
     }
 
     //we emit the signals outside of the mutex being locked
-    for (auto err : errors) {
+    for(int index = 0; index < errors.size(); ++index) {
+        const QPair<QString, int>& err = errors[index];
         Q_EMIT error(err.first, err.second);
     }
 
-    for (auto removed : removedRecords) {
+    for(int index = 0; index < removedRecords.size(); ++index) {
+        const QPair<QString, BonjourRecord>& removed = removedRecords[index];
         Q_EMIT bonjourRecordRemoved(removed.first, removed.second);
     }
-    for (auto added : addedRecords) {
+    
+    for(int index = 0; index < addedRecords.size(); ++index) {
+        const QPair<QString, BonjourRecord>& added = addedRecords[index];
         Q_EMIT bonjourRecordAdded(added.first, added.second);
     }
 }
@@ -261,8 +265,12 @@ void BonjourServiceBrowser::browseForServiceType( const QString& serviceType )
 {
     Q_ASSERT(_serviceType.isEmpty());
     _serviceType = serviceType;
-    for (const BonjourRecord &record : BonjourServiceBrowserThread::instance()->addServiceBrowser(serviceType, this))
+    
+    QList<BonjourRecord> recs = BonjourServiceBrowserThread::instance()->addServiceBrowser(serviceType, this);
+    for (int index = 0; index < recs.size(); ++index) {
+        const BonjourRecord &record  = recs[index];
         Q_EMIT bonjourRecordAdded(record);
+    }
 }	
 
 void BonjourServiceBrowser::slotBonjourRecordAdded(const QString &serviceType,  const BonjourRecord& record )

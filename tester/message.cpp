@@ -1,23 +1,25 @@
+#include <QDebug>
 #include "message.h"
 
 using namespace nzmqt;
 
-Message::Message(ZMQSocket* msg, ZMQSocket* sub, QObject *parent) : QObject(parent)
+Message::Message(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) : QObject(parent)
 {
-    _message = msg;
-    _subscribe = sub;
-    
-    connect(_message, SIGNAL(messageReceived(QList<QByteArray>)), 
+    connect(msg, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(message(QList<QByteArray>)));
     
-    connect(_subscribe, SIGNAL(messageReceived(QList<QByteArray>)), 
+    connect(sub, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(notification(QList<QByteArray>)));
 }
 
 void Message::message(QList<QByteArray> msg) {
-    
+    foreach(QByteArray a, msg) {
+        qDebug() << "message received:" << a;
+    }
 }
 
 void Message::notification(QList<QByteArray> msg) {
-    
+    foreach(QByteArray a, msg) {
+        qDebug() << "notification received:" << a;
+    }
 }

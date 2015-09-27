@@ -3,10 +3,11 @@ QT -= gui
 QT += network
 
 TEMPLATE = app
-
 TARGET = tester
 CONFIG += console
 CONFIG -= app_bundle
+
+INCLUDEPATH += ../service
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
@@ -18,10 +19,20 @@ macx {
     LIBS += -L/usr/local/lib -lusb-1.0 -lzmq 
 }
 
+HEADERS += \
+    ../service/bonjour/bonjourrecord.h \
+    ../service/bonjour/bonjourservicebrowser.h \
+    ../service/bonjour/bonjourserviceresolver.h \
+    message.h \
+    testcontroller.h \
+    registeredtyperesolver.h
+
 SOURCES += main.cpp \
-    message.cpp
+    ../service/bonjour/bonjourservicebrowser.cpp \
+    ../service/bonjour/bonjourserviceresolver.cpp \
+    message.cpp \
+    testcontroller.cpp \
+    registeredtyperesolver.cpp
 
 include (../3rdparty/nzmqt/nzmqt.pri)
 
-HEADERS += \
-    message.h
