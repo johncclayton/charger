@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QVariantMap>
 #include <serializer.h>
 
