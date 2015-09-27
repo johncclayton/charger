@@ -13,6 +13,8 @@ class UseQtEventDriver : public QObject
 public:
     UseQtEventDriver(libusb_context *context, QObject *parent = 0);
 
+    void init();
+    
     int timer;
     libusb_context *context;
 

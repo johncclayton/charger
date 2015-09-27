@@ -1,6 +1,7 @@
 
 #include <QList>
 #include <QStringList>
+#include <QDebug>
 
 #include "message_handler.h"
 #include "nzmqt/nzmqt.hpp"
@@ -8,7 +9,8 @@ using namespace nzmqt;
 
 MessageHandler::MessageHandler(nzmqt::ZMQContext* ctx, QObject *owner) : SocketBase(ctx, ZMQSocket::TYP_ROUTER, owner)
 {
-    connect(_socket, SIGNAL(messageReceived(QList<QByteArray>)), this, SLOT(message_received(QList<QByteArray>)));
+    connect(_socket, SIGNAL(messageReceived(QList<QByteArray>)), 
+            this, SLOT(message_received(QList<QByteArray>)));
 }
 
 bool MessageHandler::bind() {
@@ -25,5 +27,5 @@ bool MessageHandler::bind() {
 }
 
 void MessageHandler::message_received(QList<QByteArray> msg) {
-    
+    qDebug() << "message received:" << msg;
 }

@@ -99,12 +99,13 @@ int AppController::init() {
         QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, int, int, QString)), 
                          this, SLOT(notify_hotplug_event(bool, int, int, QString)));
         
-        // Primitive libsusb event handler.
+        // Primitive libsusb event handler.  Needs it's own thread.
         _hotplug_handler = new UseQtEventDriver(_usb.ctx);
+        
         _hotplug_thread = new QThread();
         _hotplug_handler->moveToThread(_hotplug_thread);
         _hotplug_thread->start();
-        
+        _hotplug_handler->init(); // creates timer - which the QThread is running.
         _hotplug->init(_usb.ctx);
      
         return 0;
