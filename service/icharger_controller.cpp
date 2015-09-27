@@ -14,13 +14,8 @@ QByteArray DeviceOnlyJson::toJson() const {
     data["ch1_state"] = ch1_status.value;
     data["ch2_state"] = ch2_status.value;
     
-    bool ok;
     QJson::Serializer serializer;
-    QByteArray json = serializer.serialize(data, &ok);
-    if(ok)    
-        return json;
-    
-    return QByteArray();
+    return serializer.serialize(data);
 }
 
 /*
@@ -63,13 +58,8 @@ QByteArray ChannelStatusJson::toJson(int channel) const {
             
     }    
     
-    bool ok;
     QJson::Serializer serializer;
-    QByteArray json = serializer.serialize(data, &ok);
-    if(ok)    
-        return json;
-    
-    return QByteArray();
+    return serializer.serialize(data);
 }
 
 iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger_usb_ptr p, QObject *parent) : 
