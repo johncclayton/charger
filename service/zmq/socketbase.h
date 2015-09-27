@@ -1,5 +1,5 @@
-#ifndef SOCKETBASE_H
-#define SOCKETBASE_H
+#ifndef __SOCKETBASE_H
+#define __SOCKETBASE_H
 
 #include <QObject>
 #include "nzmqt/nzmqt.hpp"

@@ -1,9 +1,10 @@
 #ifndef ZMQ_PUBLISHER_H
 #define ZMQ_PUBLISHER_H
 
+#include "zmq/socketbase.h"
+
 #include <QObject>
 #include <QSharedPointer>
-#include "zmq/socketbase.h"
 
 class Publisher : public SocketBase
 {
