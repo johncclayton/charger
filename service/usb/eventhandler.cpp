@@ -22,7 +22,7 @@ UseQtEventDriver::~UseQtEventDriver() {
 void UseQtEventDriver::handle()
 {
     qDebug() << "time gentlemen!";
-    libusb_handle_events_timeout(this->context, 0);
+    libusb_handle_events(this->context);
 }
 
 
