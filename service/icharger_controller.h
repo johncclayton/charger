@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QScopedPointer>
+#include <QTimer>
+
 #include "zmq/publisher.h"
 #include "usb/icharger_usb.h"
 
@@ -28,11 +30,10 @@ public:
 signals:
     
 public slots:
-    
-protected:
-    void timerEvent(QTimerEvent *event);
+    void handleTimeout();
     
 private:
+    QTimer* _timer;
     Publisher_ptr _pub;
     icharger_usb_ptr _device;
     

@@ -67,11 +67,13 @@ iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger
     QObject(parent), _pub(pub), _device(p)
 {
     // query status of every bloody thing every second
-    startTimer(500 /* ms */);
+    _timer = new QTimer(this);
+    _timer->setInterval(500);
+    _timer->start();
 }
 
-void iCharger_DeviceController::timerEvent(QTimerEvent *event) {
-    Q_UNUSED(event);
+void iCharger_DeviceController::handleTimeout() {
+    qDebug() << "fetching data from device";
     
     // fetch device status and publish on the bus
     DeviceOnlyJson device;
