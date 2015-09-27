@@ -40,7 +40,6 @@ AppController::~AppController() {
     delete _registry;
     _registry = 0;
     
-    _hotplug_handler->killTimer(_hotplug_handler->timer);
     _hotplug_handler->deleteLater();
     _hotplug_handler = 0;
     
@@ -105,7 +104,6 @@ int AppController::init() {
         _hotplug_thread = new QThread();
         _hotplug_handler->moveToThread(_hotplug_thread);
         _hotplug_thread->start();
-        _hotplug_handler->init(); // creates timer - which the QThread is running.
         _hotplug->init(_usb.ctx);
      
         return 0;

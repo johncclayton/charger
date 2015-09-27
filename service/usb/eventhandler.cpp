@@ -1,4 +1,3 @@
-
 #include <QDebug>
 #include <QtCore/QThread>
 
@@ -6,23 +5,25 @@
 #include "eventhandler.h"
 
 UseQtEventDriver::UseQtEventDriver(libusb_context *context, QObject *parent) :
-    QObject(parent), timer(0), context(context)
+    QObject(parent), context(context), timer(0)
 {
+    timer = new QTimer(this);
+    timer->setInterval(1);
+    
+    connect(timer, SIGNAL(timeout()), this, SLOT(handle()));
+    
+    timer->start();
+}
+
+UseQtEventDriver::~UseQtEventDriver() {
+    timer->stop();
 }
 
 void UseQtEventDriver::handle()
 {
-    qDebug() << "time genltemen!";
+    qDebug() << "time gentlemen!";
     libusb_handle_events_timeout(this->context, 0);
 }
 
-void UseQtEventDriver::init() {
-    timer = startTimer(1);    
-}
-
-void UseQtEventDriver::timerEvent(QTimerEvent *)
-{
-    QMetaObject::invokeMethod(this, "handle");
-}
 
 

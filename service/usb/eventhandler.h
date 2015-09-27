@@ -2,6 +2,7 @@
 #define USB_EVENTHANDLER_H
 
 #include <QtCore/QObject>
+#include <QTimer>
 
 struct libusb_context;
 class QThread;
@@ -12,20 +13,15 @@ class UseQtEventDriver : public QObject
 
 public:
     UseQtEventDriver(libusb_context *context, QObject *parent = 0);
-
-    void init();
+    ~UseQtEventDriver();
     
-    int timer;
     libusb_context *context;
 
 public slots:
     void handle();
 
-protected:
-    virtual void timerEvent(QTimerEvent *);
-
 private:
-
+    QTimer* timer;
 };
 
 #endif // USB_EVENTHANDLER_H
