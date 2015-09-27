@@ -82,6 +82,8 @@ void iCharger_DeviceController::timerEvent(QTimerEvent *event) {
             _latest_device_json = device_json;
             publish_device_json();
         }
+    } else {
+        qDebug() << "failed to get device only info:" << r;
     }
     
     // fetch info for ch1 and ch2
@@ -94,6 +96,8 @@ void iCharger_DeviceController::timerEvent(QTimerEvent *event) {
                 _latest_channel_json[index] = data;
                 publish_channel_json(index);
             }
+        } else {
+            qDebug() << "failed to get ch info:" << r;
         }
     }
 }
