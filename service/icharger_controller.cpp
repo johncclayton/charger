@@ -69,6 +69,10 @@ iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger
     // query status of every bloody thing every second
     _timer = new QTimer(this);
     _timer->setInterval(500);
+    _timer->setSingleShot(false);
+    
+    connect(_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
+    
     _timer->start();
 }
 
