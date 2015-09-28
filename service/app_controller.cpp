@@ -29,6 +29,7 @@ AppController::AppController(QObject *parent) : QObject(parent),
     _registry(0),
     _msg_handler(0)
 {
+    startTimer(1000);
 }
 
 AppController::~AppController() {
@@ -44,10 +45,7 @@ AppController::~AppController() {
     _hotplug_thread->quit();
     _hotplug_thread->deleteLater();    
     _hotplug_thread = 0;
-    
-    delete _bon;
-    _bon = 0;
-    
+        
     _ctx->stop();
     delete _ctx;
     _ctx = 0;
@@ -60,12 +58,13 @@ int AppController::init() {
         _ctx->start();
         
         // Get the message infrastructure ready (pub/sub and messaging).
-        _pub = Publisher_ptr(new Publisher(_ctx));
+        _pub = Publisher_ptr(new Publisher(_ctx, this));
         
         // Bonjour system needs to publish our ZMQ publisher port
-        _bon = new BonjourServiceRegister;
+        _bonjour_msg = new BonjourServiceRegister(this);
+        _bonjour_pub = new BonjourServiceRegister(this);
 
-        _registry = new DeviceRegistry(_usb.ctx, _pub);
+        _registry = new DeviceRegistry(_usb.ctx, _pub, this);
         
         QObject::connect(_registry, SIGNAL(device_activated(QString)),
                          this, SLOT(device_added(QString)));
@@ -92,14 +91,14 @@ int AppController::init() {
         }
         
         // Kick off a listener for USB hotplug events - so we keep our device list fresh
-        _hotplug = new HotplugEventAdapter();
+        _hotplug = new HotplugEventAdapter(this);
         QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, int, int, QString)), 
                          this, SLOT(notify_hotplug_event(bool, int, int, QString)));
         
         // Primitive libsusb event handler.  Needs it's own thread.
         _hotplug_handler = new UseQtEventDriver(_usb.ctx);
         
-        _hotplug_thread = new QThread();
+        _hotplug_thread = new QThread(this);
         _hotplug_handler->moveToThread(_hotplug_thread);
         _hotplug_thread->start();
         _hotplug->init(_usb.ctx);
@@ -113,13 +112,18 @@ int AppController::init() {
     }
 }
 
+void AppController::timerEvent(QTimerEvent *event) {
+    Q_UNUSED(event);
+    qDebug() << "tic toc";
+}
+
 void AppController::register_pub_port(int new_port) {
-    _bon->registerService("_charger-service-pub._tcp", new_port);   
+    _bonjour_pub->registerService("_charger-service-pub._tcp", new_port);   
     qDebug() << "pub service now available on port:" << new_port;
 }
 
 void AppController::register_msg_port(int new_port) {
-    _bon->registerService("_charger-service-msg._tcp", new_port);   
+    _bonjour_msg->registerService("_charger-service-msg._tcp", new_port);   
     qDebug() << "message handling service is now available on port:" << new_port;
 }
 

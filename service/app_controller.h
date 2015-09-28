@@ -33,13 +33,17 @@ public slots:
     void device_added(QString key);
     void device_removed(QString key);
     
+protected:
+    void timerEvent(QTimerEvent *event);
+    
 private:
     usb_context _usb;
     nzmqt::ZMQContext* _ctx;
     Publisher_ptr _pub;
     
     // ensures we publish services via bonjour/zeroconf
-    BonjourServiceRegister* _bon;
+    BonjourServiceRegister* _bonjour_pub;
+    BonjourServiceRegister* _bonjour_msg;
     
     // handles usb hotplug events - see also notify_hotplug_event
     HotplugEventAdapter* _hotplug;

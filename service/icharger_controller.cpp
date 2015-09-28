@@ -1,10 +1,30 @@
 #include <QDebug>
 #include <QThread>
 #include <QVariantMap>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#define HAS_QT_JSON
+#endif
+
 #include <serializer.h>
 
 #include "icharger_controller.h"
 #include "usb/icharger_data.h"
+
+#ifdef HAS_QT_JSON
+#include <QJsonDocument>
+#include <QJsonObject>
+#endif
+
+QByteArray makeJsonByteArray(QVariantMap data) {
+#ifdef HAS_QT_JSON
+    QJsonDocument d = QJsonDocument::fromVariant(data);
+    return d.toJson();
+#else
+    QJson::Serializer serializer;
+    return serializer.serialize(data);
+#endif    
+}
 
 struct DeviceOnlyJson : public device_only {
     QByteArray toJson() const;
@@ -23,9 +43,8 @@ QByteArray DeviceOnlyJson::toJson() const {
     data["sw_ver"] = (float)sw_version.value / 10;
     data["ch1_state"] = ch1_status.value;
     data["ch2_state"] = ch2_status.value;
-    
-    QJson::Serializer serializer;
-    return serializer.serialize(data);
+ 
+    return makeJsonByteArray(data);
 }
 
 /*
@@ -68,8 +87,7 @@ QByteArray ChannelStatusJson::toJson(int channel) const {
             
     }    
     
-    QJson::Serializer serializer;
-    return serializer.serialize(data);
+    return makeJsonByteArray(data);
 }
 
 iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger_usb_ptr p, QObject *parent) : 
@@ -77,13 +95,8 @@ iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger
 {
     // query status of every bloody thing every second
     _timer = new QTimer(this);
-    _timer->setInterval(500);
-    
     connect(_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
-    
-    qDebug() << "new device controller on thread" << QThread::currentThreadId();
-    
-    _timer->start();
+    _timer->start(500);
 }
 
 iCharger_DeviceController::~iCharger_DeviceController() {
