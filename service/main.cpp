@@ -1,10 +1,14 @@
 #include <QCoreApplication>
+#include <QThread>
+#include <QDebug>
 #include <iostream>
 
 #include "app_controller.h"
 
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
+    
+    qDebug() << "prog start on thread" << QThread::currentThreadId();
     
     AppController app_controller;
     int r = app_controller.init();

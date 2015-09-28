@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QThread>
 #include <QVariantMap>
 #include <serializer.h>
 
@@ -71,6 +72,8 @@ iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger
     _timer->setInterval(500);
     
     connect(_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
+    
+    qDebug() << "new device controller on thread" << QThread::currentThreadId();
     
     _timer->start();
 }
