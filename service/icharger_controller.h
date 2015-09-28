@@ -21,6 +21,7 @@ class iCharger_DeviceController : public QObject
     Q_OBJECT
 public:
     explicit iCharger_DeviceController(Publisher_ptr pub, icharger_usb_ptr p, QObject *parent = 0);
+    virtual ~iCharger_DeviceController();
     
     icharger_usb_ptr device() { return _device; }
     

@@ -75,6 +75,10 @@ iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger
     _timer->start();
 }
 
+iCharger_DeviceController::~iCharger_DeviceController() {
+    qDebug() << "bye bye device controller";
+}
+
 void iCharger_DeviceController::handleTimeout() {
     qDebug() << "fetching data from device";
     
