@@ -23,16 +23,16 @@ HEADERS += \
     ../service/bonjour/bonjourrecord.h \
     ../service/bonjour/bonjourservicebrowser.h \
     ../service/bonjour/bonjourserviceresolver.h \
-    message.h \
-    testcontroller.h \
-    registeredtyperesolver.h
+    registeredtyperesolver.h \
+    client_controller.h \
+    message_bus.h
 
 SOURCES += main.cpp \
     ../service/bonjour/bonjourservicebrowser.cpp \
     ../service/bonjour/bonjourserviceresolver.cpp \
-    message.cpp \
-    testcontroller.cpp \
-    registeredtyperesolver.cpp
+    registeredtyperesolver.cpp \
+    client_controller.cpp \
+    message_bus.cpp
 
 include (../3rdparty/nzmqt/nzmqt.pri)
 

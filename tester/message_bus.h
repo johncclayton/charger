@@ -4,12 +4,12 @@
 #include <QObject>
 #include "nzmqt/nzmqt.hpp"
 
-class Message : public QObject
+class MessageBus : public QObject
 {
     Q_OBJECT
 public:
-    explicit Message(nzmqt::ZMQSocket* pub, nzmqt::ZMQSocket* msg, QObject *parent = 0);
-    virtual ~Message();
+    explicit MessageBus(nzmqt::ZMQSocket* pub, nzmqt::ZMQSocket* msg, QObject *parent = 0);
+    virtual ~MessageBus();
     
 signals:
     

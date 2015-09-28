@@ -1,9 +1,9 @@
 #include <QDebug>
-#include "message.h"
+#include "message_bus.h"
 
 using namespace nzmqt;
 
-Message::Message(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) : QObject(parent)
+MessageBus::MessageBus(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) : QObject(parent)
 {
     connect(msg, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(message(QList<QByteArray>)));
@@ -14,18 +14,20 @@ Message::Message(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) : QObject(pare
     qDebug() << "messaging is now active.";
 }
 
-Message::~Message() {
+MessageBus::~MessageBus() {
     qDebug() << "messaging is now destroyed.";
 }
 
-void Message::message(QList<QByteArray> msg) {
+void MessageBus::message(QList<QByteArray> msg) {
+    qDebug() << "message:";
     foreach(QByteArray a, msg) {
-        qDebug() << "message received:" << a;
+        qDebug() << a;
     }
 }
 
-void Message::notification(QList<QByteArray> msg) {
+void MessageBus::notification(QList<QByteArray> msg) {
+    qDebug() << "notification:";
     foreach(QByteArray a, msg) {
-        qDebug() << "notification received:" << a;
+        qDebug() << a;
     }
 }
