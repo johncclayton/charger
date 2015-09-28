@@ -8,14 +8,6 @@
 #include "zmq/publisher.h"
 #include "usb/icharger_usb.h"
 
-struct DeviceOnlyJson : public device_only {
-    QByteArray toJson() const;
-};
-
-struct ChannelStatusJson : public channel_status {
-    QByteArray toJson(int channel) const;
-};
-
 class iCharger_DeviceController : public QObject
 {
     Q_OBJECT

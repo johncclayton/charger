@@ -7,7 +7,11 @@
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
         
-    QSharedPointer<AppController> app_controller(new AppController);
-    QMetaObject::invokeMethod(app_controller.data(), "init");
-    return app.exec();
+    AppController app_controller;
+    if(0 == app_controller.init())
+        return app.exec();
+    
+    std::cerr << "unable to init program";
+    
+    return -1;
 }

@@ -68,9 +68,9 @@ int AppController::init() {
         _registry = new DeviceRegistry(_usb.ctx, _pub);
         
         QObject::connect(_registry, SIGNAL(device_activated(QString)),
-                         this, SLOT(device_added(QString)), Qt::QueuedConnection);
+                         this, SLOT(device_added(QString)));
         QObject::connect(_registry, SIGNAL(device_deactivated(QString)),
-                         this, SLOT(device_removed(QString)), Qt::QueuedConnection);
+                         this, SLOT(device_removed(QString)));
                
         // Respond to changes to the publisher port
         connect(_pub.data(), SIGNAL(port_changed(int)), 
@@ -94,15 +94,15 @@ int AppController::init() {
         // Kick off a listener for USB hotplug events - so we keep our device list fresh
         _hotplug = new HotplugEventAdapter();
         QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, int, int, QString)), 
-                         this, SLOT(notify_hotplug_event(bool, int, int, QString)), Qt::QueuedConnection);
+                         this, SLOT(notify_hotplug_event(bool, int, int, QString)));
         
-//        // Primitive libsusb event handler.  Needs it's own thread.
-//        _hotplug_handler = new UseQtEventDriver(_usb.ctx);
+        // Primitive libsusb event handler.  Needs it's own thread.
+        _hotplug_handler = new UseQtEventDriver(_usb.ctx);
         
-//        _hotplug_thread = new QThread();
-//        _hotplug_handler->moveToThread(_hotplug_thread);
-//        _hotplug_thread->start();
-//        _hotplug->init(_usb.ctx);
+        _hotplug_thread = new QThread();
+        _hotplug_handler->moveToThread(_hotplug_thread);
+        _hotplug_thread->start();
+        _hotplug->init(_usb.ctx);
      
         return 0;
     }

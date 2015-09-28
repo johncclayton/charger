@@ -6,6 +6,14 @@
 #include "icharger_controller.h"
 #include "usb/icharger_data.h"
 
+struct DeviceOnlyJson : public device_only {
+    QByteArray toJson() const;
+};
+
+struct ChannelStatusJson : public channel_status {
+    QByteArray toJson(int channel) const;
+};
+
 QByteArray DeviceOnlyJson::toJson() const {
     QVariantMap data;
     

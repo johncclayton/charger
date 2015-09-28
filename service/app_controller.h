@@ -14,10 +14,6 @@
 #include "device_registry.h"
 #include "message_handler.h"
 
-namespace nzmqt {
-    class ZMQContext;
-}
-
 class AppController : public QObject
 {
     Q_OBJECT
