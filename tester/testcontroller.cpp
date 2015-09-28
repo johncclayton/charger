@@ -1,6 +1,8 @@
 #include <QHostInfo>
 #include "testcontroller.h"
 
+QHostAddress ip4(QHostAddress::AnyIPv4);
+
 using namespace nzmqt;
 
 TestController::TestController(QObject *parent) : QObject(parent) {
@@ -60,9 +62,9 @@ void TestController::closeSubscribeSocket() {
 void TestController::resolvedService(QString type, QHostInfo addr, int port) {
     qDebug() << "type:" << type << "resolved to:" << addr.hostName() << " on port:" << port;
     if(type == QString("_charger-service-pub._tcp"))
-        QHostInfo::lookupHost(addr.hostName(), this, SLOT(ipresolvedForPub(QHostInfo)));
+        QHostInfo::lookupHost(addr.hostName(), this, SLOT(ip_resolvedForPub(QHostInfo)));
     else if(type == QString("_charger-service-msg._tcp"))
-        QHostInfo::lookupHost(addr.hostName(), this, SLOT(ipresolvedForMessaging(QHostInfo)));
+        QHostInfo::lookupHost(addr.hostName(), this, SLOT(ip_resolvedForMessaging(QHostInfo)));
 }
 
 void TestController::serviceResolutionError(QString type, int err) {
@@ -79,7 +81,7 @@ void TestController::serviceRemoved(QString type) {
     }
 }
 
-void TestController::ipresolvedForPub(QHostInfo host) {
+void TestController::ip_resolvedForPub(QHostInfo host) {
     if (host.error() != QHostInfo::NoError) {
         qDebug() << "Lookup failed:" << host.errorString();
         return;
@@ -89,6 +91,8 @@ void TestController::ipresolvedForPub(QHostInfo host) {
         closeSubscribeSocket();
     
     foreach (const QHostAddress &address, host.addresses()) {
+        if(address != ip4)
+            continue;
         if(!_subscribe_socket) {
             _subscribe_socket = _ctx->createSocket(ZMQSocket::TYP_SUB, this);            
             QString addr = QString("tcp://%1:%2").arg(address.toString()).arg(_resolve_subscribe->port());
@@ -99,7 +103,7 @@ void TestController::ipresolvedForPub(QHostInfo host) {
     }
 }
 
-void TestController::ipresolvedForMessaging(QHostInfo host) {
+void TestController::ip_resolvedForMessaging(QHostInfo host) {
     if (host.error() != QHostInfo::NoError) {
         qDebug() << "Lookup failed:" << host.errorString();
         return;
@@ -109,6 +113,8 @@ void TestController::ipresolvedForMessaging(QHostInfo host) {
         closeMessageSocket();
     
     foreach (const QHostAddress &address, host.addresses()) {
+        if(address != ip4)
+            continue;
         if(!_message_socket) {
             _message_socket = _ctx->createSocket(ZMQSocket::TYP_DEALER, this);            
             QString addr = QString("tcp://%1:%2").arg(address.toString()).arg(_resolve_message->port());

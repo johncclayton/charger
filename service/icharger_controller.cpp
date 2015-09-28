@@ -141,5 +141,5 @@ void iCharger_DeviceController::publish_device_json() {
 }
 
 void iCharger_DeviceController::publish_channel_json(int index) {
-    _pub->publishOnTopic(QString::fromLatin1("icharger/channel/%d").arg(index + 1), _latest_channel_json[index]);
+    _pub->publishOnTopic(QString("icharger/channel/%d").arg(index + 1), _latest_channel_json[index]);
 }

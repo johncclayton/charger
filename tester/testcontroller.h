@@ -25,8 +25,8 @@ public slots:
     void serviceRemoved(QString type);
     
 private slots:
-    void ipresolvedForPub(QHostInfo);
-    void ipresolvedForMessaging(QHostInfo);
+    void ip_resolvedForPub(QHostInfo);
+    void ip_resolvedForMessaging(QHostInfo);
     
 private:
     void closeMessageSocket();
