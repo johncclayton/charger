@@ -25,10 +25,11 @@ public:
     explicit AppController(QObject *parent = 0);
     virtual ~AppController();
     
-    int init();
 signals:
     
 public slots:
+    int init();
+
     void register_pub_port(int new_port);
     void register_msg_port(int new_port);
     
