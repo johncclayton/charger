@@ -29,7 +29,7 @@ AppController::AppController(QObject *parent) : QObject(parent),
     _registry(0),
     _msg_handler(0)
 {
-    startTimer(1000);
+    startTimer(5000);
 }
 
 AppController::~AppController() {    
@@ -101,7 +101,7 @@ int AppController::init() {
 
 void AppController::timerEvent(QTimerEvent *event) {
     Q_UNUSED(event);
-    qDebug() << "tic toc";
+	// TODO: spit out stats.
 }
 
 void AppController::register_pub_port(int new_port) {

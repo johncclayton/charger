@@ -29,7 +29,7 @@ void Publisher::publishOnTopic(QString topic, QString content) {
     msg += content.toLocal8Bit();
     _socket->sendMessage(msg);
     
-    qDebug() << "published on topic:" << topic;
+//    qDebug() << "published on topic:" << topic << ":" << content;
 }
 
 

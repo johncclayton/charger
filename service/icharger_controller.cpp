@@ -77,11 +77,11 @@ QByteArray ChannelStatusJson::toJson(int channel) const {
     data["channel"] = channel;
     data["output_power"] = quint32(output_power.value);
     data["output_current"] = output_current.value;
-    data["input_voltage"] = input_voltage.value;
-    data["output_voltage"] = output_voltage.value;
+    data["input_voltage"] = input_voltage.value / 1000.0;
+    data["output_voltage"] = output_voltage.value / 1000.0;
     data["output_capacity"] = quint32(output_capacity.value);
-    data["temp_internal"] = temp_internal.value;
-    data["temp_external"] = temp_external.value;
+    data["temp_internal"] = temp_internal.value / 10.0;
+    data["temp_external"] = temp_external.value / 10.0;
     
     for(int index = 0; index < MAX_CELLS; ++index) {
             
@@ -104,8 +104,6 @@ iCharger_DeviceController::~iCharger_DeviceController() {
 }
 
 void iCharger_DeviceController::handleTimeout() {
-    qDebug() << "fetching data from device";
-    
     // fetch device status and publish on the bus
     DeviceOnlyJson device;
     int r = _device->get_device_only(&device);
@@ -137,9 +135,9 @@ void iCharger_DeviceController::handleTimeout() {
 }
 
 void iCharger_DeviceController::publish_device_json() {
-    _pub->publishOnTopic(QString::fromLatin1("icharger/device"), _latest_device_json);
+    _pub->publishOnTopic(QString("/icharger/device"), _latest_device_json);
 }
 
 void iCharger_DeviceController::publish_channel_json(int index) {
-    _pub->publishOnTopic(QString("icharger/channel/%1").arg(index + 1), _latest_channel_json[index]);
+    _pub->publishOnTopic(QString("/icharger/channel/%1").arg(index + 1), _latest_channel_json[index]);
 }
