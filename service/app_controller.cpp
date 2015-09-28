@@ -32,23 +32,10 @@ AppController::AppController(QObject *parent) : QObject(parent),
     startTimer(1000);
 }
 
-AppController::~AppController() {
-    delete _msg_handler;
-    _msg_handler = 0;
-            
-    delete _registry;
-    _registry = 0;
-    
-    _hotplug_handler->deleteLater();
-    _hotplug_handler = 0;
-    
+AppController::~AppController() {    
     _hotplug_thread->quit();
     _hotplug_thread->deleteLater();    
-    _hotplug_thread = 0;
-        
     _ctx->stop();
-    delete _ctx;
-    _ctx = 0;
 }
 
 int AppController::init() {

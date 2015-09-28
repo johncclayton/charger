@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "device_registry.h"
 
 DeviceRegistry::DeviceRegistry(libusb_context* ctx, Publisher_ptr pub, QObject *owner) : QObject(owner), _ctx(ctx), _pub(pub) {
@@ -21,9 +22,13 @@ void DeviceRegistry::activate_device(int vendor, int product, QString sn) {
     charger_list match = icharger_usb::all_chargers(_ctx, vendor, product, sn);
     if(match.size()) {
         iCharger_DeviceController_ptr device_ptr(new iCharger_DeviceController(_pub, match[0]));
-        QString key(device_key(vendor, product, sn));
-        _devices.insert(key, device_ptr);
-        Q_EMIT device_activated(key);
+        if(0 == device_ptr->device()->acquire()) {
+            QString key(device_key(vendor, product, sn));
+            _devices.insert(key, device_ptr);
+            Q_EMIT device_activated(key);
+        } else {
+            qDebug() << "wasnt able to claim the device - ignoring it";
+        }
     }
 }
 
