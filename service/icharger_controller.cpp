@@ -96,7 +96,7 @@ iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger
     // query status of every bloody thing every second
     _timer = new QTimer(this);
     connect(_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
-    _timer->start(500);
+    _timer->start(250);
 }
 
 iCharger_DeviceController::~iCharger_DeviceController() {
@@ -141,5 +141,5 @@ void iCharger_DeviceController::publish_device_json() {
 }
 
 void iCharger_DeviceController::publish_channel_json(int index) {
-    _pub->publishOnTopic(QString("icharger/channel/%d").arg(index + 1), _latest_channel_json[index]);
+    _pub->publishOnTopic(QString("icharger/channel/%1").arg(index + 1), _latest_channel_json[index]);
 }
