@@ -4,12 +4,21 @@
 #include <QObject>
 #include <QHostInfo>
 #include <QMetaType>
-#include <QHostAddress>
 
 #include "message_bus.h"
 #include "registeredtyperesolver.h"
 #include "nzmqt/nzmqt.hpp"
 
+/**
+ * @brief The ClientMessagingController class discovers the required zmq subcscription and
+ * req/resp endpoints and connects/configures the appropriate sockets to the MessageBus class.
+ * It continues to monitor the bonjour information and if the sockets change or go down it 
+ * will re-create the messaging bus instance.
+ * 
+ * There are two states, CS_DISCOVERY and CS_CONNECTED.  Only when both endpoints to zmq
+ * have been discovered and connected does the state change to CS_CONNECTED.  If the socket
+ * endpoints (according to bonjour) change, the class goes back into the CS_DISCOVERY state.
+ */
 class ClientMessagingController : public QObject
 {
     Q_OBJECT
@@ -21,9 +30,7 @@ public:
     
     enum State {
         CS_DISCOVERY = 0,
-        CS_FOUND_PUBLISHER = 1,
-        CS_FOUND_MESSAGER = 2,
-        CS_CONNECTED
+        CS_CONNECTED = 1
     };
 
 signals:

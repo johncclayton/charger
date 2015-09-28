@@ -2,7 +2,6 @@
 #define REGISTEREDTYPERESOLVER_H
 
 #include <QObject>
-#include <QHostAddress>
 #include "../service/bonjour/bonjourrecord.h"
 #include "../service/bonjour/bonjourservicebrowser.h"
 #include "../service/bonjour/bonjourserviceresolver.h"

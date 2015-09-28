@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
     QSharedPointer<ClientMessagingController> controller(new ClientMessagingController());   
     controller->init();
+    
     return app.exec();
 }
 
