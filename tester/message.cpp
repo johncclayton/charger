@@ -10,6 +10,12 @@ Message::Message(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) : QObject(pare
     
     connect(sub, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(notification(QList<QByteArray>)));
+    
+    qDebug() << "messaging is now active.";
+}
+
+Message::~Message() {
+    qDebug() << "messaging is now destroyed.";
 }
 
 void Message::message(QList<QByteArray> msg) {

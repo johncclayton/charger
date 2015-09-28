@@ -39,7 +39,10 @@ void TestController::closeMessagingHandler() {
     if(_messaging) {
         delete _messaging;
         _messaging = 0;
-        qDebug() << "messaging deactivated";
+    }
+    
+    if(_message_socket == 0 && _subscribe_socket == 0) {
+        
     }
 }
 
@@ -47,7 +50,7 @@ void TestController::closeMessageSocket() {
     _message_socket->close();
     delete _message_socket;
     _message_socket = 0;
-    
+    qDebug() << "messaging socket destroyed";    
     closeMessagingHandler();
 }
 
@@ -55,7 +58,7 @@ void TestController::closeSubscribeSocket() {
     _subscribe_socket->close();
     delete _subscribe_socket;
     _subscribe_socket = 0;
-
+    qDebug() << "subscribe socket destroyed";    
     closeMessagingHandler();
 }
 
@@ -91,13 +94,12 @@ void TestController::ip_resolvedForPub(QHostInfo host) {
         closeSubscribeSocket();
     
     foreach (const QHostAddress &address, host.addresses()) {
-        if(address != ip4)
-            continue;
         if(!_subscribe_socket) {
             _subscribe_socket = _ctx->createSocket(ZMQSocket::TYP_SUB, this);            
             QString addr = QString("tcp://%1:%2").arg(address.toString()).arg(_resolve_subscribe->port());
             qDebug() << "Connecting to publisher:" << addr;
             _subscribe_socket->connectTo(addr);
+            _subscribe_socket->subscribeTo("");
             checkIsMessagingReady();
         }
     }
@@ -113,8 +115,6 @@ void TestController::ip_resolvedForMessaging(QHostInfo host) {
         closeMessageSocket();
     
     foreach (const QHostAddress &address, host.addresses()) {
-        if(address != ip4)
-            continue;
         if(!_message_socket) {
             _message_socket = _ctx->createSocket(ZMQSocket::TYP_DEALER, this);            
             QString addr = QString("tcp://%1:%2").arg(address.toString()).arg(_resolve_message->port());
@@ -131,6 +131,5 @@ void TestController::checkIsMessagingReady() {
     
     if(_message_socket && _subscribe_socket) {
         _messaging = new Message(_subscribe_socket, _message_socket, this);
-        qDebug() << "messaging is now active.";
     }
 }

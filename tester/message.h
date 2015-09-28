@@ -9,6 +9,7 @@ class Message : public QObject
     Q_OBJECT
 public:
     explicit Message(nzmqt::ZMQSocket* pub, nzmqt::ZMQSocket* msg, QObject *parent = 0);
+    virtual ~Message();
     
 signals:
     
