@@ -2,6 +2,7 @@
 #define MESSAGE_BUS_H
 
 #include <QObject>
+#include "channel_status.h"
 
 namespace nzmqt {
     class ZMQSocket;
@@ -15,6 +16,7 @@ public:
     virtual ~MessageBus();
     
 signals:
+    void channelStatusUpdated(const ChannelStatus&);
     
 public slots:
     void message(QList<QByteArray> msg);

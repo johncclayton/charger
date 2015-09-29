@@ -1,5 +1,6 @@
 #include <QHostInfo>
 #include "client_controller.h"
+#include "channel_status.h"
 #include "nzmqt/nzmqt.hpp"
 
 using namespace nzmqt;
@@ -12,7 +13,7 @@ ClientMessagingController::ClientMessagingController(QObject *parent) : QObject(
     _ctx->start();
     
     _message_bus = 0;
-    
+    _charger_state = new ChargerState(this);
     _reqresp_socket = 0;
     _subscribe_socket = 0;
     
@@ -136,7 +137,16 @@ void ClientMessagingController::checkIsMessageBusReady() {
     
     if(_reqresp_socket && _subscribe_socket) {
         _message_bus = new MessageBus(_subscribe_socket, _reqresp_socket, this);
+        
         Q_EMIT stateChanged(CS_CONNECTED);
         Q_EMIT messageBusChanged();
+        
+        // hook up the change signals from message bus to the charger state
+        connect(_message_bus, &MessageBus::channelStatusUpdated, [=](const ChannelStatus& status) {
+            if(status.channel() == 0)
+                _charger_state->setCh1(status);
+            else
+                _charger_state->setCh2(status);
+        });
     }
 }

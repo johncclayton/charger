@@ -6,6 +6,7 @@
 #include <QMetaType>
 
 #include "message_bus.h"
+#include "charger_state.h"
 #include "registeredtyperesolver.h"
 
 namespace nzmqt {
@@ -34,16 +35,17 @@ public:
     
     Q_ENUMS(State)
 
-    Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged);
-    Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged);
+    Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged)
+    Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(ChargerState charger READ charger NOTIFY onChargerChanged)
     
     explicit ClientMessagingController(QObject *parent = 0);
     virtual ~ClientMessagingController();
     
     void init(int pub_port = 0, int msg_port = 0);
     
-    
     MessageBus* messageBus() const { return _message_bus; }
+    ChargerState* charger() const { return _charger_state; }
     
     State state() const { return _state; }
     void setState(State s) { _state = s; Q_EMIT stateChanged(s); }
@@ -51,6 +53,7 @@ public:
 signals:
     void messageBusChanged();
     void stateChanged(ClientMessagingController::State);
+    void onChargerChanged();
     
 public slots:
     void resolvedService(QString type, QHostInfo addr, int port);
@@ -75,6 +78,7 @@ private:
     RegisteredTypeResolver* _resolve_subscribe;
     
     MessageBus* _message_bus;
+    ChargerState* _charger_state;
     
     State _state;
 };

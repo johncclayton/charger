@@ -30,5 +30,6 @@ bool MessageHandler::bind(int port) {
 }
 
 void MessageHandler::message_received(QList<QByteArray> msg) {
-    qDebug() << "message received:" << msg;
+    Q_UNUSED(msg);
+    //qDebug() << "message received:" << msg;
 }
