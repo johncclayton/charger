@@ -1,11 +1,12 @@
 #ifndef REGISTEREDTYPERESOLVER_H
 #define REGISTEREDTYPERESOLVER_H
 
+#include <QHostInfo>
 #include <QObject>
-#include <QHostAddress>
-#include "../service/bonjour/bonjourrecord.h"
-#include "../service/bonjour/bonjourservicebrowser.h"
-#include "../service/bonjour/bonjourserviceresolver.h"
+
+class BonjourServiceBrowser;
+class BonjourServiceResolver;
+class BonjourRecord;
 
 class RegisteredTypeResolver : public QObject
 {

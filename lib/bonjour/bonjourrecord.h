@@ -1,4 +1,6 @@
 #pragma once
+
+#include <QString>
 #include <QMetaType>
 
 class BonjourRecord

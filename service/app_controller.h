@@ -10,9 +10,10 @@
 #include "nzmqt/nzmqt.hpp"
 #include "zmq/publisher.h"
 
-#include "bonjour/bonjourserviceregister.h"
 #include "device_registry.h"
 #include "message_handler.h"
+
+class BonjourServiceRegister;
 
 class AppController : public QObject
 {
