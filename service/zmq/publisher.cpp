@@ -13,7 +13,7 @@ Publisher::Publisher(ZMQContext* ctx, QObject* owner) : SocketBase(ctx, ZMQSocke
 bool Publisher::bind(int port) {
     QString port_value("*");
     if(port != 0)
-  	port_value = QString::number(port);
+        port_value = QString::number(port);
     _socket->bindTo(QString("tcp://*:%1").arg(port_value));
     
     char temp[255];
@@ -22,7 +22,7 @@ bool Publisher::bind(int port) {
     
     QStringList parts = QString::fromLatin1(temp).split(":");
     setPort(parts.last().toInt());
-        
+    
     return _port != 0;
 }
 
@@ -32,10 +32,10 @@ void Publisher::publishOnTopic(QString topic, QString content) {
     msg += content.toLocal8Bit();
     _socket->sendMessage(msg);
     
-//    qDebug() << "published on topic:" << topic << ":" << content;
+    //    qDebug() << "published on topic:" << topic << ":" << content;
 }
 
 
-    
+
 
 

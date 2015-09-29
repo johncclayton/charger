@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("Charger")
 
     MessageDialog {
         id: messageDialog
@@ -20,10 +20,10 @@ ApplicationWindow {
     
     menuBar: MenuBar {
         Menu {
-            title: qsTr("File")
+            title: qsTr("Devices")
             MenuItem {
-                text: qsTr("&Open")
-                onTriggered: console.log("Open action triggered");
+                text: qsTr("&Choose device")
+                onTriggered: console.log("Choose device triggered");
             }
             MenuItem {
                 text: qsTr("Exit")
@@ -32,11 +32,14 @@ ApplicationWindow {
         }
     }
     
-    MainForm {
-        anchors.fill: parent
-        button1.onClicked: messageDialog.show(qsTr("Woot"))
-        button2.onClicked: messageDialog.show(qsTr("Button 2 pressed"))
-    }
+//    MainForm {
+//        anchors.fill: parent
+//        button1.onClicked: messageDialog.show(qsTr("Woot"))
+//        button2.onClicked: messageDialog.show(qsTr("Button 2 pressed"))
+//    }
     
+    NetworkConfig {
+        anchors.fill: parent
+    }
 }
 

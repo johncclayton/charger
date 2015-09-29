@@ -16,7 +16,7 @@ MessageHandler::MessageHandler(nzmqt::ZMQContext* ctx, QObject *owner) : SocketB
 bool MessageHandler::bind(int port) {
     QString port_value("*");
     if(port != 0)
-	port_value = QString::number(port);
+        port_value = QString::number(port);
     _socket->bindTo(QString("tcp://*:%1").arg(port_value));
     
     char temp[255];
@@ -25,7 +25,7 @@ bool MessageHandler::bind(int port) {
     
     QStringList parts = QString::fromLatin1(temp).split(":");
     setPort(parts.last().toInt());
-        
+    
     return _port != 0;
 }
 

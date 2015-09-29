@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
         
     ClientMessagingController controller;
-    controller.init(20001, 2002);
+    controller.init();
     
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("comms", &controller);

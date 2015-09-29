@@ -27,19 +27,26 @@ class ClientMessagingController : public QObject
 {
     Q_OBJECT
 public:
+    enum State {
+        CS_DISCOVERY = 0,
+        CS_CONNECTED = 1
+    };
+    
+    Q_ENUMS(State)
+
     Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged);
+    Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged);
     
     explicit ClientMessagingController(QObject *parent = 0);
     virtual ~ClientMessagingController();
     
     void init(int pub_port = 0, int msg_port = 0);
     
-    enum State {
-        CS_DISCOVERY = 0,
-        CS_CONNECTED = 1
-    };
     
     MessageBus* messageBus() const { return _message_bus; }
+    
+    State state() const { return _state; }
+    void setState(State s) { _state = s; Q_EMIT stateChanged(s); }
 
 signals:
     void messageBusChanged();
@@ -68,8 +75,10 @@ private:
     RegisteredTypeResolver* _resolve_subscribe;
     
     MessageBus* _message_bus;
+    
+    State _state;
 };
 
-Q_DECLARE_METATYPE(ClientMessagingController::State)
+//Q_DECLARE_METATYPE(ClientMessagingController::State)
 
 #endif // TESTCONTROLLER_H

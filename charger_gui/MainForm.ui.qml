@@ -16,7 +16,7 @@ Item {
             id: button1
             text: qsTr("Press Me 1")
         }
-
+        
         Button {
             id: button2
             text: qsTr("Press Me 2")

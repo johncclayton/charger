@@ -7,8 +7,8 @@
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
 
-    int pub_port = -1;
-    int msg_port = -1;
+    int pub_port = 0;
+    int msg_port = 0;
     
     for(int index = 0; index < argc; ++index) {
         QString arg = app.arguments().at(index);

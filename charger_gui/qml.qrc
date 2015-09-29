@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MainForm.ui.qml</file>
+        <file>NetworkConfig.qml</file>
+        <file>NetworkConfigForm.ui.qml</file>
     </qresource>
 </RCC>
-
