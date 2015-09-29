@@ -13,8 +13,11 @@ MessageHandler::MessageHandler(nzmqt::ZMQContext* ctx, QObject *owner) : SocketB
             this, SLOT(message_received(QList<QByteArray>)));
 }
 
-bool MessageHandler::bind() {
-    _socket->bindTo("tcp://*:*");
+bool MessageHandler::bind(int port) {
+    QString port_value("*");
+    if(port != 0)
+	port_value = QString::number(port);
+    _socket->bindTo(QString("tcp://*:%1").arg(port_value));
     
     char temp[255];
     size_t value_len = 255;

@@ -20,7 +20,7 @@ public:
     int setPort(int port);
     int port() const;
     
-    virtual bool bind() = 0;
+    virtual bool bind(int port) = 0;
     
 signals:
     void port_changed(int port);

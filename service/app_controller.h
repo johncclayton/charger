@@ -24,7 +24,7 @@ public:
 signals:
     
 public slots:
-    int init();
+    int init(int pub_port = 0, int msg_port = 0);
 
     void register_pub_port(int new_port);
     void register_msg_port(int new_port);

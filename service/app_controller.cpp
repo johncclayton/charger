@@ -38,7 +38,7 @@ AppController::~AppController() {
     _ctx->stop();
 }
 
-int AppController::init() {
+int AppController::init(int pub_port, int msg_port) {
     try {
         // ZeroMQ to send / receive messages - requires a context.
         _ctx = createDefaultContext(this);
@@ -63,7 +63,7 @@ int AppController::init() {
                 this, SLOT(register_pub_port(int)));
                 
         // bind the publisher to cause it to find a local ephemeral port and publish it
-        if(!_pub->bind()) {
+        if(!_pub->bind(pub_port)) {
             qDebug() << "unable to bind the zmq publisher to its interface";
             return 1;
         }
@@ -72,7 +72,7 @@ int AppController::init() {
         connect(_msg_handler, SIGNAL(port_changed(int)),
                 this, SLOT(register_msg_port(int)));
         
-        if(!_msg_handler->bind()) {
+        if(!_msg_handler->bind(msg_port)) {
             qDebug() << "unable to bind the zmq message handler to its interface";
             return 2;
         }

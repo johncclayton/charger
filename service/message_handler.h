@@ -21,7 +21,7 @@ class MessageHandler : public SocketBase
     
 public:
     explicit MessageHandler(nzmqt::ZMQContext* ctx, QObject *parent = 0);
-    bool bind();    
+    bool bind(int port);    
     
 public slots:
     void message_received(QList<QByteArray> msg);
