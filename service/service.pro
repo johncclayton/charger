@@ -1,6 +1,9 @@
-TEMPLATE = lib
+TEMPLATE = app
 QT -= gui
 QT += network
+
+CONFIG += console
+CONFIG -= app_bundle
 
 OBJECTS_DIR=build/obj
 INCLUDEPATH += ../lib

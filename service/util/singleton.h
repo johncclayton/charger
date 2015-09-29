@@ -27,7 +27,7 @@ namespace FW
                 if (!_instance)
                 {
                     _instance = new T;
-                    static GlobalStaticDeleter<T> cleanup(_instance.load());
+                    static GlobalStaticDeleter<T> cleanup(_instance);
                     Q_UNUSED(cleanup)
                 }
             }

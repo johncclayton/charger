@@ -1,4 +1,6 @@
 #include <string>
+#include <QAtomicPointer>
+#include <QPair>
 
 #include "bonjourservicebrowser.h"
 #include "bonjourrecord.h"
