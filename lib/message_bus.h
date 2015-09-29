@@ -1,8 +1,11 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef MESSAGE_BUS_H
+#define MESSAGE_BUS_H
 
 #include <QObject>
-#include "nzmqt/nzmqt.hpp"
+
+namespace nzmqt {
+    class ZMQSocket;
+}
 
 class MessageBus : public QObject
 {
@@ -18,4 +21,4 @@ public slots:
     void notification(QList<QByteArray> msg);
 };
 
-#endif // MESSAGE_H
+#endif // MESSAGE_BUS_H

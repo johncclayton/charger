@@ -4,9 +4,9 @@
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #define HAS_QT_JSON
-#endif
-
+#else
 #include <serializer.h>
+#endif
 
 #include "icharger_controller.h"
 #include "usb/icharger_data.h"

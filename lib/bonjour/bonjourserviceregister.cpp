@@ -1,6 +1,5 @@
-#include "bonjourserviceregister.h"
-
-#include "bonjourrecord.h"
+#include "bonjour/bonjourserviceregister.h"
+#include "bonjour/bonjourrecord.h"
 
 #include <qendian.h>
 #include <QSocketNotifier>

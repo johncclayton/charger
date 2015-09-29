@@ -7,7 +7,11 @@
 
 #include "message_bus.h"
 #include "registeredtyperesolver.h"
-#include "nzmqt/nzmqt.hpp"
+
+namespace nzmqt {
+    class ZMQSocket;
+    class ZMQContext;
+}
 
 /**
  * @brief The ClientMessagingController class discovers the required zmq subcscription and
@@ -23,18 +27,23 @@ class ClientMessagingController : public QObject
 {
     Q_OBJECT
 public:
+    Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged);
+    
     explicit ClientMessagingController(QObject *parent = 0);
     virtual ~ClientMessagingController();
     
-    void init();
+    void init(int pub_port = 0, int msg_port = 0);
     
     enum State {
         CS_DISCOVERY = 0,
         CS_CONNECTED = 1
     };
+    
+    MessageBus* messageBus() const { return _message_bus; }
 
 signals:
-    void stateChanged(ClientMessagingController::State);    
+    void messageBusChanged();
+    void stateChanged(ClientMessagingController::State);
     
 public slots:
     void resolvedService(QString type, QHostInfo addr, int port);
@@ -42,7 +51,6 @@ public slots:
     void serviceRemoved(QString type);
         
 private:
-   
     nzmqt::ZMQSocket* createSubscriberSocket();
     nzmqt::ZMQSocket* createRequestSocket();
     

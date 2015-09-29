@@ -1,4 +1,5 @@
 #include <QDebug>
+#include "nzmqt/nzmqt.hpp"
 #include "message_bus.h"
 
 using namespace nzmqt;

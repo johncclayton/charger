@@ -1,7 +1,9 @@
 #include <QHostInfo>
 #include "client_controller.h"
+#include "nzmqt/nzmqt.hpp"
 
 using namespace nzmqt;
+
 const QString publisher_service("_charger-service-pub._tcp");
 const QString message_service("_charger-service-msg._tcp");
 
@@ -30,14 +32,22 @@ ClientMessagingController::~ClientMessagingController() {
     closeSubscribeSocket();
 }
 
-void ClientMessagingController::init() {
-    // kick off browsing for both service types
-    _resolve_message->init();
-    _resolve_subscribe->init();
-    
+void ClientMessagingController::init(int pub_port, int msg_port) {
     Q_EMIT stateChanged(CS_DISCOVERY);
-    
-    qDebug() << "listening...";
+
+    // kick off browsing for both service types but only when the ports are not specified.
+    if(pub_port == 0 || msg_port == 0) {
+        qDebug() << "listening...";
+        _resolve_message->init();
+        _resolve_subscribe->init();
+    } else {
+        qDebug() << QString("binding to localhost ports (you will need to have forwarded them appropriately through ssh, e.g. -L%1:<remote ip>:%2)...").arg(msg_port).arg(msg_port);
+        QHostInfo localhost = QHostInfo();
+        localhost.setHostName("localhost");
+        
+        resolvedService(message_service, localhost, msg_port);
+        resolvedService(publisher_service, localhost, pub_port);
+    }
 }
 
 void ClientMessagingController::closeMessagingHandler() {
@@ -46,23 +56,26 @@ void ClientMessagingController::closeMessagingHandler() {
         delete _message_bus;
         _message_bus = 0;
 
+        Q_EMIT messageBusChanged();
         Q_EMIT stateChanged(CS_DISCOVERY);
     }
 }
 
 void ClientMessagingController::closeRequestSocket() {
-    if(_reqresp_socket)
+    if(_reqresp_socket) {
         _reqresp_socket->deleteLater();
+        qDebug() << "req/resp socket destroyed";    
+    }
     _reqresp_socket = 0;
-    qDebug() << "req/resp socket destroyed";    
     closeMessagingHandler();
 }
 
 void ClientMessagingController::closeSubscribeSocket() {
-    if(_subscribe_socket)
+    if(_subscribe_socket) {
         _subscribe_socket->deleteLater();
+        qDebug() << "subscribe socket destroyed";    
+    }
     _subscribe_socket = 0;
-    qDebug() << "subscribe socket destroyed";    
     closeMessagingHandler();
 }
 
@@ -78,7 +91,7 @@ ZMQSocket* ClientMessagingController::createRequestSocket() {
 
 void ClientMessagingController::resolvedService(QString type, QHostInfo host, int port) {
     if (host.error() != QHostInfo::NoError) {
-        qDebug() << "For type:" << type << " the lookup failed:" << host.errorString();
+        qDebug() << "For type:" << type << "the lookup failed:" << host.errorString();
         return;
     }
     
@@ -94,11 +107,11 @@ void ClientMessagingController::resolvedService(QString type, QHostInfo host, in
     }
     
     QString addr = QString("tcp://%1:%2").arg(host.hostName()).arg(port);
-    qDebug() << "Connecting to:" << addr;
+    qDebug() << "Connecting to:" << addr << "for:" << type;
     s->connectTo(addr);
     
     if(isSubscriber)
-        s->subscribeTo("/`");
+        s->subscribeTo("/");
 
     checkIsMessageBusReady();
 }
@@ -124,5 +137,6 @@ void ClientMessagingController::checkIsMessageBusReady() {
     if(_reqresp_socket && _subscribe_socket) {
         _message_bus = new MessageBus(_subscribe_socket, _reqresp_socket, this);
         Q_EMIT stateChanged(CS_CONNECTED);
+        Q_EMIT messageBusChanged();
     }
 }

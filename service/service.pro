@@ -1,19 +1,16 @@
-TEMPLATE = app
+TEMPLATE = lib
 QT -= gui
 QT += network
 
 OBJECTS_DIR=build/obj
-
-CONFIG += console
-CONFIG -= app_bundle
-CONFIG += debug
+INCLUDEPATH += ../lib
+LIBS += ../lib/libcore.a
 
 SOURCES = \
     main.cpp \
     app_controller.cpp \
     device_registry.cpp \
     message_handler.cpp \
-    bonjour/bonjourserviceregister.cpp \
     icharger_controller.cpp \
     usb/icharger_data.cpp \
     usb/icharger_usb.cpp \
@@ -27,8 +24,6 @@ HEADERS = \
     device_registry.h \
     icharger_controller.h \
     message_handler.h \
-    bonjour\bonjourrecord.h \
-    bonjour/bonjourserviceregister.h \
     usb/icharger_usb.h \
     usb/icharger_data.h \
     usb/eventhandler.h \
@@ -37,7 +32,7 @@ HEADERS = \
     zmq/socketbase.h \
     zmq/publisher.h
 
-TARGET = service
+TARGET = charger
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0 
@@ -53,6 +48,7 @@ macx {
 }
 
 include (../3rdparty/nzmqt/nzmqt.pri)
+
 
 
 
