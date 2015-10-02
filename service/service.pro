@@ -38,16 +38,19 @@ HEADERS = \
 TARGET = charger
 
 unix:!macx {
-    INCLUDEPATH += ../3rdparty/build/include/libusb-1.0 
     INCLUDEPATH += /usr/include/qjson
-    LIBS += ../3rdparty/build/lib/libusb-1.0.a -L/usr/lib/arm-linux-gnueabihf -lzmq -ldns_sd -lrt -ludev -lqjson
+    INCLUDEPATH += ../3rdparty/build/include/libusb-1.0 
+    INCLUDEPATH += ../3rdparty/build/include 
+    LIBS += ../3rdparty/build/lib/libusb-1.0.a 
+    LIBS += ../3rdparty/build/lib/libzmq.a 
+    LIBS += ../3rdparty/build/lib/libsodium.a 
+    LIBS += -ldns_sd -lrt -ludev -lqjson 
 }
 
 macx {
     INCLUDEPATH += /usr/local/include 
-    INCLUDEPATH += /usr/local/include/qjson 
     INCLUDEPATH += /usr/local/include/libusb-1.0 
-    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq 
+    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq.so
 }
 
 include (../3rdparty/nzmqt/nzmqt.pri)

@@ -1,0 +1,11 @@
+Package: charger
+Version: 1.0-1
+Section: misc
+Priority: optional
+Architecture: all
+Depends: libqt4-network, libqjson0, libavahi-compat-libdnssd1, avahi-daemon
+Maintainer: John Clayton <john_clayton@me.com>
+Description: Provides a ZeroMQ/Bonjour service to the iCharger product line.
+ Charger is a tool that automatically discovers attached iCharger products and
+ makes controlling them easier.  It is NOT a product that's useful on its own
+ you must pair it with a front-end that can drive this server.
