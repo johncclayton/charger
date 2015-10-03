@@ -51,7 +51,7 @@ unix:!macx {
 macx {
     INCLUDEPATH += /usr/local/include 
     INCLUDEPATH += /usr/local/include/libusb-1.0 
-    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq.so
+    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq
 }
 
 include (../3rdparty/nzmqt/nzmqt.pri)
