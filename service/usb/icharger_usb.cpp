@@ -27,7 +27,7 @@
 #define HID_PACK_TYPE		1
 #define HID_PACK_MODBUS		2
 
-void error_exit(const char* msg, int rc, ...) {
+int error_print(const char* msg, int rc, ...) {
     char buffer[2048];
     memset(buffer, 0, sizeof(buffer));
     
@@ -38,7 +38,7 @@ void error_exit(const char* msg, int rc, ...) {
     
     printf("%s, %d/%s\r\n", buffer, rc, libusb_error_name(rc));
     
-    exit(1);
+    return rc;
 }
 
 usb_context::usb_context() : ctx(0), result(0) {
@@ -153,7 +153,7 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         if(r == LIBUSB_ERROR_TIMEOUT) {
             //printf("retrying...\r\n");
         } else if(r != 0) {
-            error_exit("an error was encountered during data transfer", r);
+            return error_print("an error was encountered during data transfer", r);
         }
         
         if(*total_transferred >= length)
