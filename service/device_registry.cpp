@@ -48,7 +48,7 @@ void DeviceRegistry::deactivate_device(int vendor, int product) {
                 qDebug() << "removing" << it.key() << "from list of registered devices";
                 
                 Q_EMIT device_deactivated(it.key());
-                _devices.erase(it);
+                it = _devices.erase(it);
                 
                 /* do not increment it */
             } else {
