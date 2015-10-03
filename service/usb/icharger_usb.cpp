@@ -62,9 +62,7 @@ icharger_usb::icharger_usb(libusb_device* d) :
 
 icharger_usb::~icharger_usb() {
     if(handle) {
-        qDebug() << "closing USB device handle";
         libusb_close(handle);
-        qDebug() << "closed USB device handle";
     }
 
     handle = 0;
