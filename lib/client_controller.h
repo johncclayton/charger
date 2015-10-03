@@ -29,8 +29,8 @@ class ClientMessagingController : public QObject
     Q_OBJECT
 public:
     enum State {
-        CS_DISCOVERY = 0,
-        CS_CONNECTED = 1
+        DISCOVERY = 0,
+        CONNECTED = 1
     };
     
     Q_ENUMS(State)
@@ -38,6 +38,8 @@ public:
     Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY onMessageBusChanged)
     Q_PROPERTY(State state READ state WRITE setState NOTIFY onStateChanged)
     Q_PROPERTY(ChargerState charger READ charger NOTIFY onChargerChanged)
+    Q_PROPERTY(QString hostname READ hostname NOTIFY onHostnameChanged)
+    Q_PROPERTY(bool connected READ connected NOTIFY onConnectedChanged)
     
     explicit ClientMessagingController(QObject *parent = 0);
     virtual ~ClientMessagingController();
@@ -54,6 +56,8 @@ signals:
     void onMessageBusChanged();
     void onChargerChanged();
     void onStateChanged(ClientMessagingController::State);
+    void onHostnameChanged(QString newName);
+    void onConnectedChanged();
     
 protected slots:
     void routeStatusUpdated(const ChannelStatus& status);
@@ -64,6 +68,10 @@ public slots:
     void serviceRemoved(QString type);
         
 private:
+    bool connected() const { return _state == CONNECTED; }
+    QString hostname() const { return _host; }
+    void setHostname(QString value) { _host = value; Q_EMIT onHostnameChanged(_host); }
+    
     nzmqt::ZMQSocket* createSubscriberSocket();
     nzmqt::ZMQSocket* createRequestSocket();
     
@@ -84,6 +92,8 @@ private:
     ChargerState* _charger_state;
     
     State _state;
+    
+    QString _host;
 };
 
 //Q_DECLARE_METATYPE(ClientMessagingController::State)

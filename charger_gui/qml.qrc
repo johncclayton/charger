@@ -5,5 +5,7 @@
         <file>NetworkConfigForm.ui.qml</file>
         <file>Channel.qml</file>
         <file>ChannelForm.ui.qml</file>
+        <file>Connecting.qml</file>
+        <file>ConnectingForm.ui.qml</file>
     </qresource>
 </RCC>

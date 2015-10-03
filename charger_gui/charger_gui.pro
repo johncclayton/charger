@@ -7,6 +7,7 @@ SOURCES += main.cpp
 RESOURCES += qml.qrc
 INCLUDEPATH += ../lib
 LIBS += ../lib/libcore.a
+TARGET = Charger
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0

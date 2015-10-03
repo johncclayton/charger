@@ -34,7 +34,7 @@ ClientMessagingController::~ClientMessagingController() {
 }
 
 void ClientMessagingController::init(int pub_port, int msg_port) {
-    Q_EMIT onStateChanged(CS_DISCOVERY);
+    Q_EMIT onStateChanged(DISCOVERY);
 
     // kick off browsing for both service types but only when the ports are not specified.
     if(pub_port == 0 || msg_port == 0) {
@@ -58,7 +58,7 @@ void ClientMessagingController::closeMessagingHandler() {
         _message_bus = 0;
 
         Q_EMIT onMessageBusChanged();
-        Q_EMIT onStateChanged(CS_DISCOVERY);
+        Q_EMIT onStateChanged(DISCOVERY);
     }
 }
 
@@ -107,6 +107,7 @@ void ClientMessagingController::resolvedService(QString type, QHostInfo host, in
         s = createRequestSocket();
     }
     
+    setHostname(host.hostName());
     QString addr = QString("tcp://%1:%2").arg(host.hostName()).arg(port);
     qDebug() << "Connecting to:" << addr << "for:" << type;
     s->connectTo(addr);
@@ -122,7 +123,6 @@ void ClientMessagingController::serviceResolutionError(QString type, int err) {
 }
 
 void ClientMessagingController::serviceRemoved(QString type) {
-    qDebug() << "type removed:" << type;   
     if(type == publisher_service) {
         closeSubscribeSocket();
     }
@@ -138,12 +138,13 @@ void ClientMessagingController::checkIsMessageBusReady() {
     if(_reqresp_socket && _subscribe_socket) {
         _message_bus = new MessageBus(_subscribe_socket, _reqresp_socket, this);
         
-        Q_EMIT onStateChanged(CS_CONNECTED);
-        Q_EMIT onMessageBusChanged();
-        
         // hook up the change signals from message bus to the charger state
         connect(_message_bus, SIGNAL(channelStatusUpdated(ChannelStatus)), 
                 this, SLOT(routeStatusUpdated(ChannelStatus)));
+
+        Q_EMIT onStateChanged(CONNECTED);
+        Q_EMIT onMessageBusChanged();
+        Q_EMIT onConnectedChanged();
     }
 }
 
