@@ -17,7 +17,8 @@ class BonjourServiceRegister;
 
 /**
  * @brief The AppController class is responsible for bringing all the back end server components
- * online and hooking them into a cohensive whole.  
+ * online and hooking them into a cohensive whole.  It's the puppet master - there is one of these
+ * instantiated from main and its job is to run the circus.  With bells on.
  * 
  * The AppController will ensure that the publisher and messaging end points are allocated
  * the right ports, usually ephemeral but they can be fixed by command line parameters.  The port
