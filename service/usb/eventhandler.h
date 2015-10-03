@@ -1,27 +1,29 @@
 #ifndef USB_EVENTHANDLER_H
 #define USB_EVENTHANDLER_H
 
-#include <QtCore/QObject>
-#include <QTimer>
+#include <QThread>
+
+#include "hotplug_adapter.h"
 
 struct libusb_context;
-class QThread;
 
-class UseQtEventDriver : public QObject
+class LibUsbEventAdapter : public QThread, private HotplugCallbackAdapter::Receiver
 {
     Q_OBJECT
 
 public:
-    UseQtEventDriver(libusb_context *context, QObject *parent = 0);
-    ~UseQtEventDriver();
+    LibUsbEventAdapter(libusb_context *context, QObject *parent = 0);
+    ~LibUsbEventAdapter();
     
-    libusb_context *context;
+    void run();
 
-public slots:
-    void handle();
+signals:
+    void hotplug_event(bool activated, int vendor, int product, QString sn);
 
 private:
-    QTimer* timer;
+    void callback(bool activation, int vendorId, int productId, QString sn);
+    
+    libusb_context *context;
 };
 
 #endif // USB_EVENTHANDLER_H

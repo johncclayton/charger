@@ -1,32 +1,45 @@
 #include <QDebug>
-#include <QtCore/QThread>
+#include <QThread>
+#include <QSharedPointer>
+
+#include <functional>
+#include <algorithm>
 
 #include "libusb.h"
 #include "eventhandler.h"
 
-UseQtEventDriver::UseQtEventDriver(libusb_context *context, QObject *parent) :
-    QObject(parent), context(context), timer(0)
+LibUsbEventAdapter::LibUsbEventAdapter(libusb_context *context, QObject *parent) :
+    QThread(parent), context(context)
 {
-    timer = new QTimer(this);
-    timer->setInterval(750);
-    
-    connect(timer, SIGNAL(timeout()), this, SLOT(handle()));
-    
-    timer->start();
 }
 
-UseQtEventDriver::~UseQtEventDriver() {
+LibUsbEventAdapter::~LibUsbEventAdapter() {
     qDebug() << "usb hotplug event driver destroyed";
 }
 
-void UseQtEventDriver::handle()
-{
-    struct timeval tv;
-    tv.tv_sec = 0;
-    tv.tv_usec = 750000;
-    
-    libusb_handle_events_timeout(this->context, &tv);
+void LibUsbEventAdapter::run() {
+    QSharedPointer<HotplugCallbackAdapter> adapter(new HotplugCallbackAdapter(this));
+
+    try {
+        adapter->init(context);
+        
+        while(true) {    
+            struct timeval tv;
+            tv.tv_sec = 0;
+            tv.tv_usec = 750000;
+            
+            libusb_handle_events_timeout(context, &tv);
+        }    
+    }
+    catch(...) {
+        qDebug() << "callback adapter threw an exception - its aborting";
+    }
 }
+
+void LibUsbEventAdapter::callback(bool activation, int vendorId, int productId, QString sn) {
+    Q_EMIT hotplug_event(activation, vendorId, productId, sn);
+}
+
 
 
 

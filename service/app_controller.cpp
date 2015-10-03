@@ -9,7 +9,6 @@
 #include <QDebug>
 
 #include "usb/icharger_usb.h"
-#include "usb/hotplug_adapter.h"
 #include "usb/eventhandler.h"
 
 #include "nzmqt/nzmqt.hpp"
@@ -23,9 +22,7 @@ using namespace std;
 AppController::AppController(QObject *parent) : QObject(parent), 
     _ctx(0),
     _pub(0), 
-    _hotplug_callback(0),
     _hotplug_handler(0),
-    _hotplug_thread(0),
     _registry(0),
     _msg_handler(0)
 {
@@ -33,8 +30,8 @@ AppController::AppController(QObject *parent) : QObject(parent),
 }
 
 AppController::~AppController() {    
-    _hotplug_thread->quit();
-    _hotplug_thread->deleteLater();    
+    _hotplug_handler->quit();
+    _hotplug_handler->deleteLater();    
     _ctx->stop();
 }
 
@@ -77,19 +74,13 @@ int AppController::init(int pub_port, int msg_port) {
             return 2;
         }
         
-        // Kick off a listener for USB hotplug events - so we keep our device list fresh
-        _hotplug_callback = new HotplugEventAdapter(_usb.ctx, this);
-        QObject::connect(_hotplug_callback, SIGNAL(hotplug_event(bool, int, int, QString)), 
-                         this, SLOT(notify_hotplug_event(bool, int, int, QString)));
-        
-        // Primitive libsusb event handler.  Needs it's own thread.
-        _hotplug_handler = new UseQtEventDriver(_usb.ctx);
-        
-        _hotplug_thread = new QThread(this);
-        QObject::connect(_hotplug_thread, SIGNAL(started()), _hotplug_callback, SLOT(init()));
-        _hotplug_handler->moveToThread(_hotplug_thread);
-        _hotplug_thread->start();
-        
+        // Kick off a listener for USB hotplug events - so we keep our device list fresh,
+        // this is a thread and it runs its own event loop internally.
+        _hotplug_handler = new LibUsbEventAdapter(_usb.ctx);
+        connect(_hotplug_handler, SIGNAL(hotplug_event(bool,int,int,QString)), 
+                this, SLOT(notify_hotplug_event(bool,int,int,QString)), Qt::QueuedConnection);
+        _hotplug_handler->start();
+               
         return 0;
     }
     

@@ -25,30 +25,35 @@ int hotplug_callback(struct libusb_context *ctx,
             sn = icharger_device->serial_number();    
         }
         
-        HotplugEventAdapter* obj = (HotplugEventAdapter*)(user_data);
+        HotplugCallbackAdapter* obj = (HotplugCallbackAdapter*)(user_data);
         obj->process_hotplug_event(event, desc.idVendor, desc.idProduct, sn);
     }
     
     return 0;
 }
 
-struct HotplugEventAdapter::Private {
+struct HotplugCallbackAdapter::Private {
     libusb_hotplug_callback_handle handle;
+    HotplugCallbackAdapter::Receiver* func;
     
     Private() : handle(0) {
         
     }
 };
 
-HotplugEventAdapter::HotplugEventAdapter(libusb_context* ctx, QObject *parent) : QObject(parent), 
-    _ctx(ctx), _p(new Private)
+HotplugCallbackAdapter::HotplugCallbackAdapter(Receiver* func) : _p(new Private)
 {
+    _p->func = func;
 }
 
-void HotplugEventAdapter::init() {
+void HotplugCallbackAdapter::init(libusb_context* ctx) {
     libusb_hotplug_callback_handle h;
     
-    int rc = libusb_hotplug_register_callback(_ctx,
+    Q_ASSERT(_p);
+    Q_ASSERT(_p->handle == 0);
+    Q_ASSERT(ctx != 0);
+    
+    int rc = libusb_hotplug_register_callback(ctx,
                                               (libusb_hotplug_event)(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED + LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT), 
                                               LIBUSB_HOTPLUG_ENUMERATE, 
                                               LIBUSB_HOTPLUG_MATCH_ANY, 
@@ -61,19 +66,23 @@ void HotplugEventAdapter::init() {
         _p->handle = h;
 }
 
-HotplugEventAdapter::~HotplugEventAdapter() {
+HotplugCallbackAdapter::~HotplugCallbackAdapter() {
     if(_p->handle) {
         libusb_hotplug_deregister_callback(NULL, _p->handle);
         qDebug() << "deregistered hotplug callback";
     }
+    
     delete _p;
     _p = 0;
 }
 
-void HotplugEventAdapter::process_hotplug_event(int event_type, int vendor, int product, QString sn) {
+void HotplugCallbackAdapter::process_hotplug_event(int event_type, int vendor, int product, QString sn) {
+    Q_ASSERT(_p);    
+    Q_ASSERT(_p->func);
+    
     if (LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED == event_type) {
-        hotplug_event(true, vendor, product, sn);        
+        _p->func->callback(true, vendor, product, sn);        
     } else if (LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT == event_type) {
-        hotplug_event(false, vendor, product, sn);
+        _p->func->callback(false, vendor, product, sn);
     }
 }

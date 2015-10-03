@@ -4,7 +4,6 @@
 #include <QObject>
 
 #include "usb/icharger_usb.h"
-#include "usb/hotplug_adapter.h"
 #include "usb/eventhandler.h"
 
 #include "nzmqt/nzmqt.hpp"
@@ -67,9 +66,7 @@ private:
     BonjourServiceRegister* _bonjour_msg;
     
     // handles usb hotplug events - see also notify_hotplug_event
-    HotplugEventAdapter* _hotplug_callback;
-    UseQtEventDriver* _hotplug_handler;
-    QThread* _hotplug_thread;
+    LibUsbEventAdapter* _hotplug_handler;
     
     // the internal device model - its really just a collection of stuff that can 
     // then be sent over the wire to listeners.  Events update this model and we
