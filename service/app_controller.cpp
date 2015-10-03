@@ -26,10 +26,10 @@ AppController::AppController(QObject *parent) : QObject(parent),
     _registry(0),
     _msg_handler(0)
 {
-//    startTimer(5000);
 }
 
 AppController::~AppController() {    
+    qDebug() << "app controller being destroyed";
     _hotplug_handler->quit();
     _hotplug_handler->deleteLater();    
     _ctx->stop();
@@ -97,13 +97,13 @@ void AppController::timerEvent(QTimerEvent *event) {
 void AppController::register_pub_port(int new_port) {
     Q_ASSERT(_bonjour_pub);
     _bonjour_pub->registerService("_charger-service-pub._tcp", new_port);   
-    qDebug() << "pub service now available on port:" << new_port;
+    qDebug() << "publisher service now available on port:" << new_port;
 }
 
 void AppController::register_msg_port(int new_port) {
     Q_ASSERT(_bonjour_msg);
     _bonjour_msg->registerService("_charger-service-msg._tcp", new_port);   
-    qDebug() << "message handling service is now available on port:" << new_port;
+    qDebug() << "messaging service now available on port:" << new_port;
 }
 
 void AppController::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
