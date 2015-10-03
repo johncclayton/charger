@@ -36,6 +36,8 @@ void DeviceRegistry::deactivate_device(int vendor, int product) {
     Q_ASSERT(vendor != 0);
     Q_ASSERT(product != 0);
 
+    QString key_to_remove;
+
     for(DeviceMap::iterator it = _devices.begin(); it != _devices.end(); ++it) {
         icharger_usb_ptr ptr = it.value()->device();
         if(ptr->vendorId() == vendor && ptr->productId() == product) {
@@ -46,12 +48,14 @@ void DeviceRegistry::deactivate_device(int vendor, int product) {
             QString sn = ptr->serial_number();
             if(sn.isNull() || sn.isEmpty()) {
 		qDebug() << "going to remove from list of registered devices";
-
-                _devices.remove(it.key());
-                Q_EMIT device_deactivated(it.key());
-
-                return;
+                key_to_remove = it.key();
+                break;
             }
         }
     }    
+
+    if(!key_to_remove.isNull()) {
+	_devices.remove(key_to_remove);
+        Q_EMIT device_deactivated(key_to_remove);
+    }
 }
