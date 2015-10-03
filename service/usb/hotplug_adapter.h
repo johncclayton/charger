@@ -14,7 +14,7 @@ class HotplugCallbackAdapter
 {
 public:
     struct Receiver {
-        void callback(bool activation, int vendorId, int productId, QString sn);
+        virtual void callback(bool activation, int vendorId, int productId, QString sn) = 0;
     };
 
     explicit HotplugCallbackAdapter(Receiver* func);

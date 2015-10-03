@@ -14,7 +14,7 @@ LibUsbEventAdapter::LibUsbEventAdapter(libusb_context *context, QObject *parent)
 }
 
 LibUsbEventAdapter::~LibUsbEventAdapter() {
-    qDebug() << "usb hotplug event driver destroyed";
+    qDebug() << "usb hotplug event adapter destroyed";
 }
 
 void LibUsbEventAdapter::run() {
