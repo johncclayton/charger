@@ -23,13 +23,42 @@ void LibUsbEventAdapter::run() {
     try {
         adapter->init(context);
         
-        while(true) {    
-            struct timeval tv;
-            tv.tv_sec = 0;
-            tv.tv_usec = 750000;
+        int completed = 0;
+        
+        retry:
+        
+        if(libusb_try_lock_events(context) == 0) {
+            completed = 0;
+            while(!completed) {
+                if(!libusb_event_handling_ok(context)) {
+                    libusb_unlock_events(context);
+                    goto retry;
+                }
+                    
+                struct timeval tv;
+                tv.tv_sec = 0;
+                tv.tv_usec = 750000;
+                
+                libusb_handle_events_timeout_completed(context, &tv, &completed);
+                
+                libusb_unlock_events(context);
+            }
+        } else {
+            // another thread is event handling...
+            libusb_lock_event_waiters(context);
             
-            libusb_handle_events_timeout(context, &tv);
-        }    
+            completed = 0;
+            while(!completed) {
+                if(!libusb_event_handler_active(context)) {
+                    libusb_unlock_event_waiters(context);
+                    goto retry;
+                }
+                
+                libusb_wait_for_event(context, NULL);
+            }
+            
+            libusb_unlock_event_waiters(context);
+        }
     }
     catch(...) {
         qDebug() << "callback adapter threw an exception - its aborting";
