@@ -66,7 +66,7 @@ private:
     BonjourServiceRegister* _bonjour_msg;
     
     // handles usb hotplug events - see also notify_hotplug_event
-    HotplugEventAdapter* _hotplug;
+    HotplugEventAdapter* _hotplug_callback;
     UseQtEventDriver* _hotplug_handler;
     QThread* _hotplug_thread;
     

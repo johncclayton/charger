@@ -16,7 +16,7 @@ UseQtEventDriver::UseQtEventDriver(libusb_context *context, QObject *parent) :
 }
 
 UseQtEventDriver::~UseQtEventDriver() {
-    timer->stop();
+    qDebug() << "usb hotplug event driver destroyed";
 }
 
 void UseQtEventDriver::handle()
@@ -24,6 +24,7 @@ void UseQtEventDriver::handle()
     struct timeval tv;
     tv.tv_sec = 0;
     tv.tv_usec = 750000;
+    
     libusb_handle_events_timeout(this->context, &tv);
 }
 

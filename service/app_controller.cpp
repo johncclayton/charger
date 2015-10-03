@@ -23,7 +23,7 @@ using namespace std;
 AppController::AppController(QObject *parent) : QObject(parent), 
     _ctx(0),
     _pub(0), 
-    _hotplug(0),
+    _hotplug_callback(0),
     _hotplug_handler(0),
     _hotplug_thread(0),
     _registry(0),
@@ -78,18 +78,18 @@ int AppController::init(int pub_port, int msg_port) {
         }
         
         // Kick off a listener for USB hotplug events - so we keep our device list fresh
-        _hotplug = new HotplugEventAdapter(this);
-        QObject::connect(_hotplug, SIGNAL(hotplug_event(bool, int, int, QString)), 
+        _hotplug_callback = new HotplugEventAdapter(_usb.ctx, this);
+        QObject::connect(_hotplug_callback, SIGNAL(hotplug_event(bool, int, int, QString)), 
                          this, SLOT(notify_hotplug_event(bool, int, int, QString)));
         
         // Primitive libsusb event handler.  Needs it's own thread.
-        _hotplug_handler = new UseQtEventDriver(_usb.ctx);
+        _hotplug_handler = new UseQtEventDriver(_usb.ctx, _hotplug_callback);
         
         _hotplug_thread = new QThread(this);
+        QObject::connect(_hotplug_thread, SIGNAL(started()), _hotplug_callback, SLOT(init()));
         _hotplug_handler->moveToThread(_hotplug_thread);
         _hotplug_thread->start();
-        _hotplug->init(_usb.ctx);
-     
+        
         return 0;
     }
     

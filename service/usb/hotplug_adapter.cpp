@@ -40,14 +40,15 @@ struct HotplugEventAdapter::Private {
     }
 };
 
-HotplugEventAdapter::HotplugEventAdapter(QObject *parent) : QObject(parent), _p(new Private)
+HotplugEventAdapter::HotplugEventAdapter(libusb_context* ctx, QObject *parent) : QObject(parent), 
+    _ctx(ctx), _p(new Private)
 {
 }
 
-void HotplugEventAdapter::init(void *ctx) {
+void HotplugEventAdapter::init() {
     libusb_hotplug_callback_handle h;
     
-    int rc = libusb_hotplug_register_callback((libusb_context *)ctx,
+    int rc = libusb_hotplug_register_callback(_ctx,
                                               (libusb_hotplug_event)(LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED + LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT), 
                                               LIBUSB_HOTPLUG_ENUMERATE, 
                                               LIBUSB_HOTPLUG_MATCH_ANY, 
@@ -61,9 +62,12 @@ void HotplugEventAdapter::init(void *ctx) {
 }
 
 HotplugEventAdapter::~HotplugEventAdapter() {
-    if(_p->handle)
+    if(_p->handle) {
         libusb_hotplug_deregister_callback(NULL, _p->handle);
+        qDebug() << "deregistered hotplug callback";
+    }
     delete _p;
+    _p = 0;
 }
 
 void HotplugEventAdapter::process_hotplug_event(int event_type, int vendor, int product, QString sn) {
