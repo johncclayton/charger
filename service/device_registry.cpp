@@ -45,8 +45,11 @@ void DeviceRegistry::deactivate_device(int vendor, int product) {
             // must be the one that died?
             QString sn = ptr->serial_number();
             if(sn.isNull() || sn.isEmpty()) {
+		qDebug() << "going to remove from list of registered devices";
+
                 _devices.remove(it.key());
                 Q_EMIT device_deactivated(it.key());
+
                 return;
             }
         }

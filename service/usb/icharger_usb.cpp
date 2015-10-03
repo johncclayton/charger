@@ -54,18 +54,25 @@ icharger_usb::icharger_usb(libusb_device* d) :
     handle(0),
     timeout_ms(1000)
 {
+    Q_ASSERT(handle == 0);
     int r = libusb_open(device, &handle);
     if(r != 0)
         handle = 0;
 }
 
 icharger_usb::~icharger_usb() {
-    if(handle)
+    if(handle) {
+        qDebug() << "closing USB device handle";
         libusb_close(handle);
+        qDebug() << "closed USB device handle";
+    }
+
     handle = 0;
 }
 
 int icharger_usb::acquire() {
+    Q_ASSERT(handle != 0);
+
     int r = libusb_kernel_driver_active(handle, 0);
     if(r == 1) {
         int r = libusb_detach_kernel_driver(handle, 0);
@@ -73,6 +80,8 @@ int icharger_usb::acquire() {
             return r;
     }
     
+    Q_ASSERT(handle != 0);
+
     int configuration = 0;
     r = libusb_get_configuration(handle, &configuration);
     if(r != 0) {
@@ -97,23 +106,27 @@ int icharger_usb::acquire() {
 //}
 
 int icharger_usb::vendorId() const {
+    Q_ASSERT(device != 0);
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(device, &desc);
     return desc.idVendor;    
 }
 
 int icharger_usb::productId() const {
+    Q_ASSERT(device != 0);
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(device, &desc);
     return desc.idProduct;    
 }
 
 QString icharger_usb::serial_number() { 
+    Q_ASSERT(device != 0);
     struct libusb_device_descriptor desc;
     libusb_get_device_descriptor(device, &desc);
     
     unsigned char serial_number[256];
     memset(serial_number, 0, sizeof(serial_number));
+    Q_ASSERT(handle != 0);
     int bytes = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
     if(bytes <= 0) {
         qDebug() << "unable to obtain serial number of device";
@@ -139,7 +152,8 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         
     while(1) {
         int transferred = 0;
-        
+       
+	Q_ASSERT(handle != 0); 
         r = libusb_interrupt_transfer(
                     handle,
                     endpoint_address,

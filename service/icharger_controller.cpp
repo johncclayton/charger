@@ -101,10 +101,13 @@ iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger
 }
 
 iCharger_DeviceController::~iCharger_DeviceController() {
-    qDebug() << "bye bye device controller";
+    qDebug() << "bye bye device controller - stopping timers";
+    _timer->deleteLater();
+    _timer = 0;
 }
 
 void iCharger_DeviceController::handleTimeout() {
+    qDebug() << "timer fired";
     // fetch device status and publish on the bus
     DeviceOnlyJson device;
     int r = _device->get_device_only(&device);

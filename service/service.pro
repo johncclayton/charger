@@ -4,6 +4,7 @@ QT += network
 
 CONFIG += console
 CONFIG -= app_bundle
+CONFIG += debug
 
 OBJECTS_DIR=build/obj
 INCLUDEPATH += ../lib
