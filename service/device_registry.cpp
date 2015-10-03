@@ -34,18 +34,28 @@ void DeviceRegistry::deactivate_device(int vendor, int product) {
     Q_ASSERT(vendor != 0);
     Q_ASSERT(product != 0);
 
-    for(DeviceMap::iterator it = _devices.begin(); it != _devices.end(); ++it) {
+    for(DeviceMap::iterator it = _devices.begin(); it != _devices.end(); /* nothing - see below */) {
         icharger_usb_ptr ptr = it.value()->device();
+        Q_ASSERT(ptr);
+        Q_ASSERT(ptr.data());
+            
         if(ptr->vendorId() == vendor && ptr->productId() == product) {
             // test if the device is open - do this by asking for its serial number - if this fails, it
             // must be the one that died?
             QString sn = ptr->serial_number();
+            
             if(sn.isNull() || sn.isEmpty()) {
                 qDebug() << "removing" << it.key() << "from list of registered devices";
+                
                 Q_EMIT device_deactivated(it.key());
-                _devices.remove(it.key());
-                return;
+                _devices.erase(it);
+                
+                /* do not increment it */
+            } else {
+                ++it;
             }
+        } else {
+            ++it;
         }
     }    
 }
