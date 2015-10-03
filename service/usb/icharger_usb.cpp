@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QThread>
 
 #include <stdarg.h>
 #include <memory.h>
@@ -42,11 +43,11 @@ int error_print(const char* msg, int rc, ...) {
 }
 
 usb_context::usb_context() : ctx(0), result(0) {
-      result = libusb_init(&ctx);
+    result = libusb_init(&ctx);
 }
 
 usb_context::~usb_context() {
-	libusb_exit(ctx);
+    libusb_exit(ctx);
 }
 
 icharger_usb::icharger_usb(libusb_device* d) : 
@@ -63,30 +64,31 @@ icharger_usb::icharger_usb(libusb_device* d) :
 icharger_usb::~icharger_usb() {
     if(handle) {
         libusb_close(handle);
+        handle = 0;
     }
-
-    handle = 0;
 }
 
 int icharger_usb::acquire() {
     Q_ASSERT(handle != 0);
-
+    
     int r = libusb_kernel_driver_active(handle, 0);
-    if(r == 1) {
+    if(r == 1 /* yup its attached */) {
         int r = libusb_detach_kernel_driver(handle, 0);
         if(r != 0)
             return r;
     }
     
     Q_ASSERT(handle != 0);
-
+    
     int configuration = 0;
     r = libusb_get_configuration(handle, &configuration);
     if(r != 0) {
         printf("cannot obtain the current configuration: %d\r\n", r);
         return r;
     }
-        
+    
+    Q_ASSERT(handle != 0);
+    
     r = libusb_claim_interface(handle, 0);
     if(r < 0)
         return r;
@@ -100,7 +102,7 @@ int icharger_usb::acquire() {
 //        printf("%2d: %2x %c\r\n", i, data[i], data[i]);
 //    }
 //    printf("----\r\n");
-    
+
 //}
 
 int icharger_usb::vendorId() const {
@@ -147,11 +149,14 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         total_transferred = &temp_total;
     
     int bytes_transferred = 0;
-        
+    
     while(1) {
         int transferred = 0;
-       
-	Q_ASSERT(handle != 0); 
+        
+        if(handle == 0) {
+           return LIBUSB_ERROR_NO_DEVICE;
+        }
+        
         r = libusb_interrupt_transfer(
                     handle,
                     endpoint_address,
@@ -163,7 +168,10 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         *total_transferred += transferred;
         
         if(r == LIBUSB_ERROR_TIMEOUT) {
-            //printf("retrying...\r\n");
+            // wait for a tiny bit and give it another shot...
+            QThread::currentThread()->msleep(10);
+        } else if(r == LIBUSB_ERROR_NO_DEVICE) {
+            return r;
         } else if(r != 0) {
             return error_print("an error was encountered during data transfer", r);
         }
@@ -195,7 +203,7 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
     
     for(int i = 0; i < data[HID_PACK_LEN] - 3; i++)
         data[HID_PACK_MODBUS + 1 + i] = input[i];
-
+    
     // ask the iCharger to send back the registers
     int r = usb_data_transfer(END_POINT_ADDRESS_WRITE, data, sizeof(data));
     if(r == 0) {
@@ -266,7 +274,7 @@ ModbusRequestError icharger_usb::read_request(char func_code, int base_addr, int
         read_data_registers read_req(base_addr, num_registers);
         read_req.quantity_to_read.high = 0;
         read_req.quantity_to_read.low = num_registers % READ_REG_COUNT_MAX;
-               
+        
         r = modbus_request(func_code, (char *)&read_req, dest);
         if(r != MB_EOK)
             return r;
@@ -353,25 +361,25 @@ ModbusRequestError icharger_usb::get_system_storage(system_storage* output) {
 }
 
 ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramType program, int mem_index) {
-	u16 data[5];
-
-	switch(action) {
-	case ORDER_RUN:
-		data[0] = program;
-		data[1] = mem_index;
-		data[2] = (int)ch;
-		data[3] = VALUE_ORDER_KEY; 
-		data[4] = action;
-		return write_request(REG_SEL_OP, 5, (char *)data);
+    u16 data[5];
+    
+    switch(action) {
+    case ORDER_RUN:
+        data[0] = program;
+        data[1] = mem_index;
+        data[2] = (int)ch;
+        data[3] = VALUE_ORDER_KEY; 
+        data[4] = action;
+        return write_request(REG_SEL_OP, 5, (char *)data);
         
-	case ORDER_STOP:
-		data[0] = VALUE_ORDER_KEY;
-		data[1] = action;	
-		return write_request(REG_ORDER_KEY, 2, (char *)data);
+    case ORDER_STOP:
+        data[0] = VALUE_ORDER_KEY;
+        data[1] = action;	
+        return write_request(REG_ORDER_KEY, 2, (char *)data);
         
     default:
         return MB_EILLFUNCTION;
-	}
+    }
 }
 
 charger_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, int product, QString serial) {
