@@ -23,6 +23,11 @@ typedef QList<icharger_usb_ptr> charger_list;
 #define ICHARGER_VENDOR_ID 0x483
 #define ICHARGER_PRODUCT_4010_DUO 0x5751
 
+/**
+ * @brief The usb_context struct is a simple RAII wrapper around the libusb_context - its expected
+ * that there is only a single one of these in the app.  
+ * @see AppController.
+ */
 struct usb_context { 
 	usb_context();
 	~usb_context();
@@ -35,6 +40,11 @@ struct usb_context {
 	}
 };
 
+/**
+ * @brief The icharger_usb struct is the actual device controller - it implements the required
+ * MODBUS protocol over USB-HID by using libusb.  It is instantiated after the DeviceRegistry
+ * uses the all_chargers method to find a recognized charger.
+ */
 struct icharger_usb {
     icharger_usb(libusb_device* d);
     ~icharger_usb();

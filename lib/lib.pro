@@ -27,7 +27,8 @@ HEADERS += \
     client_controller.h \
     message_bus.h \
     channel_status.h \
-    charger_state.h
+    charger_state.h \
+    device_info.h
 
 SOURCES += \
     bonjour/bonjourservicebrowser.cpp \
@@ -37,7 +38,8 @@ SOURCES += \
     client_controller.cpp \
     message_bus.cpp \
     channel_status.cpp \
-    charger_state.cpp
+    charger_state.cpp \
+    device_info.cpp
 
 include (../3rdparty/nzmqt/nzmqt.pri)
 

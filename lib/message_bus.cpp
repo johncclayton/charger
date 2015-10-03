@@ -32,6 +32,9 @@ void MessageBus::notification(QList<QByteArray> msg) {
         channel.setFromJson(data);
         Q_EMIT channelStatusUpdated(channel);
     } else if(topic.startsWith("/icharger/device")) {
-        
+        QByteArray data = msg.at(1);
+        DeviceInfo info;
+        info.setFromJson(data);
+        Q_EMIT deviceInfoUpdated(info);
     }
 }

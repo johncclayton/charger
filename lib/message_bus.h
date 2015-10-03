@@ -2,6 +2,7 @@
 #define MESSAGE_BUS_H
 
 #include <QObject>
+#include "device_info.h"
 #include "channel_status.h"
 
 namespace nzmqt {
@@ -17,6 +18,7 @@ public:
     
 signals:
     void channelStatusUpdated(const ChannelStatus&);
+    void deviceInfoUpdated(const DeviceInfo&);    
     
 public slots:
     void message(QList<QByteArray> msg);

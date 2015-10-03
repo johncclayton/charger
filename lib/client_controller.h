@@ -35,8 +35,8 @@ public:
     
     Q_ENUMS(State)
 
-    Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged)
-    Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY onMessageBusChanged)
+    Q_PROPERTY(State state READ state WRITE setState NOTIFY onStateChanged)
     Q_PROPERTY(ChargerState charger READ charger NOTIFY onChargerChanged)
     
     explicit ClientMessagingController(QObject *parent = 0);
@@ -48,12 +48,15 @@ public:
     ChargerState* charger() const { return _charger_state; }
     
     State state() const { return _state; }
-    void setState(State s) { _state = s; Q_EMIT stateChanged(s); }
+    void setState(State s) { _state = s; Q_EMIT onStateChanged(s); }
 
 signals:
-    void messageBusChanged();
-    void stateChanged(ClientMessagingController::State);
+    void onMessageBusChanged();
     void onChargerChanged();
+    void onStateChanged(ClientMessagingController::State);
+    
+protected slots:
+    void routeStatusUpdated(const ChannelStatus& status);
     
 public slots:
     void resolvedService(QString type, QHostInfo addr, int port);

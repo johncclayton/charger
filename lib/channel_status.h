@@ -9,6 +9,7 @@ class ChannelStatus : public QObject, private QJsonDocument
 {
     Q_OBJECT
     Q_PROPERTY(quint8 channel READ channel WRITE setChannel NOTIFY onChannelChanged)
+    
 public:
     explicit ChannelStatus(QObject *parent = 0);
     

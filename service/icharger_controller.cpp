@@ -9,6 +9,7 @@
 #endif
 
 #include "icharger_controller.h"
+#include "icharger_message_keys.h"
 #include "usb/icharger_data.h"
 
 #ifdef HAS_QT_JSON
@@ -37,12 +38,12 @@ struct ChannelStatusJson : public channel_status {
 QByteArray DeviceOnlyJson::toJson() const {
     QVariantMap data;
     
-    data["id"] = device_id.value;
-    data["sn"] = QString::fromLatin1((const char*)device_sn, 12).trimmed();
-    data["sw_ver"] = (float)hw_version.value / 10;
-    data["sw_ver"] = (float)sw_version.value / 10;
-    data["ch1_state"] = ch1_status.value;
-    data["ch2_state"] = ch2_status.value;
+    data[STR_DEVICE_ONLY_ID] = device_id.value;
+    data[STR_DEVICE_ONLY_SERIAL_NUMBER] = QString::fromLatin1((const char*)device_sn, 12).trimmed();
+    data[STR_DEVICE_ONLY_HW_VERSION] = (float)hw_version.value / 10;
+    data[STR_DEVICE_ONLY_SW_VERSION] = (float)sw_version.value / 10;
+    data[STR_DEVICE_ONLY_CH1_STATUS] = ch1_status.value;
+    data[STR_DEVICE_ONLY_CH2_STATUS] = ch2_status.value;
  
     return makeJsonByteArray(data);
 }

@@ -8,8 +8,12 @@ ChannelStatus::ChannelStatus(QObject *parent) : QObject(parent) {
 }
 
 void ChannelStatus::setFromJson(QByteArray data) {
+    int eChannel = channel();
+    
     setObject( QJsonDocument::fromJson(data).object() );
-    Q_EMIT onChannelChanged(channel());
+    
+    if(eChannel != channel())
+        Q_EMIT onChannelChanged(channel());
 }
 
 quint8 ChannelStatus::channel() const {
