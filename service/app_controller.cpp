@@ -50,9 +50,9 @@ int AppController::init(int pub_port, int msg_port) {
 
         _registry = new DeviceRegistry(_usb.ctx, _pub, this);
         
-        QObject::connect(_registry, SIGNAL(device_activated(QString)),
+        connect(_registry, SIGNAL(device_activated(QString)),
                          this, SLOT(device_added(QString)));
-        QObject::connect(_registry, SIGNAL(device_deactivated(QString)),
+        connect(_registry, SIGNAL(device_deactivated(QString)),
                          this, SLOT(device_removed(QString)));
                
         // Respond to changes to the publisher port
