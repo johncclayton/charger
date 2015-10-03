@@ -26,7 +26,7 @@ AppController::AppController(QObject *parent) : QObject(parent),
     _registry(0),
     _msg_handler(0)
 {
-    startTimer(5000);
+//    startTimer(5000);
 }
 
 AppController::~AppController() {    
@@ -92,21 +92,24 @@ int AppController::init(int pub_port, int msg_port) {
 
 void AppController::timerEvent(QTimerEvent *event) {
     Q_UNUSED(event);
-	// TODO: spit out stats.
 }
 
 void AppController::register_pub_port(int new_port) {
+    Q_ASSERT(_bonjour_pub);
     _bonjour_pub->registerService("_charger-service-pub._tcp", new_port);   
     qDebug() << "pub service now available on port:" << new_port;
 }
 
 void AppController::register_msg_port(int new_port) {
+    Q_ASSERT(_bonjour_msg);
     _bonjour_msg->registerService("_charger-service-msg._tcp", new_port);   
     qDebug() << "message handling service is now available on port:" << new_port;
 }
 
 void AppController::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
-    qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn << ", registry:" << _registry;
+    Q_ASSERT(_registry);
+
+    qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
         _registry->activate_device(vendor, product, sn);
     else

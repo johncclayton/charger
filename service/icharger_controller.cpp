@@ -107,7 +107,6 @@ iCharger_DeviceController::~iCharger_DeviceController() {
 }
 
 void iCharger_DeviceController::handleTimeout() {
-    qDebug() << "timer fired";
     // fetch device status and publish on the bus
     DeviceOnlyJson device;
     int r = _device->get_device_only(&device);
