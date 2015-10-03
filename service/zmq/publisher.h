@@ -6,6 +6,12 @@
 #include <QObject>
 #include <QSharedPointer>
 
+/**
+ * @brief The Publisher class is responsible for creating and binding the publisher ZeroMQ socket as
+ * well as providing a public facing service that publishes messages.  The publisher doesn't define the
+ * message format on the wire - it simply encodes messages into a QByteArray as <topic> + <data>.
+ * @see publishOnTopic
+ */
 class Publisher : public SocketBase
 {
     Q_OBJECT

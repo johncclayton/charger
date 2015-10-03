@@ -18,6 +18,22 @@ ApplicationWindow {
         }
     }
     
+    Channel {
+        id: channelForm1
+        x: 0
+        y: 10
+        width: parent.width / 2
+        height: 269
+    }
+    
+    Channel {
+        id: channelForm2
+        x: parent.width / 2
+        y: 10
+        width: parent.width / 2
+        height: 269
+    }
+    
     menuBar: MenuBar {
         Menu {
             title: qsTr("Devices")
@@ -32,14 +48,5 @@ ApplicationWindow {
         }
     }
     
-//    MainForm {
-//        anchors.fill: parent
-//        button1.onClicked: messageDialog.show(qsTr("Woot"))
-//        button2.onClicked: messageDialog.show(qsTr("Button 2 pressed"))
-//    }
-    
-    NetworkConfig {
-        anchors.fill: parent
-    }
 }
 

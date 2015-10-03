@@ -15,6 +15,25 @@
 
 class BonjourServiceRegister;
 
+/**
+ * @brief The AppController class is responsible for bringing all the back end server components
+ * online and hooking them into a cohensive whole.  
+ * 
+ * The AppController will ensure that the publisher and messaging end points are allocated
+ * the right ports, usually ephemeral but they can be fixed by command line parameters.  The port
+ * numbers are then publishing using Bonjour.
+ * 
+ * The AppController will also run a USB hotplug controller in another thread - so that we can 
+ * respond to plug events and attempt to instantiate the right USB code to take care of the
+ * device that has been found (only if we know what the heck it is of course).
+ * 
+ * Devices that are recognized are give to the DeviceRegistry - its responsible for keeping tracking
+ * of a unique ID per connected device, and for holding onto a pointer to both the libusb_device 
+ * object and a piece of code that drives it - e.g. for iCharger 4010 DUO you'd expect to see a single
+ * libusb_device* object as well as an instance of iCharger_DeviceController.
+ * 
+ * Devices that are removed will be instanty removed from the DeviceRegistry.
+ */
 class AppController : public QObject
 {
     Q_OBJECT

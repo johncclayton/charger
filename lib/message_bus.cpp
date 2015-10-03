@@ -20,15 +20,21 @@ MessageBus::~MessageBus() {
 }
 
 void MessageBus::message(QList<QByteArray> msg) {
-    qDebug() << "message:";
-    foreach(QByteArray a, msg) {
-        qDebug() << a;
-    }
+    Q_UNUSED(msg);
 }
 
 void MessageBus::notification(QList<QByteArray> msg) {
-    qDebug() << "notification:";
-    foreach(QByteArray a, msg) {
-        qDebug() << a;
+    QString topic = QString::fromUtf8(msg.at(0));
+    
+    if(topic.startsWith("/icharger/channel/")) {
+        QByteArray data = msg.at(1);
+        ChannelStatus channel;
+        channel.setFromJson(data);
+        Q_EMIT channelStatusUpdated(channel);
+    } else if(topic.startsWith("/icharger/device")) {
+        QByteArray data = msg.at(1);
+        DeviceInfo info;
+        info.setFromJson(data);
+        Q_EMIT deviceInfoUpdated(info);
     }
 }

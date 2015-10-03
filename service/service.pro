@@ -20,7 +20,7 @@ SOURCES = \
     usb/eventhandler.cpp \
     usb/hotplug_adapter.cpp \
     zmq/socketbase.cpp \
-    zmq/publisher.cpp
+    zmq/publisher.cpp 
 
 HEADERS = \ 
     app_controller.h \
@@ -33,7 +33,7 @@ HEADERS = \
     usb/hotplug_adapter.h \
     util/singleton.h \
     zmq/socketbase.h \
-    zmq/publisher.h
+    zmq/publisher.h 
 
 TARGET = charger
 

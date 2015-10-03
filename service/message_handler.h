@@ -13,7 +13,8 @@
  * GUI apps talk to this sucker.
  * 
  * This class is also (indirectly) responsible for translating the underlying data structures into easier 
- * to consume JSON messages.
+ * to consume JSON messages before they go onto the wire. 
+ * @see device_only, channel_status, system_storage 
  */
 class MessageHandler : public SocketBase
 {
