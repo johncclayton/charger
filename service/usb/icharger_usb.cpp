@@ -5,6 +5,7 @@
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "usb/icharger_usb.h"
 
@@ -169,7 +170,7 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         
         if(r == LIBUSB_ERROR_TIMEOUT) {
             // wait for a tiny bit and give it another shot...
-            QThread::currentThread()->msleep(10);
+            usleep(10000);
         } else if(r == LIBUSB_ERROR_NO_DEVICE) {
             return r;
         } else if(r != 0) {
