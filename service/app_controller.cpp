@@ -83,7 +83,7 @@ int AppController::init(int pub_port, int msg_port) {
                          this, SLOT(notify_hotplug_event(bool, int, int, QString)));
         
         // Primitive libsusb event handler.  Needs it's own thread.
-        _hotplug_handler = new UseQtEventDriver(_usb.ctx, _hotplug_callback);
+        _hotplug_handler = new UseQtEventDriver(_usb.ctx);
         
         _hotplug_thread = new QThread(this);
         QObject::connect(_hotplug_thread, SIGNAL(started()), _hotplug_callback, SLOT(init()));
