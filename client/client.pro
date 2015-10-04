@@ -4,9 +4,9 @@ QT += network
 CONFIG += staticlib
 
 TEMPLATE = lib
-TARGET = core
+TARGET = client
 
-INCLUDEPATH += $$PWD/.. ../service ../lib
+INCLUDEPATH += $$PWD $$PWD/.. ../service ../client
 
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
@@ -19,10 +19,6 @@ macx {
 }
 
 HEADERS += \
-    bonjour/bonjourrecord.h \
-    bonjour/bonjourservicebrowser.h \
-    bonjour/bonjourserviceresolver.h \
-    bonjour/bonjourserviceregister.h \
     registeredtyperesolver.h \
     client_controller.h \
     message_bus.h \
@@ -31,9 +27,6 @@ HEADERS += \
     device_info.h
 
 SOURCES += \
-    bonjour/bonjourservicebrowser.cpp \
-    bonjour/bonjourserviceresolver.cpp \
-    bonjour/bonjourserviceregister.cpp \
     registeredtyperesolver.cpp \
     client_controller.cpp \
     message_bus.cpp \

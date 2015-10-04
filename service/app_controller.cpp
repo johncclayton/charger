@@ -14,7 +14,7 @@
 #include "nzmqt/nzmqt.hpp"
 #include "zmq/publisher.h"
 
-#include "bonjour/bonjourserviceregister.h"
+#include "bonjourserviceregister.h"
 
 using namespace nzmqt;
 using namespace std;

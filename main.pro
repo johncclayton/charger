@@ -1,12 +1,12 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-SUBDIRS = lib \ 
+SUBDIRS = bonjour \
+          messaging \
+          client \  
           service \ 
-          charger_gui \
-          tester
+          charger_gui 
 
-service.depends = lib
-charger_gui.depends = lib
-tester.depends = lib
-
+client.depends = bonjour messaging
+service.depends = bonjour messaging
+charger_gui.depends = client

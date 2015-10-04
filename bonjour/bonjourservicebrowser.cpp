@@ -5,7 +5,7 @@
 #include "bonjourservicebrowser.h"
 #include "bonjourrecord.h"
 
-#include "util/singleton.h"
+#include "singleton.h"
 
 #include <QSocketNotifier>
 #include <QCoreApplication>

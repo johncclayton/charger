@@ -5,8 +5,12 @@ QT += qml quick widgets
 
 SOURCES += main.cpp 
 RESOURCES += qml.qrc
-INCLUDEPATH += ../lib
-LIBS += ../lib/libcore.a
+INCLUDEPATH += ../client
+INCLUDEPATH += ../bonjour
+INCLUDEPATH += ../messaging
+LIBS += ../client/libclient.a
+LIBS += ../messaging/libmessaging.a
+LIBS += ../bonjour/libbonjour.a
 TARGET = Charger
 
 unix:!macx {

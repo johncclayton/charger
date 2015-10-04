@@ -7,8 +7,11 @@ CONFIG -= app_bundle
 CONFIG += debug
 
 OBJECTS_DIR=build/obj
-INCLUDEPATH += ../lib
-LIBS += ../lib/libcore.a
+
+INCLUDEPATH += ../bonjour 
+INCLUDEPATH += ../messaging
+LIBS += ../bonjour/libbonjour.a 
+LIBS += ../messaging/libmessaging.a
 
 SOURCES = \
     main.cpp \
@@ -32,7 +35,6 @@ HEADERS = \
     usb/icharger_data.h \
     usb/eventhandler.h \
     usb/hotplug_adapter.h \
-    util/singleton.h \
     zmq/socketbase.h \
     zmq/publisher.h 
 
