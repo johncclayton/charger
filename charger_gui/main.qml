@@ -22,7 +22,17 @@ ApplicationWindow {
 
     Connecting {
         anchors.fill: parent
-        cancelButton.onClicked: Qt.quit()
+        
+        cancelButton.onClicked: {
+            if(connected) {
+                // TODO: Device Request + Selection
+                // lets ask the system for all the device information, then we move
+                // onto device selection - which is automatic if there's only a single device.
+            } else {
+                Qt.quit()
+            }
+        }
+        
     }    
 }
 

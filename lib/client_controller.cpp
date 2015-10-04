@@ -12,6 +12,7 @@ ClientMessagingController::ClientMessagingController(QObject *parent) : QObject(
     _ctx = createDefaultContext(this);
     _ctx->start();
     
+    _pub_port = _msg_port = 0;
     _message_bus = 0;
     _charger_state = new ChargerState(this);
     _reqresp_socket = 0;
@@ -34,7 +35,7 @@ ClientMessagingController::~ClientMessagingController() {
 }
 
 void ClientMessagingController::init(int pub_port, int msg_port) {
-    Q_EMIT onStateChanged(DISCOVERY);
+    setState(DISCOVERY);
 
     // kick off browsing for both service types but only when the ports are not specified.
     if(pub_port == 0 || msg_port == 0) {
@@ -57,8 +58,9 @@ void ClientMessagingController::closeMessagingHandler() {
         delete _message_bus;
         _message_bus = 0;
 
-        Q_EMIT onMessageBusChanged();
-        Q_EMIT onStateChanged(DISCOVERY);
+        Q_EMIT messageBusChanged();
+
+        setState(DISCOVERY);
     }
 }
 
@@ -95,19 +97,22 @@ void ClientMessagingController::resolvedService(QString type, QHostInfo host, in
         qDebug() << "For type:" << type << "the lookup failed:" << host.errorString();
         return;
     }
+
+    setHostname(host.hostName());
     
     bool isSubscriber = false;
     ZMQSocket* s = 0;
     if(type == publisher_service) {
         closeSubscribeSocket();
         s = createSubscriberSocket();
+        setPublishPort(port);
         isSubscriber = true;
     } else if(type == message_service) {
         closeRequestSocket();
         s = createRequestSocket();
+        setMessagePort(port);
     }
     
-    setHostname(host.hostName());
     QString addr = QString("tcp://%1:%2").arg(host.hostName()).arg(port);
     qDebug() << "Connecting to:" << addr << "for:" << type;
     s->connectTo(addr);
@@ -142,9 +147,9 @@ void ClientMessagingController::checkIsMessageBusReady() {
         connect(_message_bus, SIGNAL(channelStatusUpdated(ChannelStatus)), 
                 this, SLOT(routeStatusUpdated(ChannelStatus)));
 
-        Q_EMIT onStateChanged(CONNECTED);
-        Q_EMIT onMessageBusChanged();
-        Q_EMIT onConnectedChanged();
+        setState(CONNECTED);
+        
+        Q_EMIT messageBusChanged();
     }
 }
 
@@ -153,4 +158,33 @@ void ClientMessagingController::routeStatusUpdated(const ChannelStatus& status) 
         _charger_state->setCh1(status);
     else
         _charger_state->setCh2(status);
+}
+
+void ClientMessagingController::setState(State s) { 
+    if(s != _state) {
+        _state = s; 
+        Q_EMIT stateChanged(); 
+        Q_EMIT connectedChanged();
+    }
+}
+
+void ClientMessagingController::setHostname(QString value) { 
+    if(value != _host) {
+        _host = value; 
+        Q_EMIT hostnameChanged(); 
+    }
+}
+
+void ClientMessagingController::setPublishPort(int value) {
+    if(value != _pub_port) {
+        _pub_port = value;
+        Q_EMIT publishPortChanged();
+    }
+}
+
+void ClientMessagingController::setMessagePort(int value) {
+    if(value != _msg_port) {
+        _msg_port = value;
+        Q_EMIT messagePortChanged();
+    }
 }

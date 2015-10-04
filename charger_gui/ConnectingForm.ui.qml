@@ -11,49 +11,64 @@ Item {
     property bool connected: false
     property alias progressBar: progressBar
     property alias hostname: textHostname
-    property alias publishingPort: textPubPort
-    property alias messagingPort: textMessagingPort
-    property alias cancelButton: cancelButton
+    property alias publishingPort: textPublishPort
+    property alias messagingPort: textMessagePort
+    property alias cancelButton: actionButton
     
     states: [
         State {
             name: "ConnectingState"
-        when: !connected
-
-        PropertyChanges {
-            target: labelConnectionState
-            text: qsTr("Finding Charger...")
-        }
-        
-        PropertyChanges {
-            target: gridLayout
-            visible: false
-        }
-        
-        PropertyChanges {
-            target: cancelButton
-            visible: true
-        }
+            when: !connected
+            
+            PropertyChanges {
+                target: labelConnectionState
+                text: qsTr("Finding Charger...")
+            }
+            
+            PropertyChanges {
+                target: gridLayout
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: actionButton
+                visible: true
+            }
         },
         
-    State {
-        name: "ConnectedState"
-        when: connected
-
-        PropertyChanges {
-            target: labelConnectionState
-            text: qsTr("Connected")
-        }
-        
-        PropertyChanges {
-            target: cancelButton
-            visible: false
-        }
-    }]
+        State {
+            name: "ConnectedState"
+            when: connected
+            
+            PropertyChanges {
+                target: labelConnectionState
+                text: qsTr("Connected!")
+            }
+            
+            PropertyChanges {
+                target: actionButton
+                text: "Continue"
+                isDefault: true
+                visible: true
+            }
+            
+            PropertyChanges {
+                target: progressBar
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: chargerImage
+                visible: true
+            }
+        }]
     
     Label {
         id: labelConnectionState
-        y: 73
+        y: 33
+        anchors.rightMargin: 0
+        anchors.leftMargin: 0
+        font.pointSize: 44
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -79,8 +94,8 @@ Item {
         columns: 2
         rowSpacing: 8
         columnSpacing: 8
-
-    // hostname        
+        
+        // hostname        
         Label {
             id: labelHostname
             text: qsTr("Hostname/Server:")
@@ -97,32 +112,32 @@ Item {
             Layout.minimumWidth: 220
         }
         
-    // publishing
+        // publishing
         Label {
-            id: labelPublisherPort
+            id: labelPublishPort
             text: qsTr("Publisher Port:")
-            anchors.right: textPubPort.left
+            anchors.right: textPublishPort.left
             anchors.rightMargin: 12
             horizontalAlignment: Text.AlignRight
         }    
-
+        
         TextField {
-            id: textPubPort
+            id: textPublishPort
             readOnly: true
             placeholderText: qsTr("Publisher Port")
         }
         
-    // messaging
+        // messaging
         Label {
-            id: labelMessaging
+            id: labelMessage
             text: qsTr("Messaging Port:")
-            anchors.right: textMessagingPort.left
+            anchors.right: textMessagePort.left
             anchors.rightMargin: 12
             horizontalAlignment: Text.AlignRight
         }    
         
         TextField {
-            id: textMessagingPort
+            id: textMessagePort
             readOnly: true
             placeholderText: qsTr("Messaging Port")
         }
@@ -130,13 +145,25 @@ Item {
     }
     // cancel me...
     Button {
-        id: cancelButton
+        id: actionButton
         x: 162
         y: 349
         text:  "Cancel"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
+    }
+    
+    Image {
+        id: chargerImage
+        x: 84
+        y: 240
+        width: 233
+        height: 87
+        visible: false
+        anchors.bottom: actionButton.top
+        anchors.bottomMargin: 15
+        source: "qrc:/qtquickplugin/images/template_image.png"
     }
     
 }

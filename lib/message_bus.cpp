@@ -12,11 +12,11 @@ MessageBus::MessageBus(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) : QObjec
     connect(sub, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(notification(QList<QByteArray>)));
     
-    qDebug() << "messaging is now active.";
+    qDebug() << "message bus layer is now active.";
 }
 
 MessageBus::~MessageBus() {
-    qDebug() << "messaging is now destroyed.";
+    qDebug() << "message bus layer has now been destroyed.";
 }
 
 void MessageBus::message(QList<QByteArray> msg) {

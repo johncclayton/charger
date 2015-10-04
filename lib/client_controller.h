@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QHostInfo>
-#include <QMetaType>
 
 #include "message_bus.h"
 #include "charger_state.h"
@@ -35,11 +34,13 @@ public:
     
     Q_ENUMS(State)
 
-    Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY onMessageBusChanged)
-    Q_PROPERTY(State state READ state WRITE setState NOTIFY onStateChanged)
-    Q_PROPERTY(ChargerState charger READ charger NOTIFY onChargerChanged)
-    Q_PROPERTY(QString hostname READ hostname NOTIFY onHostnameChanged)
-    Q_PROPERTY(bool connected READ connected NOTIFY onConnectedChanged)
+    Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged)
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(ChargerState charger READ charger NOTIFY chargerChanged)
+    Q_PROPERTY(QString hostname READ hostname NOTIFY hostnameChanged)
+    Q_PROPERTY(int publishPort READ publishPort NOTIFY publishPortChanged)
+    Q_PROPERTY(int messagePort READ messagePort NOTIFY messagePortChanged)
+    Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
     
     explicit ClientMessagingController(QObject *parent = 0);
     virtual ~ClientMessagingController();
@@ -49,15 +50,14 @@ public:
     MessageBus* messageBus() const { return _message_bus; }
     ChargerState* charger() const { return _charger_state; }
     
-    State state() const { return _state; }
-    void setState(State s) { _state = s; Q_EMIT onStateChanged(s); }
-
 signals:
-    void onMessageBusChanged();
-    void onChargerChanged();
-    void onStateChanged(ClientMessagingController::State);
-    void onHostnameChanged(QString newName);
-    void onConnectedChanged();
+    void messageBusChanged();
+    void chargerChanged();
+    void stateChanged();
+    void hostnameChanged();
+    void publishPortChanged();
+    void messagePortChanged();
+    void connectedChanged();
     
 protected slots:
     void routeStatusUpdated(const ChannelStatus& status);
@@ -69,8 +69,18 @@ public slots:
         
 private:
     bool connected() const { return _state == CONNECTED; }
+                                             
     QString hostname() const { return _host; }
-    void setHostname(QString value) { _host = value; Q_EMIT onHostnameChanged(_host); }
+    void setHostname(QString value);
+    
+    int publishPort() const { return _pub_port; }
+    void setPublishPort(int value);
+    
+    int messagePort() const { return _msg_port; }
+    void setMessagePort(int value);
+    
+    State state() const { return _state; }
+    void setState(State s);
     
     nzmqt::ZMQSocket* createSubscriberSocket();
     nzmqt::ZMQSocket* createRequestSocket();
@@ -94,8 +104,7 @@ private:
     State _state;
     
     QString _host;
+    int _pub_port, _msg_port;
 };
-
-//Q_DECLARE_METATYPE(ClientMessagingController::State)
 
 #endif // TESTCONTROLLER_H
