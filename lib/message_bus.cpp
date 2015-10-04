@@ -20,7 +20,7 @@ MessageBus::~MessageBus() {
 }
 
 void MessageBus::message(QList<QByteArray> msg) {
-    Q_UNUSED(msg);
+    qDebug() << "message received:" << msg;
 }
 
 void MessageBus::notification(QList<QByteArray> msg) {

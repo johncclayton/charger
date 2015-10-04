@@ -5,6 +5,10 @@ ConnectingForm {
     hostname.text: comms.hostname
     publishingPort.text: comms.publishPort
     messagingPort.text: comms.messagePort
-    
+
+    onConnectedChanged: {
+        // go get the number of devices via the messaging API
+        
+    }    
 }
 
