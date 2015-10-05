@@ -12,7 +12,7 @@ MessageHandler::MessageHandler(nzmqt::ZMQContext* ctx, QObject *owner) :
     SocketBase(ctx, ZMQSocket::TYP_ROUTER, owner)
 {
     _socket->setIdentity("charger_service");
-    connect(_socket, SIGNAL(messageReceived(QList<QByteArray>)), 
+    connect(_socket, SIGNAL(handle_message(QList<QByteArray>)), 
             this, SLOT(message_received(QList<QByteArray>)));
 }
 
@@ -42,4 +42,6 @@ void MessageHandler::message_received(QList<QByteArray> msg) {
     }
     
     QList<QByteArray> payload(msg.mid(index + 1));
+    
+    Q_EMIT handle_message(return_path, payload);
 }

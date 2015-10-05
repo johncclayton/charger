@@ -24,7 +24,10 @@ public:
     explicit MessageHandler(nzmqt::ZMQContext* ctx, QObject *parent = 0);
     bool bind(int port);    
     
-public slots:
+signals:
+    void handle_message(QList<QByteArray> return_path, QList<QByteArray> payload);
+    
+protected slots:
     void message_received(QList<QByteArray> msg);
 };
 

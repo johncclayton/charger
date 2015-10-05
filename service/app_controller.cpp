@@ -66,8 +66,9 @@ int AppController::init(int pub_port, int msg_port) {
         }
         
         _msg_handler = new MessageHandler(_ctx);
-        connect(_msg_handler, SIGNAL(port_changed(int)),
-                this, SLOT(register_msg_port(int)));
+        connect(_msg_handler, SIGNAL(port_changed(int)), this, SLOT(register_msg_port(int)));
+        connect(_msg_handler, SIGNAL(handle_message(QList<QByteArray>,QList<QByteArray>)), 
+                this, SLOT(handle_message(QList<QByteArray>,QList<QByteArray>)));
         
         if(!_msg_handler->bind(msg_port)) {
             qDebug() << "unable to bind the zmq message handler to its interface";
@@ -122,4 +123,13 @@ void AppController::device_added(QString key) {
 
 void AppController::device_removed(QString key) {
     qDebug() << "a device was removed from the registry:" << key;
+}
+
+void AppController::handle_message(QList<QByteArray> return_path, QList<QByteArray> payload) {
+    // depends on what is being asked - our API is pretty simple now... 
+    QByteArray response_topic = payload.at(0);
+    QString request = QString::fromUtf8(payload.at(1));
+    if(request == "get-devices") {
+        qDebug() << "i would publish a set of devices";
+    }
 }

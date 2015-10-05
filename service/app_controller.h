@@ -56,6 +56,9 @@ public slots:
 protected:
     void timerEvent(QTimerEvent *event);
     
+protected slots:
+    void handle_message(QList<QByteArray> return_path, QList<QByteArray> payload);    
+    
 private:
     usb_context _usb;
     nzmqt::ZMQContext* _ctx;
