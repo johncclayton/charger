@@ -60,6 +60,8 @@ icharger_usb::icharger_usb(libusb_device* d) :
     int r = libusb_open(device, &handle);
     if(r != 0)
         handle = 0;
+    
+    libusb_get_device_descriptor(device, &descriptor);    
 }
 
 icharger_usb::~icharger_usb() {
@@ -107,34 +109,33 @@ int icharger_usb::acquire() {
 //}
 
 int icharger_usb::vendorId() const {
-    Q_ASSERT(device != 0);
-    struct libusb_device_descriptor desc;
-    libusb_get_device_descriptor(device, &desc);
-    return desc.idVendor;    
+    return descriptor.idVendor;    
 }
 
 int icharger_usb::productId() const {
-    Q_ASSERT(device != 0);
-    struct libusb_device_descriptor desc;
-    libusb_get_device_descriptor(device, &desc);
-    return desc.idProduct;    
+    return descriptor.idProduct;    
 }
 
-QString icharger_usb::serial_number() { 
-    Q_ASSERT(device != 0);
-    struct libusb_device_descriptor desc;
-    libusb_get_device_descriptor(device, &desc);
-    
-    unsigned char serial_number[256];
-    memset(serial_number, 0, sizeof(serial_number));
+QString icharger_usb::descriptor_str(uint8_t desc_idx) {    
+    unsigned char t[256];
+    memset(t, 0, sizeof(t));
     Q_ASSERT(handle != 0);
-    int bytes = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, serial_number, sizeof(serial_number) - 1);
+    int bytes = libusb_get_string_descriptor_ascii(handle, desc_idx, t, sizeof(t) - 1);
     if(bytes <= 0) {
         return QString();
     }
     
-    return QString::fromLatin1((const char *)serial_number);
+    return QString::fromLatin1((const char *)t);
+}
+
+QString icharger_usb::serialNumber() { 
+    return descriptor_str(descriptor.iSerialNumber);
 }    
+
+QString icharger_usb::manufacturer() { 
+    return descriptor_str(descriptor.iManufacturer);
+}    
+
 
 /* same as the library version, but automatically handles retry on timeout */
 int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
@@ -394,7 +395,7 @@ charger_list icharger_usb::all_chargers(libusb_context* ctx, int vendor, int pro
         if (r >= 0) {
             if(desc.idVendor == vendor && desc.idProduct == product) {
                 icharger_usb_ptr dev(new icharger_usb(devs[index]));
-                QString sn = dev->serial_number();
+                QString sn = dev->serialNumber();
                 if(serial.isNull() || (sn == serial))
                     chargers.append(dev);
             }

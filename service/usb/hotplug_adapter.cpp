@@ -22,7 +22,7 @@ int hotplug_callback(struct libusb_context *ctx,
         
         if(event == LIBUSB_HOTPLUG_EVENT_DEVICE_ARRIVED) {
             icharger_usb_ptr icharger_device(new icharger_usb(dev));
-            sn = icharger_device->serial_number();    
+            sn = icharger_device->serialNumber();    
         }
         
         HotplugCallbackAdapter* obj = (HotplugCallbackAdapter*)(user_data);

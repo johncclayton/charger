@@ -157,6 +157,9 @@ QVariantMap AppController::doGetDevices() {
         QVariantMap device;
         device["key"] = it.key();
         device["protected"] = false;
+        device["vendorId"] = it.value()->device()->vendorId();
+        device["productId"] = it.value()->device()->productId();
+        device["manufacturer"] = it.value()->device()->manufacturer();
         device_list.append(device);
     }
     

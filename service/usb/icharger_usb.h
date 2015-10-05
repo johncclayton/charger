@@ -54,8 +54,8 @@ struct icharger_usb {
     int vendorId() const;
     int productId() const;
     
-    // uses the device descriptor index to get the serial number
-    QString serial_number();
+    QString serialNumber();
+    QString manufacturer();
     
     ModbusRequestError get_device_only(device_only* output);	
     ModbusRequestError get_channel_status(int channel /* 0 or 1 */, channel_status* output);
@@ -67,7 +67,10 @@ struct icharger_usb {
 private:
     libusb_device* device;
     libusb_device_handle* handle;
+    libusb_device_descriptor descriptor;
     int timeout_ms;
+    
+    QString descriptor_str(uint8_t desc_idx);
     
     int usb_data_transfer(unsigned char endpoint_address,
                           char* data,

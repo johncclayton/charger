@@ -42,7 +42,7 @@ void DeviceRegistry::deactivateDevice(int vendor, int product) {
         if(ptr->vendorId() == vendor && ptr->productId() == product) {
             // test if the device is open - do this by asking for its serial number - if this fails, it
             // must be the one that died?
-            QString sn = ptr->serial_number();
+            QString sn = ptr->serialNumber();
             
             if(sn.isNull() || sn.isEmpty()) {
                 qDebug() << "removing" << it.key() << "from list of registered devices";
