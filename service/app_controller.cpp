@@ -138,7 +138,7 @@ void AppController::handle_message(QList<QByteArray> return_path, QList<QByteArr
         response["count"] = all_devices.count();
         
         QVariantList device_list;
-        for(DeviceMap::const_iterator it = all_devices.cbegin(); it != all_devices.cend(); ++it) {
+        for(DeviceMap::const_iterator it = all_devices.begin(); it != all_devices.end(); ++it) {
             QVariantMap device;
             device["key"] = it.key();
             device_list.append(device);
