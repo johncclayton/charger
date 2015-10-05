@@ -26,6 +26,10 @@ bool Publisher::bind(int port) {
     return _port != 0;
 }
 
+void Publisher::publishHeartbeat() {
+    publishOnTopic("/heartbeat", "ping");
+}
+
 void Publisher::publishOnTopic(QByteArray topic, QByteArray content) {
     QList< QByteArray > msg;
     msg += topic;

@@ -66,7 +66,7 @@ void LibUsbEventAdapter::run() {
 }
 
 void LibUsbEventAdapter::callback(bool activation, int vendorId, int productId, QString sn) {
-    Q_EMIT hotplug_event(activation, vendorId, productId, sn);
+    Q_EMIT hotplugEvent(activation, vendorId, productId, sn);
 }
 
 

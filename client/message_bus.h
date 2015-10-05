@@ -3,9 +3,7 @@
 
 #include <QObject>
 #include <QTimerEvent>
-
-#include "device_info.h"
-#include "channel_status.h"
+#include <QDateTime>
 
 namespace nzmqt {
     class ZMQSocket;
@@ -25,17 +23,29 @@ public:
     explicit MessageBus(nzmqt::ZMQSocket* pub, nzmqt::ZMQSocket* msg, QObject *parent = 0);
     virtual ~MessageBus();
     
+    Q_PROPERTY(bool alive READ alive NOTIFY aliveChanged)
+    
 signals:
-    void channelStatusChanged(const ChannelStatus&);
-    void deviceInfoChanged(const DeviceInfo&);    
-    void messageResponseReceived(QString topic, QList<QByteArray> msg);
+    void aliveChanged();
+    
+    void notificationReceived(QString topic, QList<QByteArray> msg);
+    void messageResponseReceived(QList<QByteArray> msg);
         
 public slots:
-    void messageReceived(QList<QByteArray> msg);
-    void notificationReceived(QList<QByteArray> msg);    
+    void processMessageResponse(QList<QByteArray> msg);
+    void processNotification(QList<QByteArray> msg);    
+    
+    bool alive() { return _alive; }
     
 protected:
+    /**
+     * @brief timerEvent is used to work out how long we've gone without a heartbeat from the server
+     * in order to set the connected/disconnected flag.  E.g. could be that tcp/ip comms is UP but
+     * the server crashed - so the server sends something on /hearbeat every second.
+     */
     void timerEvent(QTimerEvent* event);
+    
+    void setAlive(bool value);
     
 private:
     
@@ -47,10 +57,12 @@ private:
      * @param responseTopic - the topic you want the reply to appear on
      * @param requestPayload - the message payload - hope you know what it should be.
      */    
-    bool asyncRequest(QString responseTopic, QString requestPayload);
+    bool asyncRequest(QString requestPayload);
 
     nzmqt::ZMQSocket* _pub;
     nzmqt::ZMQSocket* _msg;
+    bool _alive;
+    QDateTime _lastHeartbeat;
 };
 
 #endif // MESSAGE_BUS_H

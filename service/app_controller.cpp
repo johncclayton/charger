@@ -28,6 +28,7 @@ AppController::AppController(QObject *parent) : QObject(parent),
     _registry(0),
     _msg_handler(0)
 {
+    startTimer(1000);
 }
 
 AppController::~AppController() {    
@@ -52,14 +53,14 @@ int AppController::init(int pub_port, int msg_port) {
 
         _registry = new DeviceRegistry(_usb.ctx, _pub, this);
         
-        connect(_registry, SIGNAL(device_activated(QString)),
-                         this, SLOT(device_added(QString)));
-        connect(_registry, SIGNAL(device_deactivated(QString)),
-                         this, SLOT(device_removed(QString)));
+        connect(_registry, SIGNAL(deviceActivated(QString)),
+                         this, SLOT(deviceAdded(QString)));
+        connect(_registry, SIGNAL(deviceDeactivated(QString)),
+                         this, SLOT(deviceRemoved(QString)));
                
         // Respond to changes to the publisher port
-        connect(_pub.data(), SIGNAL(port_changed(int)), 
-                this, SLOT(register_pub_port(int)));
+        connect(_pub.data(), SIGNAL(portChanged(int)), 
+                this, SLOT(registerPublisherPort(int)));
                 
         // bind the publisher to cause it to find a local ephemeral port and publish it
         if(!_pub->bind(pub_port)) {
@@ -68,9 +69,9 @@ int AppController::init(int pub_port, int msg_port) {
         }
         
         _msg_handler = new MessageHandler(_ctx);
-        connect(_msg_handler, SIGNAL(port_changed(int)), this, SLOT(register_msg_port(int)));
-        connect(_msg_handler, SIGNAL(handle_message(QList<QByteArray>,QList<QByteArray>)), 
-                this, SLOT(handle_message(QList<QByteArray>,QList<QByteArray>)));
+        connect(_msg_handler, SIGNAL(portChanged(int)), this, SLOT(registerMessagePort(int)));
+        connect(_msg_handler, SIGNAL(requesetReceived(QList<QByteArray>,QList<QByteArray>)), 
+                this, SLOT(processMessageRequest(QList<QByteArray>,QList<QByteArray>)));
         
         if(!_msg_handler->bind(msg_port)) {
             qDebug() << "unable to bind the zmq message handler to its interface";
@@ -80,8 +81,8 @@ int AppController::init(int pub_port, int msg_port) {
         // Kick off a listener for USB hotplug events - so we keep our device list fresh,
         // this is a thread and it runs its own event loop internally.  
         _hotplug_handler = new LibUsbEventAdapter(_usb.ctx);
-        connect(_hotplug_handler, SIGNAL(hotplug_event(bool,int,int,QString)), 
-                this, SLOT(notify_hotplug_event(bool,int,int,QString)), Qt::QueuedConnection);
+        connect(_hotplug_handler, SIGNAL(hotplugEvent(bool,int,int,QString)), 
+                this, SLOT(notifyHotplugEvent(bool,int,int,QString)), Qt::QueuedConnection);
         _hotplug_handler->start();
                
         return 0;
@@ -95,43 +96,42 @@ int AppController::init(int pub_port, int msg_port) {
 
 void AppController::timerEvent(QTimerEvent *event) {
     Q_UNUSED(event);
+    _pub->publishHeartbeat();
 }
 
-void AppController::register_pub_port(int new_port) {
+void AppController::registerPublisherPort(int new_port) {
     Q_ASSERT(_bonjour_pub);
     _bonjour_pub->registerService("_charger-service-pub._tcp", new_port);   
     qDebug() << "publisher service now available on port:" << new_port;
 }
 
-void AppController::register_msg_port(int new_port) {
+void AppController::registerMessagePort(int new_port) {
     Q_ASSERT(_bonjour_msg);
     _bonjour_msg->registerService("_charger-service-msg._tcp", new_port);   
     qDebug() << "messaging service now available on port:" << new_port;
 }
 
-void AppController::notify_hotplug_event(bool added, int vendor, int product, QString sn)  {
+void AppController::notifyHotplugEvent(bool added, int vendor, int product, QString sn)  {
     Q_ASSERT(_registry);
 
     qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
-        _registry->activate_device(vendor, product, sn);
+        _registry->activateDevice(vendor, product, sn);
     else
-        _registry->deactivate_device(vendor, product);
+        _registry->deactivateDevice(vendor, product);
 }
 
-void AppController::device_added(QString key) {
+void AppController::deviceAdded(QString key) {
     qDebug() << "a device was added to the registry:" << key;
 }
 
-void AppController::device_removed(QString key) {
+void AppController::deviceRemoved(QString key) {
     qDebug() << "a device was removed from the registry:" << key;
 }
 
-void AppController::handle_message(QList<QByteArray> return_path, QList<QByteArray> payload) {
+void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
     // depends on what is being asked - our API is pretty simple now... 
-    QByteArray response_topic = payload.at(0);
-    
-    QString request = QString::fromUtf8(payload.at(1));
+    QString request = QString::fromUtf8(payload.at(0));
     if(request == "get-devices") {
         DeviceMap all_devices = _registry->devices();
         QVariantMap response;
@@ -141,6 +141,7 @@ void AppController::handle_message(QList<QByteArray> return_path, QList<QByteArr
         for(DeviceMap::const_iterator it = all_devices.begin(); it != all_devices.end(); ++it) {
             QVariantMap device;
             device["key"] = it.key();
+            device["protected"] = false;
             device_list.append(device);
         }
         
@@ -148,10 +149,9 @@ void AppController::handle_message(QList<QByteArray> return_path, QList<QByteArr
 
         MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
         if(msg_handler) {
-            QList<QByteArray> response;
-            response.append(response_topic);
-            response.append(makeJsonByteArray(response));
-            msg_handler->send_response(return_path, json);
+            QList<QByteArray> data;
+            data.append(makeJsonByteArray(response));
+            msg_handler->sendResponse(return_path, data);
         }
     }
 }

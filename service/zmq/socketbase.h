@@ -23,7 +23,7 @@ public:
     virtual bool bind(int port) = 0;
     
 signals:
-    void port_changed(int port);
+    void portChanged(int port);
         
 protected:
     nzmqt::ZMQSocket* _socket;

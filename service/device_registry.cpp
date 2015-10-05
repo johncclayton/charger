@@ -8,11 +8,11 @@ DeviceRegistry::~DeviceRegistry() {
     _ctx = 0;
 }
 
-QString DeviceRegistry::device_key(int vendor, int product, QString sn) {
+QString DeviceRegistry::deviceKey(int vendor, int product, QString sn) {
     return QString("%1-%2-%3").arg(vendor, 1, 16).arg(product, 1, 16).arg(sn).toUpper();
 }
 
-void DeviceRegistry::activate_device(int vendor, int product, QString sn) {
+void DeviceRegistry::activateDevice(int vendor, int product, QString sn) {
     Q_ASSERT(_ctx != 0);
     Q_ASSERT(vendor != 0);
     Q_ASSERT(product != 0);
@@ -21,16 +21,16 @@ void DeviceRegistry::activate_device(int vendor, int product, QString sn) {
     if(match.size()) {
         iCharger_DeviceController_ptr device_ptr(new iCharger_DeviceController(_pub, match[0]));
         if(0 == device_ptr->device()->acquire()) {
-            QString key(device_key(vendor, product, sn));
+            QString key(deviceKey(vendor, product, sn));
             _devices.insert(key, device_ptr);
-            Q_EMIT device_activated(key);
+            Q_EMIT deviceActivated(key);
         } else {
             qDebug() << "wasn't able to claim the device - ignoring it";
         }
     }
 }
 
-void DeviceRegistry::deactivate_device(int vendor, int product) {
+void DeviceRegistry::deactivateDevice(int vendor, int product) {
     Q_ASSERT(vendor != 0);
     Q_ASSERT(product != 0);
 
@@ -47,7 +47,7 @@ void DeviceRegistry::deactivate_device(int vendor, int product) {
             if(sn.isNull() || sn.isEmpty()) {
                 qDebug() << "removing" << it.key() << "from list of registered devices";
                 
-                Q_EMIT device_deactivated(it.key());
+                Q_EMIT deviceDeactivated(it.key());
                 it = _devices.erase(it);
                 
                 /* do not increment it */

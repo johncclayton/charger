@@ -18,7 +18,7 @@ public:
     void run();
 
 signals:
-    void hotplug_event(bool activated, int vendor, int product, QString sn);
+    void hotplugEvent(bool activated, int vendor, int product, QString sn);
 
 private:
     void callback(bool activation, int vendorId, int productId, QString sn);

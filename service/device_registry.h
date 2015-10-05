@@ -20,15 +20,15 @@ public:
     DeviceRegistry(libusb_context* ctx, Publisher_ptr pub, QObject* owner = 0);
     virtual ~DeviceRegistry();
     
-    QString device_key(int vendor, int product, QString sn);
+    QString deviceKey(int vendor, int product, QString sn);
     
-    void activate_device(int vendor, int product, QString sn);
-    void deactivate_device(int vendor, int product);
+    void activateDevice(int vendor, int product, QString sn);
+    void deactivateDevice(int vendor, int product);
     DeviceMap devices() const { return _devices; }
 
 signals:
-    void device_activated(QString key);
-    void device_deactivated(QString key);
+    void deviceActivated(QString key);
+    void deviceDeactivated(QString key);
     
 private:
     libusb_context* _ctx;

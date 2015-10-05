@@ -24,14 +24,14 @@ public:
     explicit MessageHandler(nzmqt::ZMQContext* ctx, QObject *parent = 0);
     bool bind(int port);    
     
-    void send_response(QList<QByteArray> return_path, QList<QByteArray> payload);
-    void send_response(QList<QByteArray> return_path, QByteArray payload);
+    void sendResponse(QList<QByteArray> return_path, QList<QByteArray> payload);
+    void sendResponse(QList<QByteArray> return_path, QByteArray payload);
     
 signals:
-    void handle_message(QList<QByteArray> return_path, QList<QByteArray> payload);
+    void requesetReceived(QList<QByteArray> return_path, QList<QByteArray> payload);
     
 protected slots:
-    void message_received(QList<QByteArray> msg);
+    void processMessageRequest(QList<QByteArray> msg);
 };
 
 #endif // MESSAGE_HANDLER_H

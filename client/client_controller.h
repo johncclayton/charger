@@ -18,24 +18,12 @@ namespace nzmqt {
  * req/resp endpoints and connects/configures the appropriate sockets to the MessageBus class.
  * It continues to monitor the bonjour information and if the sockets change or go down it 
  * will re-create the messaging bus instance.
- * 
- * There are two states, CS_DISCOVERY and CS_CONNECTED.  Only when both endpoints to zmq
- * have been discovered and connected does the state change to CS_CONNECTED.  If the socket
- * endpoints (according to bonjour) change, the class goes back into the CS_DISCOVERY state.
  */
 class ClientMessagingController : public QObject
 {
     Q_OBJECT
 public:
-    enum State {
-        DISCOVERY = 0,
-        CONNECTED = 1
-    };
-    
-    Q_ENUMS(State)
-
     Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(ChargerState charger READ charger NOTIFY chargerChanged)
     Q_PROPERTY(QString hostname READ hostname NOTIFY hostnameChanged)
     Q_PROPERTY(int publishPort READ publishPort NOTIFY publishPortChanged)
@@ -60,8 +48,7 @@ signals:
     void connectedChanged();
     
 protected slots:
-    void routeStatusUpdated(const ChannelStatus& status);
-    void routeDeviceInfoChanged(const DeviceInfo& info);
+    void processNotificationReceived(QString topic, QList<QByteArray> msg);
     
 public slots:
     void resolvedService(QString type, QHostInfo addr, int port);
@@ -69,7 +56,8 @@ public slots:
     void serviceRemoved(QString type);
         
 private:
-    bool connected() const { return _state == CONNECTED; }
+    bool connected() const { return _connected; }
+    void setConnected(bool value);
                                              
     QString hostname() const { return _host; }
     void setHostname(QString value);
@@ -79,9 +67,6 @@ private:
     
     int messagePort() const { return _msg_port; }
     void setMessagePort(int value);
-    
-    State state() const { return _state; }
-    void setState(State s);
     
     nzmqt::ZMQSocket* createSubscriberSocket();
     nzmqt::ZMQSocket* createRequestSocket();
@@ -105,7 +90,7 @@ private:
     // a single iCharger on the bus - so this IS our entire data model.
     ChargerState* _charger_state;
     
-    State _state;
+    bool _connected;
     
     QString _host;
     int _pub_port, _msg_port;

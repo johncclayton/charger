@@ -18,7 +18,7 @@ SocketBase::~SocketBase() {
 
 int SocketBase::setPort(int port) {
     _port = port;
-    Q_EMIT port_changed(_port);
+    Q_EMIT portChanged(_port);
     return _port;
 }
 

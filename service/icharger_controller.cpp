@@ -95,7 +95,7 @@ void iCharger_DeviceController::handleTimeout() {
         QByteArray device_json = device.toJson();
         if(_latest_device_json != device_json) {
             _latest_device_json = device_json;
-            publish_device_json();
+            publishDeviceJson();
         }
     } else {
         qDebug() << "failed to get device only info:" << r;
@@ -109,7 +109,7 @@ void iCharger_DeviceController::handleTimeout() {
             QByteArray data = channel[index].toJson(index);
             if(data != _latest_channel_json[index]) {
                 _latest_channel_json[index] = data;
-                publish_channel_json(index);
+                publishChannelJson(index);
             }
         } else {
             qDebug() << "failed to get ch info:" << r;
@@ -117,10 +117,10 @@ void iCharger_DeviceController::handleTimeout() {
     }
 }
 
-void iCharger_DeviceController::publish_device_json() {
+void iCharger_DeviceController::publishDeviceJson() {
     _pub->publishOnTopic(QString("/icharger/device").toUtf8(), _latest_device_json);
 }
 
-void iCharger_DeviceController::publish_channel_json(int index) {
+void iCharger_DeviceController::publishChannelJson(int index) {
     _pub->publishOnTopic(QString("/icharger/channel/%1").arg(index + 1).toUtf8(), _latest_channel_json[index]);
 }

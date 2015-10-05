@@ -13,7 +13,7 @@ MessageHandler::MessageHandler(nzmqt::ZMQContext* ctx, QObject *owner) :
 {
     _socket->setIdentity("charger_service");
     connect(_socket, SIGNAL(messageReceived(QList<QByteArray>)), 
-            this, SLOT(message_received(QList<QByteArray>)));
+            this, SLOT(processMessageRequest(QList<QByteArray>)));
 }
 
 bool MessageHandler::bind(int port) {
@@ -32,7 +32,7 @@ bool MessageHandler::bind(int port) {
     return _port != 0;
 }
 
-void MessageHandler::message_received(QList<QByteArray> msg) {
+void MessageHandler::processMessageRequest(QList<QByteArray> msg) {
     QList<QByteArray> return_path;
 
     int index = 0;
@@ -43,10 +43,10 @@ void MessageHandler::message_received(QList<QByteArray> msg) {
     
     QList<QByteArray> payload(msg.mid(index + 1));
     
-    Q_EMIT handle_message(return_path, payload);
+    Q_EMIT requesetReceived(return_path, payload);
 }
 
-void MessageHandler::send_response(QList<QByteArray> return_path, QList<QByteArray> payload) {
+void MessageHandler::sendResponse(QList<QByteArray> return_path, QList<QByteArray> payload) {
     QList<QByteArray> msg;
     msg << return_path;
     msg << QByteArray();
@@ -54,8 +54,8 @@ void MessageHandler::send_response(QList<QByteArray> return_path, QList<QByteArr
     _socket->sendMessage(msg);
 }
 
-void MessageHandler::send_response(QList<QByteArray> return_path, QByteArray payload) {
+void MessageHandler::sendResponse(QList<QByteArray> return_path, QByteArray payload) {
     QList<QByteArray> msg;
     msg << payload;
-    send_response(return_path, msg);
+    sendResponse(return_path, msg);
 }

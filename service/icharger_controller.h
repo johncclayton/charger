@@ -17,8 +17,8 @@ public:
     
     icharger_usb_ptr device() { return _device; }
     
-    void publish_device_json();
-    void publish_channel_json(int index);
+    void publishDeviceJson();
+    void publishChannelJson(int index);
         
 signals:
     
