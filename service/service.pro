@@ -10,6 +10,7 @@ OBJECTS_DIR=build/obj
 
 INCLUDEPATH += ../bonjour 
 INCLUDEPATH += ../messaging
+INCLUDEPATH += ../client
 LIBS += ../bonjour/libbonjour.a 
 LIBS += ../messaging/libmessaging.a
 

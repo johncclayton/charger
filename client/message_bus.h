@@ -31,8 +31,8 @@ public:
     void setMessageSocket(nzmqt::ZMQSocket* s);
     
 signals:
-    void aliveChanged(bool value);
     void heartbeat();
+    void aliveChanged(bool value);
     
     void getDeviceResponse(QString key, QVariantMap resp);
     void getDevicesResponse(QVariantMap resp);

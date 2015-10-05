@@ -4,13 +4,9 @@ CONFIG += c++11
 QT += qml quick widgets
 
 SOURCES += main.cpp \ 
-    qjsonitem.cpp \
-    qjsonmodel.cpp \
     device_model.cpp
 
 HEADERS += \
-    qjsonitem.h \
-    qjsonmodel.h \
     device_model.h
 
 RESOURCES += qml.qrc

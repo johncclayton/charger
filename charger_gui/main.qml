@@ -24,14 +24,13 @@ ApplicationWindow {
     statusBar: StatusBar {
         RowLayout {
             anchors.fill: parent
-            
-//            StatusIndicator {
-//                id: statusInd
-//            }
+                        
+            Label {
+                text: connectionState.connectionMessage
+            }
             
             Label {
-//                anchors.left: statusInd.right
-                text: connectionState.connectionMessage
+                text: dataModel.rowCount() + " devices";
             }
         }
     }

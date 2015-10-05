@@ -63,7 +63,6 @@ signals:
 public slots:
     void setFromJson(QByteArray data);
     
-private slots:
     void setSerialNumber(QString value);
     void setSoftwareVersion(float value);
     void setCh1Status(quint8 value);

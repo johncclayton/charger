@@ -6,6 +6,7 @@
 #include <QTimer>
 
 #include "usb/icharger_usb.h"
+#include "charger_state.h"
 
 class iCharger_DeviceController : public QObject
 {
@@ -30,8 +31,10 @@ private:
     QString _key;
     icharger_usb_ptr _device;
     
-    QByteArray _latest_device_json;
-    QByteArray _latest_channel_json[2];
+    ChargerState _state;
+    
+//    QByteArray _latest_device_json;
+//    QByteArray _latest_channel_json[2];
 };
 
 typedef QSharedPointer<iCharger_DeviceController> iCharger_DeviceController_ptr;

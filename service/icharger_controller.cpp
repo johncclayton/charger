@@ -5,27 +5,23 @@
 #include "icharger_controller.h"
 #include "icharger_message_keys.h"
 #include "usb/icharger_data.h"
+#include "charger_state.h"
 #include "json_helper.h"
 
 struct DeviceOnlyJson : public device_only {
-    QByteArray toJson() const;
+    void writeToChargerState(ChargerState& state);
 };
 
 struct ChannelStatusJson : public channel_status {
-    QByteArray toJson(int channel) const;
+    void writeToChargerState(ChargerState& state, int channel);
 };
 
-QByteArray DeviceOnlyJson::toJson() const {
-    QVariantMap data;
-    
-    data[STR_DEVICE_ONLY_ID] = device_id.value;
-    data[STR_DEVICE_ONLY_SERIAL_NUMBER] = QString::fromLatin1((const char*)device_sn, 12).trimmed();
-    data[STR_DEVICE_ONLY_HW_VERSION] = (float)hw_version.value / 10;
-    data[STR_DEVICE_ONLY_SW_VERSION] = (float)sw_version.value / 10;
-    data[STR_DEVICE_ONLY_CH1_STATUS] = ch1_status.value;
-    data[STR_DEVICE_ONLY_CH2_STATUS] = ch2_status.value;
- 
-    return variantMapToJson(data);
+void DeviceOnlyJson::writeToChargerState(ChargerState& state) const {
+    state.info().setSerialNumber(QString::fromLatin1((const char*)device_sn, 12).trimmed());
+    state.info().setSoftwareVersion((float)sw_version.value / 10);
+    state.info().setHardwareVersion((float)hw_version.value / 10);
+    state.info().setCh1Status(ch1_status.value);
+    state.info().setCh2Status(ch2_status.value);
 }
 
 /*
@@ -50,11 +46,12 @@ QByteArray DeviceOnlyJson::toJson() const {
     u16 run_status;
     u16 run_error;
     u16 dialog_box_id;
-
 */
-QByteArray ChannelStatusJson::toJson(int channel) const {
-    QVariantMap data;
 
+void ChannelStatusJson::writeToChargerState(ChargerState& state, int channel) const {
+    ChannelStatus& ch = channel == 0 ? state.ch1() : state.ch2();
+    ch.setChannel(channel);
+/*    
     data[STR_CHANNEL_STATUS_CHANNEL_NUM] = channel;
     data[STR_CHANNEL_STATUS_OUTPUT_POWER] = quint32(output_power.value);
     data[STR_CHANNEL_STATUS_OUTPUT_CURRENT] = output_current.value;
@@ -81,8 +78,7 @@ QByteArray ChannelStatusJson::toJson(int channel) const {
     data[STR_CHANNEL_STATUS_LINE_INTERNAL_RESISTANCE] = line_internal_resistance;
     data[STR_CHANNEL_STATUS_CYCLE_COUNT] = cycle_count;
     data[STR_CHANNEL_STATUS_CONTROL_STATUS] = control_status;
-    
-    return variantMapToJson(data);
+  */  
 }
 
 iCharger_DeviceController::iCharger_DeviceController(QString key, icharger_usb_ptr p, QObject *parent) : 
@@ -91,59 +87,34 @@ iCharger_DeviceController::iCharger_DeviceController(QString key, icharger_usb_p
     // query status of every bloody thing every second
     _timer = new QTimer(this);
     connect(_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
-    _timer->start(250);
+    _timer->start(750);
 }
 
 iCharger_DeviceController::~iCharger_DeviceController() {
-    qDebug() << "bye bye device controller - stopping timers";
+    qDebug() << "bye bye device controller";
     _timer->deleteLater();
     _timer = 0;
 }
 
 void iCharger_DeviceController::handleTimeout() {
-    bool changed = false;
-    
     // fetch device status and publish on the bus
     DeviceOnlyJson device;
     int r = _device->get_device_only(&device);
-    if(r == 0) {
-        // consert to JSON and make the units sane - then publish
-        QByteArray device_json = device.toJson();
-        if(_latest_device_json != device_json) {
-            _latest_device_json = device_json;
-            changed = true;
-        }
-    } else {
-        qDebug() << "failed to get device only info:" << r;
-    }
+    if(r == 0) 
+        device.writeToChargerState(_state);
     
     // fetch info for ch1 and ch2
     ChannelStatusJson channel[2];
     for(int index = 0; index < 2; ++index) {
         r = _device->get_channel_status(index, &channel[index]);
-        if(r == 0) {
-            QByteArray data = channel[index].toJson(index);
-            if(data != _latest_channel_json[index]) {
-                _latest_channel_json[index] = data;
-                changed = true;
-            }
-        } else {
-            qDebug() << "failed to get ch info:" << r;
-        }
+        if(r == 0) 
+            channel[index].writeToChargerState(_state, index);
     }
     
-    if(changed)
-        Q_EMIT onChargerStateChanged();
+    Q_EMIT onChargerStateChanged();
 }
 
 QByteArray iCharger_DeviceController::toJson() const {
-    QVariantMap data;
-    data["key"] = _key;
-    data["info"] = _latest_device_json;
-    QVariantList channels;
-    channels << _latest_channel_json[0];
-    channels << _latest_channel_json[1];
-    data["channel"] = channels;
-    return variantMapToJson(data);
+    return variantMapToJson(_state.toVariantMap());
 }
 
