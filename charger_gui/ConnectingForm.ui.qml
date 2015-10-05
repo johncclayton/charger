@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Layouts 1.2
 import QtQuick.Controls 1.3
+import QtQuick.Extras 1.4
 
 Item {
     id: content
@@ -9,11 +10,11 @@ Item {
     height: 400
     
     property bool connected: false
-    property alias progressBar: progressBar
-    property alias hostname: textHostname
-    property alias publishingPort: textPublishPort
-    property alias messagingPort: textMessagePort
+    property alias hostname: textHostname.text
+    property alias publishingPort: textPublishPort.text
+    property alias messagingPort: textMessagePort.text
     property alias cancelButton: actionButton
+    property alias connectionMessage: labelConnectionState.text
     
     states: [
         State {
@@ -63,33 +64,6 @@ Item {
                 y: 237
                 anchors.bottomMargin: 20
                 visible: false
-            }
-        },
-        State {
-            name: "GetDevicesState"
-            PropertyChanges {
-                target: labelConnectionState
-                text: qsTr("Connected!")
-            }
-
-            PropertyChanges {
-                target: actionButton
-                text: "Continue"
-                visible: true
-                isDefault: true
-            }
-
-            PropertyChanges {
-                target: progressBar
-                visible: false
-            }
-
-            PropertyChanges {
-                target: chargerImage
-                x: 84
-                y: 237
-                visible: true
-                anchors.bottomMargin: 20
             }
         }]
     
@@ -196,6 +170,5 @@ Item {
         anchors.bottomMargin: 15
         source: "images/icharger_4010_duo.png"
     }
-    
 }
 

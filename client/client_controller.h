@@ -28,7 +28,6 @@ public:
     Q_PROPERTY(QString hostname READ hostname NOTIFY hostnameChanged)
     Q_PROPERTY(int publishPort READ publishPort NOTIFY publishPortChanged)
     Q_PROPERTY(int messagePort READ messagePort NOTIFY messagePortChanged)
-    Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
     
     explicit ClientMessagingController(QObject *parent = 0);
     virtual ~ClientMessagingController();
@@ -45,7 +44,6 @@ signals:
     void hostnameChanged();
     void publishPortChanged();
     void messagePortChanged();
-    void connectedChanged();
     
 protected slots:
     void processNotificationReceived(QString topic, QList<QByteArray> msg);
@@ -56,9 +54,6 @@ public slots:
     void serviceRemoved(QString type);
         
 private:
-    bool connected() const { return _connected; }
-    void setConnected(bool value);
-                                             
     QString hostname() const { return _host; }
     void setHostname(QString value);
     
@@ -89,8 +84,6 @@ private:
     // this would typically be a list of devices - but today the system supports only
     // a single iCharger on the bus - so this IS our entire data model.
     ChargerState* _charger_state;
-    
-    bool _connected;
     
     QString _host;
     int _pub_port, _msg_port;

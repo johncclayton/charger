@@ -19,7 +19,6 @@ ClientMessagingController::ClientMessagingController(QObject *parent) : QObject(
     _charger_state = new ChargerState(this);
     _reqresp_socket = 0;
     _subscribe_socket = 0;
-    _connected = false;
     
     _resolve_message = new RegisteredTypeResolver(message_service);
     connect(_resolve_message, SIGNAL(serviceRemoved(QString)), this, SLOT(serviceRemoved(QString)));
@@ -38,7 +37,6 @@ ClientMessagingController::~ClientMessagingController() {
 }
 
 void ClientMessagingController::init(int pub_port, int msg_port) {
-    setConnected(false);
     
     // kick off browsing for both service types but only when the ports are not specified.
     if(pub_port == 0 || msg_port == 0) {
@@ -62,8 +60,6 @@ void ClientMessagingController::closeMessagingHandler() {
         _message_bus = 0;
 
         Q_EMIT messageBusChanged();
-
-        setConnected(false);
     }
 }
 
@@ -151,9 +147,7 @@ void ClientMessagingController::checkIsMessageBusReady() {
         // hook up the change signals from message bus to the charger state
         connect(_message_bus, SIGNAL(notificationReceived(QString,QList<QByteArray>)),
                 this, SLOT(processNotificationReceived(QString,QList<QByteArray>)));
-                
-        setConnected(true);
-        
+                        
         Q_EMIT messageBusChanged();
     }
 }
@@ -173,13 +167,6 @@ void ClientMessagingController::processNotificationReceived(QString topic, QList
         info.setFromJson(data);
         _charger_state->setDeviceInfo(info);
     } 
-}
-
-void ClientMessagingController::setConnected(bool value) {
-    if(value != _connected) {
-        _connected = value;
-        Q_EMIT connectedChanged();
-    }
 }
 
 void ClientMessagingController::setHostname(QString value) { 

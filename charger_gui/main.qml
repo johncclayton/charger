@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
-import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.1
+import QtQuick.Extras 1.4
 
 ApplicationWindow {
     visible: true
@@ -19,8 +20,26 @@ ApplicationWindow {
             }
         }
     }
+    
+    statusBar: StatusBar {
+        RowLayout {
+            anchors.fill: parent
 
+            Layout.rightMargin: 12
+            
+            StatusIndicator {
+                id: statusInd
+            }
+            
+            Label {
+                anchors.left: statusInd.right
+                text: connectionState.connectionMessage
+            }
+        }
+    }
+        
     Connecting {
+        id: connectionState
         anchors.fill: parent
         
         cancelButton.onClicked: {
@@ -33,6 +52,7 @@ ApplicationWindow {
             }
         }
         
-    }    
+    }
+    
 }
 

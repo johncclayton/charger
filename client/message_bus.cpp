@@ -30,6 +30,11 @@ void MessageBus::setAlive(bool value) {
     if(value != _alive) {
         _alive = value;
         Q_EMIT aliveChanged();
+        qDebug() << "alive:" << _alive;
+        
+        if(_alive) {
+            asyncRequest("get-devices");
+        }
     }
 }
 
@@ -46,7 +51,8 @@ void MessageBus::timerEvent(QTimerEvent* event) {
 }
 
 void MessageBus::processMessageResponse(QList<QByteArray> msg) {
-    qDebug() << "response received:" << msg;
+    if(msg.size() > 1)
+        qDebug() << "response received:" << msg.mid(1);
 }
 
 void MessageBus::processNotification(QList<QByteArray> msg) {
