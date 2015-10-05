@@ -12,6 +12,8 @@ MessageBus::MessageBus(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) :
     
     connect(sub, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(notificationReceived(QList<QByteArray>)));
+
+    startTimer(1500);
     
     qDebug() << "message bus layer is now active.";
 }
@@ -22,6 +24,11 @@ MessageBus::~MessageBus() {
 
 void MessageBus::messageReceived(QList<QByteArray> msg) {
     qDebug() << "response received:" << msg;
+}
+
+void MessageBus::timerEvent(QTimerEvent* event) {
+    Q_UNUSED(event);
+    asyncRequest("/device_list", "get-devices");
 }
 
 void MessageBus::notificationReceived(QList<QByteArray> msg) {

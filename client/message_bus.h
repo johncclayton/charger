@@ -2,6 +2,8 @@
 #define MESSAGE_BUS_H
 
 #include <QObject>
+#include <QTimerEvent>
+
 #include "device_info.h"
 #include "channel_status.h"
 
@@ -31,6 +33,9 @@ signals:
 public slots:
     void messageReceived(QList<QByteArray> msg);
     void notificationReceived(QList<QByteArray> msg);    
+    
+protected:
+    void timerEvent(QTimerEvent* event);
     
 private:
     
