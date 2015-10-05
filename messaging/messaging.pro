@@ -16,4 +16,8 @@ SOURCES += \
     json_helper.cpp \
     icharger_message_keys.cpp 
 
+unix:!macx {
+    INCLUDEPATH += /usr/include/qjson
+    LIBS += -lqjson 
+}
 

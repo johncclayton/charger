@@ -5,6 +5,7 @@
 #define HAS_QT_JSON
 #else
 #include <serializer.h>
+#include <parser.h>
 #endif
 
 #ifdef HAS_QT_JSON
@@ -28,6 +29,6 @@ QVariantMap jsonToVariantMap(QByteArray data) {
     return d.object().toVariantMap();
 #else
     QJson::Parser parser;
-    return parser.parser(data).toMap();
+    return parser.parse(data).toMap();
 #endif    
 }
