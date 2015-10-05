@@ -179,6 +179,7 @@ QVariantMap AppController::doGetDevice(QString key) {
     iCharger_DeviceController_ptr device(_registry->devices().find(key).value());
     QVariantMap response;
     response["action"] = "get-device";
+    response["key"] = key;
     response["device"] = jsonToVariantMap(device->toJson());
     return response;
 }

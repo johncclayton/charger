@@ -34,6 +34,8 @@ signals:
     void aliveChanged(bool value);
     void heartbeat();
     
+    void getDeviceResponse(QString key, QVariantMap resp);
+    void getDevicesResponse(QVariantMap resp);
     void deviceAddedRemoved(bool added, QString key);
     
     void notificationReceived(QString topic, QList<QByteArray> msg);

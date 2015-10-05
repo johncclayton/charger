@@ -72,8 +72,14 @@ void MessageBus::timerEvent(QTimerEvent* event) {
 }
 
 void MessageBus::processMessageResponse(QList<QByteArray> msg) {
-    if(msg.size() > 1) {
-        qDebug() << "response received:" << msg.mid(1);
+    if(msg.size() == 2) {
+        QVariantMap payload = jsonToVariantMap(msg.at(1));
+        QString action = payload["action"].toString();
+        if(action == "get-devices") {
+            Q_EMIT getDevicesResponse(payload);
+        } else if(action == "get-device") {
+            Q_EMIT getDeviceResponse(payload["key"].toString(), payload["device"].toMap());
+        }
     }
 }
 
