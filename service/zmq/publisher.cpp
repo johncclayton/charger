@@ -4,6 +4,7 @@
 #include <QStringList>
 
 #include "zmq/publisher.h"
+#include "json_helper.h"
 
 using namespace nzmqt;
 
@@ -28,6 +29,13 @@ bool Publisher::bind(int port) {
 
 void Publisher::publishHeartbeat() {
     publishOnTopic("/heartbeat", "ping");
+}
+
+void Publisher::publishDeviceAddedRemoved(bool added, QString key) {
+    QVariantMap data;
+    data["added"] = added;
+    data["key"] = key;
+    publishOnTopic("/device", variantMapToJson(data));    
 }
 
 void Publisher::publishOnTopic(QByteArray topic, QByteArray content) {

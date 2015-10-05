@@ -25,18 +25,19 @@ public:
     
     Q_PROPERTY(bool alive READ alive NOTIFY aliveChanged)
     
+    bool alive() { return _alive; }
+    
 signals:
     void aliveChanged();
+    void heartbeat();
     
     void notificationReceived(QString topic, QList<QByteArray> msg);
     void messageResponseReceived(QList<QByteArray> msg);
         
-public slots:
+protected slots:
     void processMessageResponse(QList<QByteArray> msg);
     void processNotification(QList<QByteArray> msg);    
-    
-    bool alive() { return _alive; }
-    
+        
 protected:
     /**
      * @brief timerEvent is used to work out how long we've gone without a heartbeat from the server

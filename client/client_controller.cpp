@@ -16,7 +16,6 @@ ClientMessagingController::ClientMessagingController(QObject *parent) : QObject(
     
     _pub_port = _msg_port = 0;
     _message_bus = 0;
-    _charger_state = new ChargerState(this);
     _reqresp_socket = 0;
     _subscribe_socket = 0;
     
@@ -154,18 +153,18 @@ void ClientMessagingController::checkIsMessageBusReady() {
 
 void ClientMessagingController::processNotificationReceived(QString topic, QList<QByteArray> msg) {
     if(topic.startsWith("/icharger/channel/")) {
-        QByteArray data = msg.at(0);
-        ChannelStatus status;
-        status.setFromJson(data);
-        if(status.channel() == 0)
-            _charger_state->setCh1(status);
-        else
-            _charger_state->setCh2(status);
+//        QByteArray data = msg.at(0);
+//        ChannelStatus status;
+//        status.setFromJson(data);
+//        if(status.channel() == 0)
+//            _charger_state->setCh1(status);
+//        else
+//            _charger_state->setCh2(status);
     } else if(topic.startsWith("/icharger/device")) {
-        QByteArray data = msg.at(0);
-        DeviceInfo info;
-        info.setFromJson(data);
-        _charger_state->setDeviceInfo(info);
+//        QByteArray data = msg.at(0);
+//        DeviceInfo info;
+//        info.setFromJson(data);
+//        _charger_state->setDeviceInfo(info);
     } 
 }
 

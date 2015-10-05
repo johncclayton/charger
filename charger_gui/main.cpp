@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
         
         QQmlApplicationEngine engine;
         engine.rootContext()->setContextProperty("comms", controller.data());
-        engine.rootContext()->setContextProperty("charger", controller->charger());
         
         engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
         

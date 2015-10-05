@@ -122,36 +122,40 @@ void AppController::notifyHotplugEvent(bool added, int vendor, int product, QStr
 }
 
 void AppController::deviceAdded(QString key) {
-    qDebug() << "a device was added to the registry:" << key;
+    _pub->publishDeviceAddedRemoved(true, key);
 }
 
 void AppController::deviceRemoved(QString key) {
-    qDebug() << "a device was removed from the registry:" << key;
+    _pub->publishDeviceAddedRemoved(false, key);
 }
 
 void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
     // depends on what is being asked - our API is pretty simple now... 
     QString request = QString::fromUtf8(payload.at(0));
     if(request == "get-devices") {
-        DeviceMap all_devices = _registry->devices();
-        QVariantMap response;
-        response["count"] = all_devices.count();
-        
-        QVariantList device_list;
-        for(DeviceMap::const_iterator it = all_devices.begin(); it != all_devices.end(); ++it) {
-            QVariantMap device;
-            device["key"] = it.key();
-            device["protected"] = false;
-            device_list.append(device);
-        }
-        
-        response["devices"] = device_list;
+        doGetDevices(return_path);
+    }
+}
 
-        MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
-        if(msg_handler) {
-            QList<QByteArray> data;
-            data.append(makeJsonByteArray(response));
-            msg_handler->sendResponse(return_path, data);
-        }
+void AppController::doGetDevices(QList<QByteArray> return_path) {
+    DeviceMap all_devices = _registry->devices();
+    QVariantMap response;
+    response["count"] = all_devices.count();
+    
+    QVariantList device_list;
+    for(DeviceMap::const_iterator it = all_devices.begin(); it != all_devices.end(); ++it) {
+        QVariantMap device;
+        device["key"] = it.key();
+        device["protected"] = false;
+        device_list.append(device);
+    }
+    
+    response["devices"] = device_list;
+
+    MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
+    if(msg_handler) {
+        QList<QByteArray> data;
+        data.append(variantMapToJson(response));
+        msg_handler->sendResponse(return_path, data);
     }
 }

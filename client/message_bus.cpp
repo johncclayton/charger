@@ -2,6 +2,7 @@
 
 #include "nzmqt/nzmqt.hpp"
 #include "message_bus.h"
+#include "messaging/json_helper.h"
 
 using namespace nzmqt;
 
@@ -31,10 +32,6 @@ void MessageBus::setAlive(bool value) {
         _alive = value;
         Q_EMIT aliveChanged();
         qDebug() << "alive:" << _alive;
-        
-        if(_alive) {
-            asyncRequest("get-devices");
-        }
     }
 }
 
@@ -59,6 +56,9 @@ void MessageBus::processNotification(QList<QByteArray> msg) {
     QString topic = QString::fromUtf8(msg.at(0));
     if(topic == "/heartbeat") {
         _lastHeartbeat = QDateTime::currentDateTime();
+        Q_EMIT heartbeat();
+    } else if(topic == "/device") {
+        QByteArray deviceJson = msg.at(1);        
     }
     
     Q_EMIT notificationReceived(topic, msg.mid(1));

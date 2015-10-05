@@ -25,7 +25,7 @@ QByteArray DeviceOnlyJson::toJson() const {
     data[STR_DEVICE_ONLY_CH1_STATUS] = ch1_status.value;
     data[STR_DEVICE_ONLY_CH2_STATUS] = ch2_status.value;
  
-    return makeJsonByteArray(data);
+    return variantMapToJson(data);
 }
 
 /*
@@ -68,7 +68,7 @@ QByteArray ChannelStatusJson::toJson(int channel) const {
             
     }    
     
-    return makeJsonByteArray(data);
+    return variantMapToJson(data);
 }
 
 iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger_usb_ptr p, QObject *parent) : 

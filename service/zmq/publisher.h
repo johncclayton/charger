@@ -20,6 +20,7 @@ public:
     bool bind(int pub_port);
     
     void publishHeartbeat();
+    void publishDeviceAddedRemoved(bool added, QString key);
     void publishOnTopic(QByteArray topic, QByteArray content);
 };
 

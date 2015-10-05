@@ -12,7 +12,7 @@
 #include <QJsonObject>
 #endif
 
-QByteArray makeJsonByteArray(QVariantMap data) {
+QByteArray variantMapToJson(QVariantMap data) {
 #ifdef HAS_QT_JSON
     QJsonDocument d = QJsonDocument::fromVariant(data);
     return d.toJson();
@@ -22,4 +22,12 @@ QByteArray makeJsonByteArray(QVariantMap data) {
 #endif    
 }
 
-
+QVariantMap jsonToVariantMap(QByteArray data) {
+#ifdef HAS_QT_JSON
+    QJsonDocument d = QJsonDocument::fromJson(data);
+    return d.object().toVariantMap();
+#else
+    QJson::Parser parser;
+    return parser.parser(data).toMap();
+#endif    
+}

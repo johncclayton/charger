@@ -58,6 +58,7 @@ protected:
     
 protected slots:
     void processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload);    
+    void doGetDevices(QList<QByteArray> return_path);
     
 private:
     usb_context _usb;

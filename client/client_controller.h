@@ -5,7 +5,6 @@
 #include <QHostInfo>
 
 #include "message_bus.h"
-#include "charger_state.h"
 #include "registeredtyperesolver.h"
 
 namespace nzmqt {
@@ -24,7 +23,6 @@ class ClientMessagingController : public QObject
     Q_OBJECT
 public:
     Q_PROPERTY(MessageBus* messageBus READ messageBus NOTIFY messageBusChanged)
-    Q_PROPERTY(ChargerState charger READ charger NOTIFY chargerChanged)
     Q_PROPERTY(QString hostname READ hostname NOTIFY hostnameChanged)
     Q_PROPERTY(int publishPort READ publishPort NOTIFY publishPortChanged)
     Q_PROPERTY(int messagePort READ messagePort NOTIFY messagePortChanged)
@@ -35,12 +33,9 @@ public:
     void init(int pub_port = 0, int msg_port = 0);
     
     MessageBus* messageBus() const { return _message_bus; }
-    ChargerState* charger() const { return _charger_state; }
     
 signals:
     void messageBusChanged();
-    void chargerChanged();
-    void stateChanged();
     void hostnameChanged();
     void publishPortChanged();
     void messagePortChanged();
@@ -80,11 +75,7 @@ private:
     RegisteredTypeResolver* _resolve_subscribe;
     
     MessageBus* _message_bus;
-    
-    // this would typically be a list of devices - but today the system supports only
-    // a single iCharger on the bus - so this IS our entire data model.
-    ChargerState* _charger_state;
-    
+        
     QString _host;
     int _pub_port, _msg_port;
 };

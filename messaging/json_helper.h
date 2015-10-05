@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QVariantMap>
 
-QByteArray makeJsonByteArray(QVariantMap data);
+QByteArray variantMapToJson(QVariantMap data);
+QVariantMap jsonToVariantMap(QByteArray data);
 
 #endif // JSON_HELPER_H
