@@ -33,5 +33,17 @@ bool MessageHandler::bind(int port) {
 }
 
 void MessageHandler::message_received(QList<QByteArray> msg) {
-    qDebug() << "message received:" << msg;
+    QList<QByteArray> return_path;
+
+    int index = 0;
+    while(!msg.at(index).isNull()) {
+        return_path.append(msg.at(index));
+        ++index;
+    }
+    
+    QList<QByteArray> payload;
+    payload.append(msg.mid(index));
+
+    qDebug() << "return path:" << return_path;
+    qDebug() << "payload" << payload;    
 }

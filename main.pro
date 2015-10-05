@@ -10,4 +10,5 @@ SUBDIRS = bonjour \
 messaging.depends = bonjour
 client.depends = messaging
 service.depends = messaging
-charger_gui.depends = client
+
+charger_gui.depends = bonjour, messaging, client

@@ -91,7 +91,7 @@ ZMQSocket* ClientMessagingController::createSubscriberSocket() {
 
 ZMQSocket* ClientMessagingController::createRequestSocket() {
     _reqresp_socket = _ctx->createSocket(ZMQSocket::TYP_DEALER, this);  
-    QUuid ident;
+    QUuid ident = QUuid::createUuid();
     _reqresp_socket->setIdentity(ident.toString());
     return _reqresp_socket;
 }
@@ -148,7 +148,7 @@ void ClientMessagingController::checkIsMessageBusReady() {
         _message_bus = new MessageBus(_subscribe_socket, _reqresp_socket, this);
         
         // hook up the change signals from message bus to the charger state
-        connect(_message_bus, SIGNAL(channelStatusUpdated(ChannelStatus)), 
+        connect(_message_bus, SIGNAL(channelStatusChanged(ChannelStatus)), 
                 this, SLOT(routeStatusUpdated(ChannelStatus)));
         connect(_message_bus, SIGNAL(deviceInfoChanged(DeviceInfo)), 
                 this, SLOT(routeDeviceInfoChanged(DeviceInfo)));

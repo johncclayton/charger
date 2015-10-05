@@ -7,3 +7,4 @@ Makefile
 lib*.a
 charger
 *.deb
+main.pro.user
