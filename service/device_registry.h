@@ -30,6 +30,9 @@ signals:
     void deviceActivated(QString key);
     void deviceDeactivated(QString key);
     
+public slots:
+    void publishChargerState();
+    
 private:
     libusb_context* _ctx;
     Publisher_ptr _pub;

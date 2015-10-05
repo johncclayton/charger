@@ -5,29 +5,29 @@
 #include <QScopedPointer>
 #include <QTimer>
 
-#include "zmq/publisher.h"
 #include "usb/icharger_usb.h"
 
 class iCharger_DeviceController : public QObject
 {
     Q_OBJECT
 public:
-    explicit iCharger_DeviceController(Publisher_ptr pub, icharger_usb_ptr p, QObject *parent = 0);
+    explicit iCharger_DeviceController(QString key, icharger_usb_ptr p, QObject *parent = 0);
     virtual ~iCharger_DeviceController();
     
     icharger_usb_ptr device() { return _device; }
+    QString key() const { return _key; }
+    QByteArray toJson() const;
     
-    void publishDeviceJson();
-    void publishChannelJson(int index);
-        
 signals:
+    void onChargerStateChanged();
     
 public slots:
     void handleTimeout();
     
 private:
     QTimer* _timer;
-    Publisher_ptr _pub;
+    
+    QString _key;
     icharger_usb_ptr _device;
     
     QByteArray _latest_device_json;

@@ -12,17 +12,29 @@ QString DeviceRegistry::deviceKey(int vendor, int product, QString sn) {
     return QString("%1-%2-%3").arg(vendor, 1, 16).arg(product, 1, 16).arg(sn).toUpper();
 }
 
+void DeviceRegistry::publishChargerState() {
+    // TODO: fix to make it generic via interface...
+    iCharger_DeviceController* icharger = dynamic_cast<iCharger_DeviceController*>(sender());
+    if(icharger) {
+        QString topic = QString("/%1").arg(icharger->key());
+        _pub->publishOnTopic(topic.toUtf8(), icharger->toJson());
+    }
+}
+
 void DeviceRegistry::activateDevice(int vendor, int product, QString sn) {
     Q_ASSERT(_ctx != 0);
     Q_ASSERT(vendor != 0);
     Q_ASSERT(product != 0);
     
+    // TODO: instantiate the right code - generic instead of iCharger specific.
     charger_list match = icharger_usb::all_chargers(_ctx, vendor, product, sn);
-    if(match.size()) {
-        iCharger_DeviceController_ptr device_ptr(new iCharger_DeviceController(_pub, match[0]));
+    for(int index = 0; index < match.size(); ++index) {
+        QString key(deviceKey(vendor, product, sn));
+        icharger_usb_ptr obj(match[index]);
+        iCharger_DeviceController_ptr device_ptr(new iCharger_DeviceController(key, obj));
         if(0 == device_ptr->device()->acquire()) {
-            QString key(deviceKey(vendor, product, sn));
             _devices.insert(key, device_ptr);
+            connect(device_ptr.data(), SIGNAL(onChargerStateChanged()), this, SLOT(publishChargerState())); 
             Q_EMIT deviceActivated(key);
         } else {
             qDebug() << "wasn't able to claim the device - ignoring it";

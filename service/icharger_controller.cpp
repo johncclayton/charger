@@ -55,24 +55,38 @@ QByteArray DeviceOnlyJson::toJson() const {
 QByteArray ChannelStatusJson::toJson(int channel) const {
     QVariantMap data;
 
-    data["channel"] = channel;
-    data["output_power"] = quint32(output_power.value);
-    data["output_current"] = output_current.value;
-    data["input_voltage"] = input_voltage.value / 1000.0;
-    data["output_voltage"] = output_voltage.value / 1000.0;
-    data["output_capacity"] = quint32(output_capacity.value);
-    data["temp_internal"] = temp_internal.value / 10.0;
-    data["temp_external"] = temp_external.value / 10.0;
+    data[STR_CHANNEL_STATUS_CHANNEL_NUM] = channel;
+    data[STR_CHANNEL_STATUS_OUTPUT_POWER] = quint32(output_power.value);
+    data[STR_CHANNEL_STATUS_OUTPUT_CURRENT] = output_current.value;
+    data[STR_CHANNEL_STATUS_OUTPUT_VOLTAGE] = output_voltage.value / 1000.0;
+    data[STR_CHANNEL_STATUS_OUTPUT_CAPACITY] = quint32(output_capacity.value);
+
+    data[STR_CHANNEL_STATUS_INPUT_VOLTAGE] = input_voltage.value / 1000.0;
     
+    data[STR_CHANNEL_STATUS_TEMP_INTERNAL] = temp_internal.value / 10.0;
+    data[STR_CHANNEL_STATUS_TEMP_EXTERNAL] = temp_external.value / 10.0;
+    
+    QVariantList cells;
     for(int index = 0; index < MAX_CELLS; ++index) {
-            
+        QVariantMap cell;
+        cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = cell_voltage[index];
+        cell[STR_CHANNEL_STATUS_CELL_BALANCE_STATUS] = balance_status[index];
+        cell[STR_CHANNEL_STATUS_CELL_RESISTANCE] = cell_resistance[index];
+        cells << cell;
     }    
+    
+    data[STR_CHANNEL_STATUS_CELLS] = cells;
+    
+    data[STR_CHANNEL_STATUS_TOTAL_RESISTANCE] = total_resistance;
+    data[STR_CHANNEL_STATUS_LINE_INTERNAL_RESISTANCE] = line_internal_resistance;
+    data[STR_CHANNEL_STATUS_CYCLE_COUNT] = cycle_count;
+    data[STR_CHANNEL_STATUS_CONTROL_STATUS] = control_status;
     
     return variantMapToJson(data);
 }
 
-iCharger_DeviceController::iCharger_DeviceController(Publisher_ptr pub, icharger_usb_ptr p, QObject *parent) : 
-    QObject(parent), _pub(pub), _device(p)
+iCharger_DeviceController::iCharger_DeviceController(QString key, icharger_usb_ptr p, QObject *parent) : 
+    QObject(parent), _key(key), _device(p)
 {
     // query status of every bloody thing every second
     _timer = new QTimer(this);
@@ -87,6 +101,8 @@ iCharger_DeviceController::~iCharger_DeviceController() {
 }
 
 void iCharger_DeviceController::handleTimeout() {
+    bool changed = false;
+    
     // fetch device status and publish on the bus
     DeviceOnlyJson device;
     int r = _device->get_device_only(&device);
@@ -95,7 +111,7 @@ void iCharger_DeviceController::handleTimeout() {
         QByteArray device_json = device.toJson();
         if(_latest_device_json != device_json) {
             _latest_device_json = device_json;
-            publishDeviceJson();
+            changed = true;
         }
     } else {
         qDebug() << "failed to get device only info:" << r;
@@ -109,18 +125,25 @@ void iCharger_DeviceController::handleTimeout() {
             QByteArray data = channel[index].toJson(index);
             if(data != _latest_channel_json[index]) {
                 _latest_channel_json[index] = data;
-                publishChannelJson(index);
+                changed = true;
             }
         } else {
             qDebug() << "failed to get ch info:" << r;
         }
     }
+    
+    if(changed)
+        Q_EMIT onChargerStateChanged();
 }
 
-void iCharger_DeviceController::publishDeviceJson() {
-    _pub->publishOnTopic(QString("/icharger/device").toUtf8(), _latest_device_json);
+QByteArray iCharger_DeviceController::toJson() const {
+    QVariantMap data;
+    data["key"] = _key;
+    data["info"] = _latest_device_json;
+    QVariantList channels;
+    channels << _latest_channel_json[0];
+    channels << _latest_channel_json[1];
+    data["channel"] = channels;
+    return variantMapToJson(data);
 }
 
-void iCharger_DeviceController::publishChannelJson(int index) {
-    _pub->publishOnTopic(QString("/icharger/channel/%1").arg(index + 1).toUtf8(), _latest_channel_json[index]);
-}

@@ -130,7 +130,6 @@ void AppController::deviceRemoved(QString key) {
 }
 
 void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
-    MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
     QVariantMap response;
 
     // depends on what is being asked - our API is pretty simple now... 
@@ -139,6 +138,7 @@ void AppController::processMessageRequest(QList<QByteArray> return_path, QList<Q
         response = doGetDevices();
     }
     
+    MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
     if(!response.isEmpty() && msg_handler) {
         QList<QByteArray> data;
         data.append(variantMapToJson(response));
