@@ -41,13 +41,12 @@ HEADERS = \
 TARGET = charger
 
 unix:!macx {
-    INCLUDEPATH += /usr/include/qjson
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0 
     INCLUDEPATH += ../3rdparty/build/include 
     LIBS += ../3rdparty/build/lib/libusb-1.0.a 
     LIBS += ../3rdparty/build/lib/libzmq.a 
     LIBS += ../3rdparty/build/lib/libsodium.a 
-    LIBS += -ldns_sd -lrt -ludev -lqjson 
+    LIBS += -ldns_sd -lrt -ludev
 }
 
 macx {
