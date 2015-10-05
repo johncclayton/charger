@@ -16,6 +16,7 @@ TARGET = Charger
 unix:!macx {
     INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
     LIBS += ../3rdparty/build/lib/libusb-1.0.a -L/usr/lib/arm-linux-gnueabihf -lzmq -ldns_sd -lrt -ludev
+    LIBS += -lqjson 
 }
 
 macx {

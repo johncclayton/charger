@@ -18,6 +18,5 @@ SOURCES += \
 
 unix:!macx {
     INCLUDEPATH += /usr/include/qjson
-    LIBS += -lqjson 
 }
 

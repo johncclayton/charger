@@ -47,6 +47,7 @@ unix:!macx {
     LIBS += ../3rdparty/build/lib/libzmq.a 
     LIBS += ../3rdparty/build/lib/libsodium.a 
     LIBS += -ldns_sd -lrt -ludev
+    LIBS += -lqjson 
 }
 
 macx {

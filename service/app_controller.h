@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 
 #include <QObject>
+#include <QVariantMap>
 
 #include "usb/icharger_usb.h"
 #include "usb/eventhandler.h"
@@ -58,7 +59,7 @@ protected:
     
 protected slots:
     void processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload);    
-    void doGetDevices(QList<QByteArray> return_path);
+    QVariantMap doGetDevices();
     
 private:
     usb_context _usb;

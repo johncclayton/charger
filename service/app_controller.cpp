@@ -130,14 +130,24 @@ void AppController::deviceRemoved(QString key) {
 }
 
 void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
+    MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
+    QVariantMap response;
+
     // depends on what is being asked - our API is pretty simple now... 
     QString request = QString::fromUtf8(payload.at(0));
     if(request == "get-devices") {
-        doGetDevices(return_path);
+        response = doGetDevices();
     }
+    
+    if(!response.isEmpty() && msg_handler) {
+        QList<QByteArray> data;
+        data.append(variantMapToJson(response));
+        msg_handler->sendResponse(return_path, data);
+    }
+    
 }
 
-void AppController::doGetDevices(QList<QByteArray> return_path) {
+QVariantMap AppController::doGetDevices() {
     DeviceMap all_devices = _registry->devices();
     QVariantMap response;
     response["count"] = all_devices.count();
@@ -151,11 +161,5 @@ void AppController::doGetDevices(QList<QByteArray> return_path) {
     }
     
     response["devices"] = device_list;
-
-    MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
-    if(msg_handler) {
-        QList<QByteArray> data;
-        data.append(variantMapToJson(response));
-        msg_handler->sendResponse(return_path, data);
-    }
+    return response;
 }
