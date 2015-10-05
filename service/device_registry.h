@@ -24,6 +24,7 @@ public:
     
     void activate_device(int vendor, int product, QString sn);
     void deactivate_device(int vendor, int product);
+    DeviceMap devices() const { return _devices; }
 
 signals:
     void device_activated(QString key);

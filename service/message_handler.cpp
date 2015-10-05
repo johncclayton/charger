@@ -45,3 +45,17 @@ void MessageHandler::message_received(QList<QByteArray> msg) {
     
     Q_EMIT handle_message(return_path, payload);
 }
+
+void MessageHandler::send_response(QList<QByteArray> return_path, QList<QByteArray> payload) {
+    QList<QByteArray> msg;
+    msg << return_path;
+    msg << QByteArray();
+    msg << payload;
+    _socket->sendMessage(msg);
+}
+
+void MessageHandler::send_response(QList<QByteArray> return_path, QByteArray payload) {
+    QList<QByteArray> msg;
+    msg << payload;
+    send_response(return_path, msg);
+}

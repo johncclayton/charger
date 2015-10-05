@@ -19,7 +19,7 @@ public:
     
     void publish_device_json();
     void publish_channel_json(int index);
-    
+        
 signals:
     
 public slots:

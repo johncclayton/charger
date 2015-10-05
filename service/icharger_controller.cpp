@@ -2,30 +2,10 @@
 #include <QThread>
 #include <QVariantMap>
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-#define HAS_QT_JSON
-#else
-#include <serializer.h>
-#endif
-
 #include "icharger_controller.h"
 #include "icharger_message_keys.h"
 #include "usb/icharger_data.h"
-
-#ifdef HAS_QT_JSON
-#include <QJsonDocument>
-#include <QJsonObject>
-#endif
-
-QByteArray makeJsonByteArray(QVariantMap data) {
-#ifdef HAS_QT_JSON
-    QJsonDocument d = QJsonDocument::fromVariant(data);
-    return d.toJson();
-#else
-    QJson::Serializer serializer;
-    return serializer.serialize(data);
-#endif    
-}
+#include "json_helper.h"
 
 struct DeviceOnlyJson : public device_only {
     QByteArray toJson() const;
@@ -138,9 +118,9 @@ void iCharger_DeviceController::handleTimeout() {
 }
 
 void iCharger_DeviceController::publish_device_json() {
-    _pub->publishOnTopic(QString("/icharger/device"), _latest_device_json);
+    _pub->publishOnTopic(QString("/icharger/device").toUtf8(), _latest_device_json);
 }
 
 void iCharger_DeviceController::publish_channel_json(int index) {
-    _pub->publishOnTopic(QString("/icharger/channel/%1").arg(index + 1), _latest_channel_json[index]);
+    _pub->publishOnTopic(QString("/icharger/channel/%1").arg(index + 1).toUtf8(), _latest_channel_json[index]);
 }

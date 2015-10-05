@@ -26,15 +26,12 @@ bool Publisher::bind(int port) {
     return _port != 0;
 }
 
-void Publisher::publishOnTopic(QString topic, QString content) {
+void Publisher::publishOnTopic(QByteArray topic, QByteArray content) {
     QList< QByteArray > msg;
-    msg += topic.toLocal8Bit();
-    msg += content.toLocal8Bit();
+    msg += topic;
+    msg += content;
     _socket->sendMessage(msg);
-    
-    //    qDebug() << "published on topic:" << topic << ":" << content;
 }
-
 
 
 

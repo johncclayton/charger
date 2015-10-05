@@ -19,7 +19,8 @@ public:
     explicit Publisher(nzmqt::ZMQContext* ctx, QObject* owner = 0);
     bool bind(int pub_port);
     
-    void publishOnTopic(QString topic, QString content);
+    void publishOnTopic(QByteArray topic, QByteArray content);
+    void publish(QList<QByteArray> data);
 };
 
 typedef QSharedPointer<Publisher> Publisher_ptr;

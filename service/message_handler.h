@@ -24,6 +24,9 @@ public:
     explicit MessageHandler(nzmqt::ZMQContext* ctx, QObject *parent = 0);
     bool bind(int port);    
     
+    void send_response(QList<QByteArray> return_path, QList<QByteArray> payload);
+    void send_response(QList<QByteArray> return_path, QByteArray payload);
+    
 signals:
     void handle_message(QList<QByteArray> return_path, QList<QByteArray> payload);
     

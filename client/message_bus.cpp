@@ -50,14 +50,9 @@ void MessageBus::notificationReceived(QList<QByteArray> msg) {
 }
 
 bool MessageBus::asyncRequest(QString responseTopic, QString requestPayload) {   
-    qDebug() << "sending" << requestPayload << "reply on topic:" << responseTopic;
-    
     QList<QByteArray> msg;
     msg << QByteArray();
     msg << responseTopic.toUtf8();
     msg << requestPayload.toUtf8();
-    qDebug() << "will sendnow";
-    bool value = _msg->sendMessage(msg);
-    qDebug() << "with success:" << value;
-    return value;
+    return _msg->sendMessage(msg);
 }

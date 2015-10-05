@@ -10,6 +10,8 @@
 
 #include "usb/icharger_usb.h"
 #include "usb/eventhandler.h"
+#include "message_handler.h"
+#include "json_helper.h"
 
 #include "nzmqt/nzmqt.hpp"
 #include "zmq/publisher.h"
@@ -128,8 +130,26 @@ void AppController::device_removed(QString key) {
 void AppController::handle_message(QList<QByteArray> return_path, QList<QByteArray> payload) {
     // depends on what is being asked - our API is pretty simple now... 
     QByteArray response_topic = payload.at(0);
+    
     QString request = QString::fromUtf8(payload.at(1));
     if(request == "get-devices") {
-        qDebug() << "i would publish a set of devices";
+        DeviceMap all_devices = _registry->devices();
+        QVariantMap response;
+        response["count"] = all_devices.count();
+        
+        QVariantList device_list;
+        for(DeviceMap::const_iterator it = all_devices.cbegin(); it != all_devices.cend(); ++it) {
+            QVariantMap device;
+            device["key"] = it.key();
+            device_list.append(device);
+        }
+        
+        response["devices"] = device_list;
+
+        MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
+        if(msg_handler) {
+            QByteArray json = makeJsonByteArray(response);
+            msg_handler->send_response(return_path, json);
+        }
     }
 }
