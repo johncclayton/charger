@@ -61,6 +61,7 @@ signals:
     
 protected slots:
     void routeStatusUpdated(const ChannelStatus& status);
+    void routeDeviceInfoChanged(const DeviceInfo& info);
     
 public slots:
     void resolvedService(QString type, QHostInfo addr, int port);
@@ -99,6 +100,9 @@ private:
     RegisteredTypeResolver* _resolve_subscribe;
     
     MessageBus* _message_bus;
+    
+    // this would typically be a list of devices - but today the system supports only
+    // a single iCharger on the bus - so this IS our entire data model.
     ChargerState* _charger_state;
     
     State _state;

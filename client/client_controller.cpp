@@ -1,4 +1,6 @@
 #include <QHostInfo>
+#include <QUuid>
+
 #include "client_controller.h"
 #include "channel_status.h"
 #include "nzmqt/nzmqt.hpp"
@@ -89,6 +91,8 @@ ZMQSocket* ClientMessagingController::createSubscriberSocket() {
 
 ZMQSocket* ClientMessagingController::createRequestSocket() {
     _reqresp_socket = _ctx->createSocket(ZMQSocket::TYP_DEALER, this);  
+    QUuid ident;
+    _reqresp_socket->setIdentity(ident.toString());
     return _reqresp_socket;
 }
 
@@ -146,6 +150,8 @@ void ClientMessagingController::checkIsMessageBusReady() {
         // hook up the change signals from message bus to the charger state
         connect(_message_bus, SIGNAL(channelStatusUpdated(ChannelStatus)), 
                 this, SLOT(routeStatusUpdated(ChannelStatus)));
+        connect(_message_bus, SIGNAL(deviceInfoChanged(DeviceInfo)), 
+                this, SLOT(routeDeviceInfoChanged(DeviceInfo)));
 
         setState(CONNECTED);
         
@@ -158,6 +164,10 @@ void ClientMessagingController::routeStatusUpdated(const ChannelStatus& status) 
         _charger_state->setCh1(status);
     else
         _charger_state->setCh2(status);
+}
+
+void ClientMessagingController::routeDeviceInfoChanged(const DeviceInfo& info) {
+    _charger_state->setDeviceInfo(info);
 }
 
 void ClientMessagingController::setState(State s) { 

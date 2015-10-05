@@ -42,10 +42,10 @@ void MessageBus::notificationReceived(QList<QByteArray> msg) {
     }
 }
 
-void MessageBus::asyncRequest(QString responseTopic, QString requestPayload) {
+bool MessageBus::asyncRequest(QString responseTopic, QString requestPayload) {
     QList<QByteArray> msg;
-    msg << QByteArray();
+    msg << "charger_service";
     msg << responseTopic.toUtf8();
     msg << requestPayload.toUtf8();
-    _msg->sendMessage(msg);
+    return _msg->sendMessage(msg);
 }

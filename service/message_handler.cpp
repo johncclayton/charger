@@ -5,10 +5,13 @@
 
 #include "message_handler.h"
 #include "nzmqt/nzmqt.hpp"
+
 using namespace nzmqt;
 
-MessageHandler::MessageHandler(nzmqt::ZMQContext* ctx, QObject *owner) : SocketBase(ctx, ZMQSocket::TYP_ROUTER, owner)
+MessageHandler::MessageHandler(nzmqt::ZMQContext* ctx, QObject *owner) : 
+    SocketBase(ctx, ZMQSocket::TYP_ROUTER, owner)
 {
+    _socket->setIdentity("charger_service");
     connect(_socket, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(message_received(QList<QByteArray>)));
 }
@@ -30,6 +33,5 @@ bool MessageHandler::bind(int port) {
 }
 
 void MessageHandler::message_received(QList<QByteArray> msg) {
-    Q_UNUSED(msg);
-    //qDebug() << "message received:" << msg;
+    qDebug() << "message received:" << msg;
 }

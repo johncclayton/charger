@@ -22,7 +22,18 @@ class MessageBus : public QObject
 public:
     explicit MessageBus(nzmqt::ZMQSocket* pub, nzmqt::ZMQSocket* msg, QObject *parent = 0);
     virtual ~MessageBus();
-
+    
+signals:
+    void channelStatusChanged(const ChannelStatus&);
+    void deviceInfoChanged(const DeviceInfo&);    
+    void messageResponseReceived(QString topic, QList<QByteArray> msg);
+        
+public slots:
+    void messageReceived(QList<QByteArray> msg);
+    void notificationReceived(QList<QByteArray> msg);    
+    
+private:
+    
     /**
      * @brief asyncRequest publishes a request payload to the back end service and expects
      * the reply to appear at some point later on the provided topic (which can be anything, 
@@ -31,18 +42,8 @@ public:
      * @param responseTopic - the topic you want the reply to appear on
      * @param requestPayload - the message payload - hope you know what it should be.
      */    
-    void asyncRequest(QString responseTopic, QString requestPayload);
-    
-signals:
-    void channelStatusChanged(const ChannelStatus&);
-    void deviceInfoChanged(const DeviceInfo&);    
-    void messageResponseReceived(QString topic, QList<QByteArray> msg);
-    
-public slots:
-    void messageReceived(QList<QByteArray> msg);
-    void notificationReceived(QList<QByteArray> msg);    
-    
-private:
+    bool asyncRequest(QString responseTopic, QString requestPayload);
+
     nzmqt::ZMQSocket* _pub;
     nzmqt::ZMQSocket* _msg;
 };

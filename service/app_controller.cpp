@@ -75,7 +75,7 @@ int AppController::init(int pub_port, int msg_port) {
         }
         
         // Kick off a listener for USB hotplug events - so we keep our device list fresh,
-        // this is a thread and it runs its own event loop internally.
+        // this is a thread and it runs its own event loop internally.  
         _hotplug_handler = new LibUsbEventAdapter(_usb.ctx);
         connect(_hotplug_handler, SIGNAL(hotplug_event(bool,int,int,QString)), 
                 this, SLOT(notify_hotplug_event(bool,int,int,QString)), Qt::QueuedConnection);
