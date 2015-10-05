@@ -8,18 +8,22 @@
 #include "client_controller.h"
 #include "qjsonmodel.h"
 
-class DeviceModel : public QJsonModel {
+class DeviceModel : public QObject {
     Q_OBJECT
     
 public:
-    DeviceModel(QSharedPointer<ClientMessagingController> controller, QObject *parent = 0);
+    DeviceModel(QSharedPointer<ClientMessagingController> controller, 
+                QObject *parent = 0);
     ~DeviceModel();
-    
+
+    QAbstractItemModel* itemModel() const { return _model; }
+        
 public slots:
-    void messageBusInstantiated();
+    void deviceAddedRemoved(bool added, QString key);
     
 private:
     QSharedPointer<ClientMessagingController> _controller;
+    QJsonModel* _model;
 };
 
 #endif // DEVICEMODEL_H

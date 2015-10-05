@@ -28,13 +28,16 @@ int main(int argc, char *argv[])
     {
         QSharedPointer<ClientMessagingController> controller(new ClientMessagingController);
         controller->init(pub_port, msg_port);
-        
-        DeviceModel model(controller);
-        
+                
         QQmlApplicationEngine engine;
         engine.rootContext()->setContextProperty("comms", controller.data());
-        engine.rootContext()->setContextProperty("deviceModel", &model);
-        
+     
+        // slightly retarted - but hey, what's a program without a bit of built in
+        // cruft?  The model here listens to added/removed events on the controller
+        // and basically stores all the data that's visible on the screen in the UI.  
+        DeviceModel model(controller);
+        engine.rootContext()->setContextProperty("dataModel", model.itemModel());
+                
         engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
         
         r = app.exec();

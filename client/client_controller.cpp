@@ -2,7 +2,6 @@
 #include <QUuid>
 
 #include "client_controller.h"
-#include "channel_status.h"
 #include "nzmqt/nzmqt.hpp"
 
 using namespace nzmqt;
@@ -15,7 +14,7 @@ ClientMessagingController::ClientMessagingController(QObject *parent) : QObject(
     _ctx->start();
     
     _pub_port = _msg_port = 0;
-    _message_bus = 0;
+    _message_bus = new MessageBus(this);
     _reqresp_socket = 0;
     _subscribe_socket = 0;
     
@@ -52,36 +51,28 @@ void ClientMessagingController::init(int pub_port, int msg_port) {
     }
 }
 
-void ClientMessagingController::closeMessagingHandler() {
-    if(_message_bus) {
-        qDebug() << "closing the message bus";
-        delete _message_bus;
-        _message_bus = 0;
-
-        Q_EMIT messageBusChanged();
-    }
-}
-
 void ClientMessagingController::closeRequestSocket() {
     if(_reqresp_socket) {
+        _message_bus->setMessageSocket(0);
         _reqresp_socket->deleteLater();
         qDebug() << "req/resp socket destroyed";    
     }
     _reqresp_socket = 0;
-    closeMessagingHandler();
 }
 
 void ClientMessagingController::closeSubscribeSocket() {
     if(_subscribe_socket) {
+        _message_bus->setPublishSocket(0);
         _subscribe_socket->deleteLater();
         qDebug() << "subscribe socket destroyed";    
     }
     _subscribe_socket = 0;
-    closeMessagingHandler();
 }
 
 ZMQSocket* ClientMessagingController::createSubscriberSocket() {
     _subscribe_socket = _ctx->createSocket(ZMQSocket::TYP_SUB, this);  
+    _message_bus->setPublishSocket(_subscribe_socket);
+    Q_EMIT messageBusChanged();
     return _subscribe_socket;
 }
 
@@ -89,6 +80,8 @@ ZMQSocket* ClientMessagingController::createRequestSocket() {
     _reqresp_socket = _ctx->createSocket(ZMQSocket::TYP_DEALER, this);  
     QUuid ident = QUuid::createUuid();
     _reqresp_socket->setIdentity(ident.toString());
+    _message_bus->setMessageSocket(_reqresp_socket);
+    Q_EMIT messageBusChanged();
     return _reqresp_socket;
 }
 
@@ -115,12 +108,11 @@ void ClientMessagingController::resolvedService(QString type, QHostInfo host, in
     
     QString addr = QString("tcp://%1:%2").arg(host.hostName()).arg(port);
     qDebug() << "Connecting to:" << addr << "for:" << type;
-    s->connectTo(addr);
     
+    s->connectTo(addr);
+
     if(isSubscriber)
         s->subscribeTo("/");
-
-    checkIsMessageBusReady();
 }
 
 void ClientMessagingController::serviceResolutionError(QString type, int err) {
@@ -133,17 +125,6 @@ void ClientMessagingController::serviceRemoved(QString type) {
     }
     else if(type == message_service) {
         closeRequestSocket();
-    }
-}
-
-void ClientMessagingController::checkIsMessageBusReady() {
-    if(_message_bus)
-        return;
-    
-    if(_reqresp_socket && _subscribe_socket) {
-        _message_bus = new MessageBus(_subscribe_socket, _reqresp_socket, this);
-                                
-        Q_EMIT messageBusChanged();
     }
 }
 

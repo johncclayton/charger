@@ -18,12 +18,17 @@ class MessageBus : public QObject
 {
     Q_OBJECT
 public:
-    explicit MessageBus(nzmqt::ZMQSocket* pub, nzmqt::ZMQSocket* msg, QObject *parent = 0);
+    explicit MessageBus(QObject *parent = 0);
     virtual ~MessageBus();
     
     Q_PROPERTY(bool alive READ alive NOTIFY aliveChanged)
     
-    bool alive() { return _alive; }
+    bool alive() const { return _alive; }
+    void getDevices() const;
+    void getDeviceInformation(QString key) const;
+    
+    void setPublishSocket(nzmqt::ZMQSocket* s);
+    void setMessageSocket(nzmqt::ZMQSocket* s);
     
 signals:
     void aliveChanged();
@@ -55,10 +60,12 @@ private:
      * the reply to immediately 
      * @param requestPayload - the message payload - hope you know what it should be.
      */    
-    bool syncRequest(QString requestPayload);
+    bool syncRequest(QByteArray requestPayload) const;
+    bool syncRequest(QList<QByteArray> requestPayload) const;
 
     nzmqt::ZMQSocket* _pub;
     nzmqt::ZMQSocket* _msg;
+    
     bool _alive;
     QDateTime _lastHeartbeat;
 };

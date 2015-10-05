@@ -136,6 +136,9 @@ void AppController::processMessageRequest(QList<QByteArray> return_path, QList<Q
     QString request = QString::fromUtf8(payload.at(0));
     if(request == "get-devices") {
         response = doGetDevices();
+    } else if(request == "get-device") {
+        QString key = payload.at(1);
+        response = doGetDevice(key);
     }
     
     MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
@@ -165,4 +168,11 @@ QVariantMap AppController::doGetDevices() {
     
     response["devices"] = device_list;
     return response;
+}
+
+QVariantMap AppController::doGetDevice(QString key) {
+    if(!_registry->devices().contains(key))
+        return QVariantMap();
+    iCharger_DeviceController_ptr device(_registry->devices().find(key).value());
+    return jsonToVariantMap(device->toJson());
 }

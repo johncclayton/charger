@@ -8,23 +8,47 @@ using namespace nzmqt;
 
 #define SECONDS_5_MS (1000 * 5)
 
-MessageBus::MessageBus(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) : 
-    QObject(parent), _pub(sub), _msg(msg), _alive(false)
+MessageBus::MessageBus(QObject *parent) : 
+    QObject(parent), _pub(0), _msg(0), _alive(false)
 {
-    connect(msg, SIGNAL(messageReceived(QList<QByteArray>)), 
-            this, SLOT(processMessageResponse(QList<QByteArray>)));
-    
-    connect(sub, SIGNAL(messageReceived(QList<QByteArray>)), 
-            this, SLOT(processNotification(QList<QByteArray>)));
-
     _lastHeartbeat = QDateTime::currentDateTime();
-    startTimer(1000);
-    
-    qDebug() << "message bus layer is now active.";
+    startTimer(1000);    
 }
 
 MessageBus::~MessageBus() {
-    qDebug() << "message bus layer has now been destroyed.";
+}
+
+void MessageBus::setPublishSocket(ZMQSocket* s) {
+    if(_pub)
+        disconnect(_pub);
+    
+    _pub = s;
+
+    if(_pub)
+        connect(_pub, SIGNAL(messageReceived(QList<QByteArray>)), 
+                this, SLOT(processNotification(QList<QByteArray>)));
+}
+
+void MessageBus::setMessageSocket(ZMQSocket* s) {
+    if(_msg)
+        disconnect(_msg);
+    
+    _msg = s;
+    
+    if(_msg)
+        connect(_msg, SIGNAL(messageReceived(QList<QByteArray>)), 
+                this, SLOT(processMessageResponse(QList<QByteArray>)));
+}
+
+void MessageBus::getDevices() const {
+    syncRequest("get-devices");    
+}
+
+void MessageBus::getDeviceInformation(QString key) const {
+    QList<QByteArray> req;
+    req << "get-device";
+    req << key.toUtf8();
+    syncRequest(req);
 }
 
 void MessageBus::setAlive(bool value) {
@@ -66,9 +90,13 @@ void MessageBus::processNotification(QList<QByteArray> msg) {
     Q_EMIT notificationReceived(topic, msg.mid(1));
 }
 
-bool MessageBus::syncRequest(QString requestPayload) {   
+bool MessageBus::syncRequest(QList<QByteArray> requestPayload) const {   
+    requestPayload.prepend(QByteArray());
+    return _msg->sendMessage(requestPayload);
+}
+
+bool MessageBus::syncRequest(QByteArray requestPayload) const {   
     QList<QByteArray> msg;
-    msg << QByteArray();
-    msg << requestPayload.toUtf8();
-    return _msg->sendMessage(msg);
+    msg << requestPayload;
+    return syncRequest(msg);
 }

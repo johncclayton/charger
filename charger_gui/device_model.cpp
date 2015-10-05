@@ -1,21 +1,26 @@
 #include "device_model.h"
+#include "message_bus.h"
 
 DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QObject *parent) : 
-    QJsonModel(parent),
-    _controller(c) 
+    QObject(parent),
+    _controller(c),
+    _model(new QJsonModel)
 {
-    connect(c.data(), SIGNAL(messageBusChanged()), this, SLOT(messageBusInstantiated()));    
+    MessageBus* bus = c->messageBus();
+    connect(bus, SIGNAL(deviceAddedRemoved(bool,QString)), this, SLOT(deviceAddedRemoved(bool,QString)));    
 }
 
 DeviceModel::~DeviceModel() {
     
 }
 
-void DeviceModel::messageBusInstantiated() {
-    // drop all existing signals/slots...    
-    
-    // drop model content...
-    
-    // make new ones!
-    
+void DeviceModel::deviceAddedRemoved(bool added, QString key) {
+    if(added) {
+        // go fetch all the details for the device. 
+        
+    } else {
+        // find it in the model and remove it.
+        
+    }
 }
+

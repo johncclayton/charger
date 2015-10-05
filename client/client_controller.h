@@ -40,10 +40,7 @@ signals:
     void hostnameChanged();
     void publishPortChanged();
     void messagePortChanged();
-        
-protected slots:
-//    void processNotificationReceived(QString topic, QList<QByteArray> msg);
-    
+            
 public slots:
     void resolvedService(QString type, QHostInfo addr, int port);
     void serviceResolutionError(QString type, int err);    
@@ -64,10 +61,7 @@ private:
     
     void closeRequestSocket();
     void closeSubscribeSocket();
-    
-    void closeMessagingHandler();
-    void checkIsMessageBusReady();
-    
+        
     nzmqt::ZMQContext* _ctx;
     nzmqt::ZMQSocket* _reqresp_socket;
     nzmqt::ZMQSocket* _subscribe_socket;
