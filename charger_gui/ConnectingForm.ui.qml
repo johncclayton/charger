@@ -22,7 +22,7 @@ Item {
             
             PropertyChanges {
                 target: labelConnectionState
-                text: qsTr("Finding Charger...")
+                text: qsTr("Connecting...")
             }
             
             PropertyChanges {
@@ -42,7 +42,7 @@ Item {
             
             PropertyChanges {
                 target: labelConnectionState
-                text: qsTr("Connected!")
+                text: qsTr("Discovery...")
             }
             
             PropertyChanges {
@@ -59,7 +59,37 @@ Item {
             
             PropertyChanges {
                 target: chargerImage
+                x: 84
+                y: 237
+                anchors.bottomMargin: 20
+                visible: false
+            }
+        },
+        State {
+            name: "GetDevicesState"
+            PropertyChanges {
+                target: labelConnectionState
+                text: qsTr("Connected!")
+            }
+
+            PropertyChanges {
+                target: actionButton
+                text: "Continue"
                 visible: true
+                isDefault: true
+            }
+
+            PropertyChanges {
+                target: progressBar
+                visible: false
+            }
+
+            PropertyChanges {
+                target: chargerImage
+                x: 84
+                y: 237
+                visible: true
+                anchors.bottomMargin: 20
             }
         }]
     
@@ -160,10 +190,11 @@ Item {
         y: 240
         width: 233
         height: 87
+        fillMode: Image.PreserveAspectFit
         visible: false
         anchors.bottom: actionButton.top
         anchors.bottomMargin: 15
-        source: "qrc:/qtquickplugin/images/template_image.png"
+        source: "images/icharger_4010_duo.png"
     }
     
 }

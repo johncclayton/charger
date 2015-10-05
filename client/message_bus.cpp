@@ -13,7 +13,7 @@ MessageBus::MessageBus(ZMQSocket* sub, ZMQSocket* msg, QObject *parent) :
     connect(sub, SIGNAL(messageReceived(QList<QByteArray>)), 
             this, SLOT(notificationReceived(QList<QByteArray>)));
 
-    startTimer(1500);
+    startTimer(5000);
     
     qDebug() << "message bus layer is now active.";
 }

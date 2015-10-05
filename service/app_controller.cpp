@@ -148,7 +148,9 @@ void AppController::handle_message(QList<QByteArray> return_path, QList<QByteArr
 
         MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
         if(msg_handler) {
-            QByteArray json = makeJsonByteArray(response);
+            QList<QByteArray> response;
+            response.append(response_topic);
+            response.append(makeJsonByteArray(response));
             msg_handler->send_response(return_path, json);
         }
     }
