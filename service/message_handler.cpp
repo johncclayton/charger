@@ -36,14 +36,10 @@ void MessageHandler::message_received(QList<QByteArray> msg) {
     QList<QByteArray> return_path;
 
     int index = 0;
-    while(!msg.at(index).isNull()) {
-        return_path.append(msg.at(index));
+    while(!msg.at(index).isEmpty() && index < msg.size()) {
+        return_path << msg.at(index);
         ++index;
     }
     
-    QList<QByteArray> payload;
-    payload.append(msg.mid(index));
-
-    qDebug() << "return path:" << return_path;
-    qDebug() << "payload" << payload;    
+    QList<QByteArray> payload(msg.mid(index + 1));
 }
