@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTimerEvent>
+#include <QVariantMap>
 #include <QDateTime>
 
 namespace nzmqt {
@@ -11,10 +12,7 @@ namespace nzmqt {
 
 /**
  * @brief The MessageBus class provides an interface for the UI/Qml to talk to the 
- * back end services via ZeroMQ and JSON.  The interface is intended to be entirely
- * async in nature, the primary mechanism by which messages are sent/received is
- * the request/subscription channels. 
- * @see asyncRequest
+ * back end services via ZeroMQ and JSON.  
  */
 class MessageBus : public QObject
 {
@@ -30,6 +28,8 @@ public:
 signals:
     void aliveChanged();
     void heartbeat();
+    
+    void deviceAddedRemoved(bool added, QString key);
     
     void notificationReceived(QString topic, QList<QByteArray> msg);
     void messageResponseReceived(QList<QByteArray> msg);
@@ -51,14 +51,11 @@ protected:
 private:
     
     /**
-     * @brief asyncRequest publishes a request payload to the back end service and expects
-     * the reply to appear at some point later on the provided topic (which can be anything, 
-     * as long as the requestor has subscribed).  The reply will appear via the 
-     * messageResponseReceived() signal.
-     * @param responseTopic - the topic you want the reply to appear on
+     * @brief syncRequest publishes a request payload to the back end service and expects
+     * the reply to immediately 
      * @param requestPayload - the message payload - hope you know what it should be.
      */    
-    bool asyncRequest(QString requestPayload);
+    bool syncRequest(QString requestPayload);
 
     nzmqt::ZMQSocket* _pub;
     nzmqt::ZMQSocket* _msg;

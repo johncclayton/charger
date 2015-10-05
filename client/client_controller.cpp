@@ -142,15 +142,12 @@ void ClientMessagingController::checkIsMessageBusReady() {
     
     if(_reqresp_socket && _subscribe_socket) {
         _message_bus = new MessageBus(_subscribe_socket, _reqresp_socket, this);
-        
-        // hook up the change signals from message bus to the charger state
-        connect(_message_bus, SIGNAL(notificationReceived(QString,QList<QByteArray>)),
-                this, SLOT(processNotificationReceived(QString,QList<QByteArray>)));
-                        
+                                
         Q_EMIT messageBusChanged();
     }
 }
 
+/*
 void ClientMessagingController::processNotificationReceived(QString topic, QList<QByteArray> msg) {
     if(topic.startsWith("/icharger/channel/")) {
 //        QByteArray data = msg.at(0);
@@ -167,6 +164,7 @@ void ClientMessagingController::processNotificationReceived(QString topic, QList
 //        _charger_state->setDeviceInfo(info);
     } 
 }
+*/
 
 void ClientMessagingController::setHostname(QString value) { 
     if(value != _host) {

@@ -24,12 +24,10 @@ ApplicationWindow {
     statusBar: StatusBar {
         RowLayout {
             anchors.fill: parent
-
-            Layout.rightMargin: 12
             
-            StatusIndicator {
-                id: statusInd
-            }
+//            StatusIndicator {
+//                id: statusInd
+//            }
             
             Label {
                 anchors.left: statusInd.right

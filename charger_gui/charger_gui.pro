@@ -3,7 +3,16 @@ TEMPLATE = app
 CONFIG += c++11
 QT += qml quick widgets
 
-SOURCES += main.cpp 
+SOURCES += main.cpp \ 
+    qjsonitem.cpp \
+    qjsonmodel.cpp \
+    device_model.cpp
+
+HEADERS += \
+    qjsonitem.h \
+    qjsonmodel.h \
+    device_model.h
+
 RESOURCES += qml.qrc
 INCLUDEPATH += ../client
 INCLUDEPATH += ../bonjour
@@ -29,4 +38,5 @@ QML_IMPORT_PATH =
 
 # Default rules for deployment.
 include(deployment.pri)
+
 

@@ -7,5 +7,7 @@
         <file>ChannelForm.ui.qml</file>
         <file>Connecting.qml</file>
         <file>ConnectingForm.ui.qml</file>
+        <file>Device.qml</file>
+        <file>DeviceForm.ui.qml</file>
     </qresource>
 </RCC>

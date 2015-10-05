@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Layouts 1.2
-import QtQuick.Controls 1.3
+import QtQuick.Controls 1.4
 import QtQuick.Extras 1.4
 
 Item {
@@ -35,6 +35,11 @@ Item {
                 target: actionButton
                 visible: true
             }
+            
+            PropertyChanges {
+                target: usableDevices
+                anchors.topMargin: 20
+            }
         },
         
         State {
@@ -55,14 +60,6 @@ Item {
             
             PropertyChanges {
                 target: progressBar
-                visible: false
-            }
-            
-            PropertyChanges {
-                target: chargerImage
-                x: 84
-                y: 237
-                anchors.bottomMargin: 20
                 visible: false
             }
         }]
@@ -158,17 +155,23 @@ Item {
         anchors.bottomMargin: 30
     }
     
-    Image {
-        id: chargerImage
-        x: 84
-        y: 240
-        width: 233
-        height: 87
-        fillMode: Image.PreserveAspectFit
+    GroupBox {
+        id: usableDevices
+        anchors.rightMargin: 20
+        anchors.leftMargin: 20
+        anchors.topMargin: 20
+        anchors.bottomMargin: 20
         visible: false
+        checked: false
+        anchors.top: gridLayout.bottom
+        anchors.right: parent.right
         anchors.bottom: actionButton.top
-        anchors.bottomMargin: 15
-        source: "images/icharger_4010_duo.png"
+        anchors.left: parent.left
+        
+        Device {
+            id: device1
+            anchors.fill: parent
+        }
     }
 }
 

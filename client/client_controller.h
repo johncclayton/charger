@@ -36,12 +36,13 @@ public:
     
 signals:
     void messageBusChanged();
+    
     void hostnameChanged();
     void publishPortChanged();
     void messagePortChanged();
-    
+        
 protected slots:
-    void processNotificationReceived(QString topic, QList<QByteArray> msg);
+//    void processNotificationReceived(QString topic, QList<QByteArray> msg);
     
 public slots:
     void resolvedService(QString type, QHostInfo addr, int port);

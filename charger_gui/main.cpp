@@ -4,6 +4,7 @@
 #include <QQmlContext>
 
 #include "client_controller.h"
+#include "device_model.h"
 
 int main(int argc, char *argv[])
 {
@@ -28,8 +29,11 @@ int main(int argc, char *argv[])
         QSharedPointer<ClientMessagingController> controller(new ClientMessagingController);
         controller->init(pub_port, msg_port);
         
+        DeviceModel model(controller);
+        
         QQmlApplicationEngine engine;
         engine.rootContext()->setContextProperty("comms", controller.data());
+        engine.rootContext()->setContextProperty("deviceModel", &model);
         
         engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
         

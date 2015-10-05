@@ -58,13 +58,15 @@ void MessageBus::processNotification(QList<QByteArray> msg) {
         _lastHeartbeat = QDateTime::currentDateTime();
         Q_EMIT heartbeat();
     } else if(topic == "/device") {
-        QByteArray deviceJson = msg.at(1);        
+        // key and added fields.. then go get the initial snapshot and topics
+        QVariantMap data = jsonToVariantMap(msg.at(1));
+        Q_EMIT deviceAddedRemoved(data["added"].toBool(), data["key"].toString());
     }
     
     Q_EMIT notificationReceived(topic, msg.mid(1));
 }
 
-bool MessageBus::asyncRequest(QString requestPayload) {   
+bool MessageBus::syncRequest(QString requestPayload) {   
     QList<QByteArray> msg;
     msg << QByteArray();
     msg << requestPayload.toUtf8();
