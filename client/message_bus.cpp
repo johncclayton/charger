@@ -11,7 +11,7 @@ using namespace nzmqt;
 MessageBus::MessageBus(QObject *parent) : 
     QObject(parent), _pub(0), _msg(0), _alive(false)
 {
-    _lastHeartbeat = QDateTime::currentDateTime();
+    _lastHeartbeat = QDateTime();
     startTimer(1000);    
 }
 
@@ -41,10 +41,12 @@ void MessageBus::setMessageSocket(ZMQSocket* s) {
 }
 
 void MessageBus::getDevices() const {
+    qDebug() << "asking for all devices";
     syncRequest("get-devices");    
 }
 
 void MessageBus::getDeviceInformation(QString key) const {
+    qDebug() << "asking for info about one device:" << key;
     QList<QByteArray> req;
     req << "get-device";
     req << key.toUtf8();
@@ -54,7 +56,7 @@ void MessageBus::getDeviceInformation(QString key) const {
 void MessageBus::setAlive(bool value) {
     if(value != _alive) {
         _alive = value;
-        Q_EMIT aliveChanged();
+        Q_EMIT aliveChanged(_alive);
         qDebug() << "alive:" << _alive;
     }
 }
@@ -66,20 +68,20 @@ void MessageBus::timerEvent(QTimerEvent* event) {
     double diff = n.toMSecsSinceEpoch() - _lastHeartbeat.toMSecsSinceEpoch();
     if(diff > SECONDS_5_MS) {
         setAlive(false);
-    } else {
-        setAlive(true);
     }
 }
 
 void MessageBus::processMessageResponse(QList<QByteArray> msg) {
-    if(msg.size() > 1)
+    if(msg.size() > 1) {
         qDebug() << "response received:" << msg.mid(1);
+    }
 }
 
 void MessageBus::processNotification(QList<QByteArray> msg) {
     QString topic = QString::fromUtf8(msg.at(0));
     if(topic == "/heartbeat") {
         _lastHeartbeat = QDateTime::currentDateTime();
+        setAlive(true);
         Q_EMIT heartbeat();
     } else if(topic == "/device") {
         // key and added fields.. then go get the initial snapshot and topics

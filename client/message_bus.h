@@ -31,7 +31,7 @@ public:
     void setMessageSocket(nzmqt::ZMQSocket* s);
     
 signals:
-    void aliveChanged();
+    void aliveChanged(bool value);
     void heartbeat();
     
     void deviceAddedRemoved(bool added, QString key);

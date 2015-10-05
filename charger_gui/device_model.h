@@ -19,6 +19,8 @@ public:
     QAbstractItemModel* itemModel() const { return _model; }
         
 public slots:
+    void messageBusAlive(bool alive);
+    void deviceInfoUpdated(QString key, QVariantMap data);
     void deviceAddedRemoved(bool added, QString key);
     
 private:

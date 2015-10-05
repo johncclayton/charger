@@ -153,6 +153,8 @@ void AppController::processMessageRequest(QList<QByteArray> return_path, QList<Q
 QVariantMap AppController::doGetDevices() {
     DeviceMap all_devices = _registry->devices();
     QVariantMap response;
+    
+    response["action"] = "get-devices";
     response["count"] = all_devices.count();
     
     QVariantList device_list;
@@ -167,6 +169,7 @@ QVariantMap AppController::doGetDevices() {
     }
     
     response["devices"] = device_list;
+    
     return response;
 }
 
@@ -174,5 +177,8 @@ QVariantMap AppController::doGetDevice(QString key) {
     if(!_registry->devices().contains(key))
         return QVariantMap();
     iCharger_DeviceController_ptr device(_registry->devices().find(key).value());
-    return jsonToVariantMap(device->toJson());
+    QVariantMap response;
+    response["action"] = "get-device";
+    response["device"] = jsonToVariantMap(device->toJson());
+    return response;
 }

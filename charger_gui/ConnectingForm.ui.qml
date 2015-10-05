@@ -35,11 +35,6 @@ Item {
                 target: actionButton
                 visible: true
             }
-            
-            PropertyChanges {
-                target: usableDevices
-                anchors.topMargin: 20
-            }
         },
         
         State {
@@ -153,25 +148,6 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
-    }
-    
-    GroupBox {
-        id: usableDevices
-        anchors.rightMargin: 20
-        anchors.leftMargin: 20
-        anchors.topMargin: 20
-        anchors.bottomMargin: 20
-        visible: false
-        checked: false
-        anchors.top: gridLayout.bottom
-        anchors.right: parent.right
-        anchors.bottom: actionButton.top
-        anchors.left: parent.left
-        
-        Device {
-            id: device1
-            anchors.fill: parent
-        }
     }
 }
 

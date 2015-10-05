@@ -30,7 +30,7 @@ ApplicationWindow {
 //            }
             
             Label {
-                anchors.left: statusInd.right
+//                anchors.left: statusInd.right
                 text: connectionState.connectionMessage
             }
         }
