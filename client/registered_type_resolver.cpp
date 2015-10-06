@@ -1,7 +1,7 @@
 #include "bonjour/bonjourrecord.h"
 #include "bonjour/bonjourservicebrowser.h"
 #include "bonjour/bonjourserviceresolver.h"
-#include "registeredtyperesolver.h"
+#include "registered_type_resolver.h"
 
 RegisteredTypeResolver::RegisteredTypeResolver(QString type, QObject *parent) : QObject(parent), _type(type)
 {

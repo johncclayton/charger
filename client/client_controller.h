@@ -5,7 +5,7 @@
 #include <QHostInfo>
 
 #include "message_bus.h"
-#include "registeredtyperesolver.h"
+#include "registered_type_resolver.h"
 
 namespace nzmqt {
     class ZMQSocket;

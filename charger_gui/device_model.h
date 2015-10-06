@@ -8,7 +8,7 @@
 #include <QMap>
 #include <QList>
 
-#include "charger_state.h"
+#include "icharger/charger_state.h"
 #include "client_controller.h"
 
 class DeviceModel : public QObject {
