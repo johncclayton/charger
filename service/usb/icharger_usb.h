@@ -58,8 +58,8 @@ struct icharger_usb {
     QString manufacturer();
     QString product();
     
-    void clear_halt(unsigned char endpoint);
-    void reset();
+    int clear_halt(unsigned char endpoint);
+    int reset();
     
     ModbusRequestError get_device_only(device_only* output);	
     ModbusRequestError get_channel_status(int channel /* 0 or 1 */, channel_status* output);

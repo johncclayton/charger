@@ -99,24 +99,27 @@ int icharger_usb::acquire() {
     return 0;    
 }
 
-void icharger_usb::clear_halt(unsigned char endpoint) {
-    if(handle)
-        libusb_clear_halt(handle, endpoint);
+int icharger_usb::clear_halt(unsigned char endpoint) {
+    if(handle) {
+        int r = libusb_clear_halt(handle, endpoint);
+	if(r != 0)
+		error_print("unable to clear halt condition", r);
+	return r;
+    }
+
+    return 0;
 }
 
-void icharger_usb::reset() {
-    if(handle)
-        libusb_reset_device(handle);
+int icharger_usb::reset() {
+    if(handle) {
+        int r = libusb_reset_device(handle);
+	if(r != 0)
+		error_print("unable to reset the device", r);
+	return r;
+    }
+
+    return 0;
 }
-
-//void dump_ascii_hex(char* data, int len) {
-//    printf("from addr: %d for %d bytes\r\n", (void *)data, len);
-//    for(int i = 0; i < len; ++i) {
-//        printf("%2d: %2x %c\r\n", i, data[i], data[i]);
-//    }
-//    printf("----\r\n");
-
-//}
 
 int icharger_usb::vendorId() const {
     return descriptor.idVendor;    
@@ -187,8 +190,10 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         } else if(r == LIBUSB_ERROR_NO_DEVICE) {
             return r;
         } else if(r != 0) {
-            clear_halt(endpoint_address);
-            return error_print("an error was encountered during data transfer with endpoint address 0x%Xd", r, endpoint_address);
+            error_print("an error was encountered during data transfer with endpoint address 0x%Xd", r, endpoint_address);
+            if(0 != clear_halt(endpoint_address))
+		reset();
+            return r;
         }
         
         if(*total_transferred >= length)
