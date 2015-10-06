@@ -4,10 +4,9 @@
 
 #define KeyRole Qt::UserRole + 100
 
-DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QQmlContext* ctx, QObject *parent) : 
+DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QObject *parent) : 
     QObject(parent),
-    _controller(c),
-    _ctx(ctx)
+    _controller(c)
 {
     MessageBus* bus = c->messageBus();
     
@@ -21,6 +20,22 @@ DeviceModel::~DeviceModel() {
     
 }
 
+QByteArray DeviceModel::jsonData() const {
+    QList<QVariant> items;
+    Q_FOREACH(QVariantMap p, _model.values()) {
+        items.append(QVariant(p));
+    }
+    
+    QVariantMap data;
+    data["count"] = items.size();
+    data["items"] = items;
+    
+    QByteArray b(variantMapToJson(data));
+    qDebug() << QString::fromUtf8(b);
+    
+    return b;
+}
+
 void DeviceModel::messageBusAlive(bool alive) {
     if(alive) {
         // fetch all the models...
@@ -28,18 +43,20 @@ void DeviceModel::messageBusAlive(bool alive) {
     } else {
         // clear the data model...
         _model.clear();
-        replaceModel();
+        Q_EMIT jsonDataChanged();
     }
 }
 
 void DeviceModel::deviceInfoUpdated(QString key, QVariantMap data) {
-    qDebug() << "received info for key" << key << "device info:" << variantMapToJson(data);
+    qDebug() << "data for item:" << key << "updated";
+    _model[key] = data;
+    Q_EMIT jsonDataChanged();
 }
 
 void DeviceModel::devicesUpdated(QVariantMap data) {
-    qDebug() << "devices have been updated" << data;
     if(data.contains("devices") && data.contains("count")) {
         QVariantList devices(data["devices"].toList());
+        qDebug() << "got" << devices.size() << "devices for which I will get more details for";
         for(int index = 0; index < devices.size(); ++index) {
             const QVariantMap o = devices.at(index).toMap();
             _controller->messageBus()->getDeviceInformation(o["key"].toString());
@@ -52,9 +69,8 @@ void DeviceModel::deviceAddedRemoved(bool added, QString key) {
         _controller->messageBus()->getDeviceInformation(key);
     } else {
         // find this and remove it from the model       
+        _model.remove(key);
+        Q_EMIT jsonDataChanged();
     }
 }
 
-void DeviceModel::replaceModel() {
-//    _ctx->setContextProperty("dataModel", _model);
-}

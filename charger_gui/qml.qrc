@@ -10,5 +10,6 @@
         <file>Device.qml</file>
         <file>DeviceForm.ui.qml</file>
         <file>JSONListModel.qml</file>
+        <file>jsonpath.js</file>
     </qresource>
 </RCC>

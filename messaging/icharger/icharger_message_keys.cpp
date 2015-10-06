@@ -18,6 +18,7 @@ const QString STR_CHANNEL_STATUS_TEMP_INTERNAL("temp_internal");
 const QString STR_CHANNEL_STATUS_TEMP_EXTERNAL("temp_external");
 
 const QString STR_CHANNEL_STATUS_CELLS("cells");
+const QString STR_CHANNEL_STATUS_CELL_NUMBER("cell");
 const QString STR_CHANNEL_STATUS_CELL_VOLTAGE("voltage");
 const QString STR_CHANNEL_STATUS_CELL_BALANCE_STATUS("balance_status");
 const QString STR_CHANNEL_STATUS_CELL_RESISTANCE("resistance");

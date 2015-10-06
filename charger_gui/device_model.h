@@ -4,23 +4,27 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QVariantMap>
-#include <QQmlContext>
 #include <QMap>
 #include <QList>
 
-#include "icharger/charger_state.h"
 #include "client_controller.h"
 
 class DeviceModel : public QObject {
     Q_OBJECT
     
 public:
-    DeviceModel(QSharedPointer<ClientMessagingController> controller, 
-                QQmlContext* ctx, QObject *parent = 0);
+    DeviceModel(QSharedPointer<ClientMessagingController> controller, QObject *parent = 0);
     ~DeviceModel();
 
-    QList<ChargerState*> itemModel() const { return _model.values(); }
-        
+    QByteArray jsonData() const;
+    quint16 deviceCount() const { return _model.size(); }
+    
+    Q_PROPERTY(QByteArray jsonData READ jsonData NOTIFY jsonDataChanged)
+    Q_PROPERTY(quint16 count READ deviceCount NOTIFY jsonDataChanged)
+    
+signals:
+    void jsonDataChanged();
+    
 public slots:
     void messageBusAlive(bool alive);
     void deviceInfoUpdated(QString key, QVariantMap data);
@@ -28,11 +32,8 @@ public slots:
     void deviceAddedRemoved(bool added, QString key);
     
 private:
-    void replaceModel();
-    
     QSharedPointer<ClientMessagingController> _controller;
-    QMap<QString, ChargerState*> _model;
-    QQmlContext* _ctx;
+    QMap<QString, QVariantMap> _model;
 };
 
 #endif // DEVICEMODEL_H

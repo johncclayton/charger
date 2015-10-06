@@ -16,7 +16,7 @@
 QByteArray variantMapToJson(QVariantMap data) {
 #ifdef HAS_QT_JSON
     QJsonDocument d = QJsonDocument::fromVariant(data);
-    return d.toJson();
+    return d.toJson(QJsonDocument::Compact);
 #else
     QJson::Serializer serializer;
     return serializer.serialize(data);

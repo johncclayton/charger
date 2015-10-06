@@ -13,8 +13,8 @@ struct DeviceOnlyJson : public device_only {
         
         data[STR_DEVICE_ONLY_ID] = device_id.value;
         data[STR_DEVICE_ONLY_SERIAL_NUMBER] = QString::fromLatin1((const char*)device_sn, 12).trimmed();
-        data[STR_DEVICE_ONLY_HW_VERSION] = (float)hw_version.value / 10;
-        data[STR_DEVICE_ONLY_SW_VERSION] = (float)sw_version.value / 10;
+        data[STR_DEVICE_ONLY_HW_VERSION] = hw_version.value / 1000.0;
+        data[STR_DEVICE_ONLY_SW_VERSION] = sw_version.value / 1000.0;
         data[STR_DEVICE_ONLY_CH1_STATUS] = ch1_status.value;
         data[STR_DEVICE_ONLY_CH2_STATUS] = ch2_status.value;
         
@@ -39,8 +39,12 @@ struct ChannelStatusJson : public channel_status {
         
         QVariantList cells;
         for(int index = 0; index < MAX_CELLS; ++index) {
+            if(cell_voltage[index] == 1024 && cell_resistance[index] == 1024)
+                continue;
+            
             QVariantMap cell;
-            cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = cell_voltage[index];
+            cell[STR_CHANNEL_STATUS_CELL_NUMBER] = index;
+            cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = cell_voltage[index] / 1000.0;
             cell[STR_CHANNEL_STATUS_CELL_BALANCE_STATUS] = balance_status[index];
             cell[STR_CHANNEL_STATUS_CELL_RESISTANCE] = cell_resistance[index];
             cells << cell;

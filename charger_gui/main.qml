@@ -30,15 +30,22 @@ ApplicationWindow {
             }
             
             Label {
-                text: dataModel.rowCount() + " devices";
+                Layout.alignment: Qt.AlignRight
+                text: {
+                    if(!devices.count)
+                        return "No devices found"
+                    if(devices.count === 1)
+                          devices.count + " device";
+                    else devices.count + " devices";
+                }
             }
         }
     }
-        
+
     Connecting {
         id: connectionState
         anchors.fill: parent
-        
+        deviceListModel.json: devices.jsonData
         cancelButton.onClicked: {
             if(connected) {
                 // TODO: Device Request + Selection

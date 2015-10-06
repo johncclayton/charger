@@ -46,7 +46,7 @@ void MessageBus::getDevices() const {
 }
 
 void MessageBus::getDeviceInformation(QString key) const {
-    qDebug() << "asking for info about one device:" << key;
+    qDebug() << "fetching details about device:" << key;
     QList<QByteArray> req;
     req << "get-device";
     req << key.toUtf8();

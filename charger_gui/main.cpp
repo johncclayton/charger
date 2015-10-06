@@ -31,15 +31,11 @@ int main(int argc, char *argv[])
                 
         QQmlApplicationEngine engine;
         engine.rootContext()->setContextProperty("comms", controller.data());
-     
-        // slightly retarted - but hey, what's a program without a bit of built in
-        // cruft?  The model here listens to added/removed events on the controller
-        // and basically stores all the data that's visible on the screen in the UI.  
-        //
-        // using specially trained gnomes, the device model replaces the whole 
-        // data model at the drop of a hat (or USB cable if you refer).  That's just
-        // the way QML likes to roll when using non-abstractitemmodel models.
-        DeviceModel model(controller, engine.rootContext());
+    
+        // Listens to events from the message bus and updates an in-memory
+        // JSON model structure that's exposed to QML
+        DeviceModel model(controller);
+        engine.rootContext()->setContextProperty("devices", &model);
                 
         engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
         

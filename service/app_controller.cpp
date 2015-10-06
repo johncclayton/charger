@@ -132,7 +132,6 @@ void AppController::deviceRemoved(QString key) {
 void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
     QVariantMap response;
 
-    // depends on what is being asked - our API is pretty simple now... 
     QString request = QString::fromUtf8(payload.at(0));
     if(request == "get-devices") {
         response = doGetDevices();

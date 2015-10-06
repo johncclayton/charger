@@ -15,6 +15,7 @@ Item {
     property alias messagingPort: textMessagePort.text
     property alias cancelButton: actionButton
     property alias connectionMessage: labelConnectionState.text
+    property alias modelView: modelView
     
     states: [
         State {
@@ -27,7 +28,7 @@ Item {
             }
             
             PropertyChanges {
-                target: gridLayout
+                target: gridForConnectionDetails
                 visible: false
             }
             
@@ -43,7 +44,7 @@ Item {
             
             PropertyChanges {
                 target: labelConnectionState
-                text: qsTr("Discovery...")
+                text: qsTr("Choose Device...")
             }
             
             PropertyChanges {
@@ -56,6 +57,24 @@ Item {
             PropertyChanges {
                 target: progressBar
                 visible: false
+            }
+            
+            PropertyChanges {
+                target: gridForConnectionDetails
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: gridForDeviceSelection
+                anchors.bottomMargin: 12
+                rows: 1
+                columns: 1
+                opacity: 1
+            }
+            
+            PropertyChanges {
+                target: modelView
+                visible: true
             }
         }]
     
@@ -80,7 +99,7 @@ Item {
     }
     
     GridLayout {
-        id: gridLayout
+        id: gridForConnectionDetails
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: progressBar.bottom
         
@@ -148,6 +167,27 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
+    }
+    
+    GridLayout {
+        id: gridForDeviceSelection
+        width: 100
+        height: 100
+        anchors.rightMargin: 0
+        anchors.leftMargin: 0
+        anchors.bottomMargin: 12
+        anchors.top: labelConnectionState.bottom
+        anchors.right: gridForConnectionDetails.left
+        anchors.bottom: actionButton.top
+        anchors.left: gridForConnectionDetails.right
+        anchors.topMargin: 16
+        opacity: 0
+        
+        ListView {
+            id: modelView
+            anchors.fill: parent
+            visible: false
+        }
     }
 }
 
