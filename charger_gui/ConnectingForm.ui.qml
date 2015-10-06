@@ -104,7 +104,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
     }
-    
+        
     GridLayout {
         id: gridForDeviceSelection
         
@@ -128,13 +128,22 @@ Item {
             anchors.fill: parent
             visible: false
             
-//            highlight: Rectangle { color: "lightsteelblue"; radius: 5; width: itemWidth * 4 }
+            highlight: Rectangle { 
+                color: "lightsteelblue"
+                radius: 5
+                
+            }
+            
             focus: true
             
-            delegate: Item {
-                width: itemWidth
+            delegate: Rectangle {
+                anchors.fill: parent
                 height: 50
-                                
+                
+                border.color: "black"
+                border.width: 12
+                radius: 14
+                                                
                 GridLayout {
                     rows: 3
                     columns: 3
@@ -143,10 +152,15 @@ Item {
                     
                     Image {
                         source: model.modelData.imageSource
-                        fillMode: Image.PreserveAspectFit
-                        Layout.rowSpan: 3
-                        Layout.fillHeight: true
+                        
+                        sourceSize.width: 90
+                        sourceSize.height: 90
+                        
                         width: 90
+                        height: 90
+                        
+                        fillMode: Image.PreserveAspectFit        
+                        Layout.rowSpan: 3
                     }
                     
                     // row 1

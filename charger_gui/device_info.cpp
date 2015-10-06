@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QJsonObject>
 #include "device_info.h"
 #include "icharger/icharger_message_keys.h"
@@ -10,11 +11,14 @@ void DeviceInfo::setFromJson(QByteArray data) {
 }
 
 QString DeviceInfo::imageSource() const {
-    return object()["img_source"].toString();
+    QString v = object()["img_source"].toString();
+    qDebug() << "image will be:" << v;
+    return v;
 }
 
 void DeviceInfo::setImageSource(QString value) {
     object()["img_source"] = value;
+    Q_EMIT onImageSourceChanged();
 }
 
 QString DeviceInfo::serialNumber() const { 

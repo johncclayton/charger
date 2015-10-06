@@ -56,6 +56,7 @@ struct icharger_usb {
     
     QString serialNumber();
     QString manufacturer();
+    QString product();
     
     ModbusRequestError get_device_only(device_only* output);	
     ModbusRequestError get_channel_status(int channel /* 0 or 1 */, channel_status* output);

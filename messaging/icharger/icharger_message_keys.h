@@ -10,6 +10,8 @@ extern const QString STR_DEVICE_ONLY_SW_VERSION;
 extern const QString STR_DEVICE_ONLY_HW_VERSION;
 extern const QString STR_DEVICE_ONLY_CH1_STATUS;
 extern const QString STR_DEVICE_ONLY_CH2_STATUS;
+extern const QString STR_DEVICE_ONLY_MANUFACTURER;
+extern const QString STR_DEVICE_ONLY_PRODUCT;
 
 // ChannelStatus
 extern const QString STR_CHANNEL_STATUS_CHANNEL_NUM;

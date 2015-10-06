@@ -136,6 +136,9 @@ QString icharger_usb::manufacturer() {
     return descriptor_str(descriptor.iManufacturer);
 }    
 
+QString icharger_usb::product() {
+    return descriptor_str(descriptor.idProduct);
+}
 
 /* same as the library version, but automatically handles retry on timeout */
 int icharger_usb::usb_data_transfer(unsigned char endpoint_address,

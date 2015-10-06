@@ -54,6 +54,9 @@ public slots:
     void setHardwareVersion(float value);
     void setCh1Status(quint8 value);
     void setCh2Status(quint8 value);
+    
+private:
+    
 };
 
 #endif // DEVICEINFO_H

@@ -20,9 +20,7 @@ DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QQmlContex
     connect(bus, SIGNAL(deviceAddedRemoved(bool,QString)), this, SLOT(deviceAddedRemoved(bool,QString)));    
     connect(bus, SIGNAL(getDeviceResponse(QString,QVariantMap)), this, SLOT(deviceInfoUpdated(QString,QVariantMap)));
     connect(bus, SIGNAL(getDevicesResponse(QVariantMap)), this, SLOT(devicesUpdated(QVariantMap)));
-    
-    connect(this, SIGNAL(jsonDataChanged()), this, SLOT(resetModels()));
-    
+        
     resetModels();
 }
 
@@ -36,8 +34,8 @@ void DeviceModel::resetModels() {
     Q_FOREACH(QVariantMap m, _model.values()) {
         QVariantMap dev_info = m["info"].toMap();
         DeviceInfo* info = new DeviceInfo;
-        info->setImageSource("qrc:/images/icharger_4010_duo.png");
         info->setFromJson(variantMapToJson(dev_info));
+        info->setImageSource("qrc:/images/icharger_4010_duo.png");
         devices.append(info);
     }
     
@@ -52,6 +50,7 @@ void DeviceModel::messageBusAlive(bool alive) {
     } else {
         // clear the data model...
         _model.clear();
+        resetModels();
         Q_EMIT jsonDataChanged();
     }
 }
@@ -59,6 +58,7 @@ void DeviceModel::messageBusAlive(bool alive) {
 void DeviceModel::deviceInfoUpdated(QString key, QVariantMap data) {
     qDebug() << "retrieved data for item:" << key << "and stored it";
     _model[key] = data;
+    resetModels();
     Q_EMIT jsonDataChanged();
 }
 
@@ -79,6 +79,7 @@ void DeviceModel::deviceAddedRemoved(bool added, QString key) {
     } else {
         // find this and remove it from the model       
         _model.remove(key);
+        resetModels();
         Q_EMIT jsonDataChanged();
     }
 }

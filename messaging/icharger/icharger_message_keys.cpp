@@ -6,6 +6,8 @@ const QString STR_DEVICE_ONLY_SW_VERSION("sw_ver");
 const QString STR_DEVICE_ONLY_HW_VERSION("hw_ver");
 const QString STR_DEVICE_ONLY_CH1_STATUS("ch1_status");
 const QString STR_DEVICE_ONLY_CH2_STATUS("ch2_status");
+const QString STR_DEVICE_ONLY_MANUFACTURER("manufacturer");
+const QString STR_DEVICE_ONLY_PRODUCT("product");
 
 const QString STR_CHANNEL_STATUS_CHANNEL_NUM("channel");
 const QString STR_CHANNEL_STATUS_OUTPUT_POWER("output_power");
