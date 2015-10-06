@@ -150,7 +150,7 @@ QString icharger_usb::manufacturer() {
 }    
 
 QString icharger_usb::product() {
-    return descriptor_str(descriptor.idProduct);
+    return descriptor_str(descriptor.iProduct);
 }
 
 /* same as the library version, but automatically handles retry on timeout */

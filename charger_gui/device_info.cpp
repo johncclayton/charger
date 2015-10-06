@@ -11,13 +11,11 @@ void DeviceInfo::setFromJson(QByteArray data) {
 }
 
 QString DeviceInfo::imageSource() const {
-    QString v = object()["img_source"].toString();
-    qDebug() << "image will be:" << v;
-    return v;
+    return _img_source;
 }
 
 void DeviceInfo::setImageSource(QString value) {
-    object()["img_source"] = value;
+    _img_source = value;
     Q_EMIT onImageSourceChanged();
 }
 

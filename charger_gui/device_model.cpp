@@ -2,6 +2,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+#include "icharger/icharger_message_keys.h"
 #include "device_model.h"
 #include "device_info.h"
 #include "message_bus.h"
@@ -35,7 +36,12 @@ void DeviceModel::resetModels() {
         QVariantMap dev_info = m["info"].toMap();
         DeviceInfo* info = new DeviceInfo;
         info->setFromJson(variantMapToJson(dev_info));
-        info->setImageSource("qrc:/images/icharger_4010_duo.png");
+        if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("4010"))
+            info->setImageSource("qrc:/images/icharger_4010_duo.png");
+        if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("406"))
+            info->setImageSource("qrc:/images/icharger_406_duo.png");
+        if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("308"))
+            info->setImageSource("qrc:/images/icharger_308_duo.png");
         devices.append(info);
     }
     

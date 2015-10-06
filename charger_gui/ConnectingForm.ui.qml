@@ -10,6 +10,8 @@ Item {
     height: 250
     
     property bool connected: false
+    property string connectingString: qsTr("Connecting...")
+    property string chooseDeviceString: qsTr("Choose Device...")
     property int itemWidth: 50
     property alias cancelButton: actionButton
     property alias connectionMessage: labelConnectionState.text
@@ -22,7 +24,7 @@ Item {
             
             PropertyChanges {
                 target: labelConnectionState
-                text: qsTr("Connecting...")
+                text: connectingString
             }
             
             PropertyChanges {
@@ -42,7 +44,7 @@ Item {
             
             PropertyChanges {
                 target: labelConnectionState
-                text: qsTr("Choose Device...")
+                text: chooseDeviceString
             }
             
             PropertyChanges {
@@ -124,14 +126,14 @@ Item {
         
         ListView {
             id: modelView
-            orientation: Qt.Horizontal
+            highlightMoveDuration: 200
+            keyNavigationWraps: true
             anchors.fill: parent
             visible: false
             
             highlight: Rectangle { 
                 color: "lightsteelblue"
                 radius: 5
-                
             }
             
             focus: true
@@ -148,7 +150,7 @@ Item {
                     rows: 3
                     columns: 3
                     rowSpacing: 8
-                    columnSpacing: 8
+                    columnSpacing: 18
                     
                     Image {
                         source: model.modelData.imageSource
@@ -162,22 +164,7 @@ Item {
                         fillMode: Image.PreserveAspectFit        
                         Layout.rowSpan: 3
                     }
-                    
-                    // row 1 - serial
-                    Label {
-                        id: labelSerialNumber
-                        text: "Serial Number:"
-                        anchors.right: textSerialNumber.left
-                        anchors.rightMargin: 12
-                        horizontalAlignment: Text.AlignRight                        
-                    }
-                    
-                    Text {
-                        id: textSerialNumber
-                        text: model.modelData.serialNumber
-                        horizontalAlignment: Text.AlignLeft
-                    }
-                    
+                                        
                     // row 2
                     Label {
                         id: labelProduct
@@ -205,6 +192,21 @@ Item {
                     Text {
                         id: textManufacturer
                         text: model.modelData.manufacturer
+                        horizontalAlignment: Text.AlignLeft
+                    }
+                    
+                    // row 1 - serial
+                    Label {
+                        id: labelSerialNumber
+                        text: "Serial Number:"
+                        anchors.right: textSerialNumber.left
+                        anchors.rightMargin: 12
+                        horizontalAlignment: Text.AlignRight                        
+                    }
+                    
+                    Text {
+                        id: textSerialNumber
+                        text: model.modelData.serialNumber
                         horizontalAlignment: Text.AlignLeft
                     }
                     

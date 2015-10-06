@@ -10,5 +10,7 @@
         <file>Device.qml</file>
         <file>DeviceForm.ui.qml</file>
         <file>images/icharger_4010_duo.png</file>
+        <file>images/icharger_308_duo.png</file>
+        <file>images/icharger_406_duo.png</file>
     </qresource>
 </RCC>

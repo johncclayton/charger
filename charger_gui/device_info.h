@@ -63,7 +63,7 @@ public slots:
 //    void setManufacturer(QString value);
     
 private:
-    
+    QString _img_source;  
 };
 
 #endif // DEVICEINFO_H
