@@ -26,7 +26,7 @@ ApplicationWindow {
             anchors.fill: parent
             
             Label {
-                text: connectionState.connectionMessage
+                text: "Connected to: " + comms.hostname
             }
             
             Label {

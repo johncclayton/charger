@@ -118,6 +118,7 @@ Item {
         anchors.top: labelConnectionState.bottom
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: -30
         
         anchors.rightMargin: 0
         anchors.leftMargin: 0

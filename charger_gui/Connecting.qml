@@ -23,6 +23,9 @@ ConnectingForm {
         qsTr("Pick a charger, any charger"),
         qsTr("Don't be scared - pick one!"),
         qsTr("To charge, or not to charge..."),
+        qsTr("How hard can this be?"),
+        qsTr("Come on... pick one!"),
+        qsTr("Phone a friend maybe?"),
         qsTr("Or just dont..."),
     ]    
 

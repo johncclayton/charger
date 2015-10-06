@@ -55,6 +55,8 @@ void ClientMessagingController::closeRequestSocket() {
     if(_reqresp_socket) {
         _message_bus->setMessageSocket(0);
         _reqresp_socket->deleteLater();
+        setMessagePort(0);
+        setHostname(QString());
         qDebug() << "req/resp socket destroyed";    
     }
     _reqresp_socket = 0;
@@ -64,6 +66,8 @@ void ClientMessagingController::closeSubscribeSocket() {
     if(_subscribe_socket) {
         _message_bus->setPublishSocket(0);
         _subscribe_socket->deleteLater();
+        setPublishPort(0);
+        setHostname(QString());
         qDebug() << "subscribe socket destroyed";    
     }
     _subscribe_socket = 0;
@@ -127,25 +131,6 @@ void ClientMessagingController::serviceRemoved(QString type) {
         closeRequestSocket();
     }
 }
-
-/*
-void ClientMessagingController::processNotificationReceived(QString topic, QList<QByteArray> msg) {
-    if(topic.startsWith("/icharger/channel/")) {
-//        QByteArray data = msg.at(0);
-//        ChannelStatus status;
-//        status.setFromJson(data);
-//        if(status.channel() == 0)
-//            _charger_state->setCh1(status);
-//        else
-//            _charger_state->setCh2(status);
-    } else if(topic.startsWith("/icharger/device")) {
-//        QByteArray data = msg.at(0);
-//        DeviceInfo info;
-//        info.setFromJson(data);
-//        _charger_state->setDeviceInfo(info);
-    } 
-}
-*/
 
 void ClientMessagingController::setHostname(QString value) { 
     if(value != _host) {
