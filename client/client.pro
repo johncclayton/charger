@@ -19,20 +19,14 @@ macx {
 }
 
 HEADERS += \
-    registeredtyperesolver.h \
     client_controller.h \
-    message_bus.h \
-    channel_status.h \
-    charger_state.h \
-    device_info.h
+    message_bus.h \ 
+    registered_type_resolver.h
 
 SOURCES += \
-    registeredtyperesolver.cpp \
     client_controller.cpp \
-    message_bus.cpp \
-    channel_status.cpp \
-    charger_state.cpp \
-    device_info.cpp
+    message_bus.cpp \ 
+    registered_type_resolver.cpp
 
 include (../3rdparty/nzmqt/nzmqt.pri)
 

@@ -42,6 +42,7 @@ public:
     DeviceInfo& operator=(const DeviceInfo& other) {
         setSerialNumber(other.serialNumber());
         setSoftwareVersion(other.softwareVersion());
+        setHardwareVersion(other.hardwareVersion());
         setCh1Status(other.ch1Status());
         setCh2Status(other.ch2Status());
         return *this;
@@ -49,6 +50,7 @@ public:
 
     QString serialNumber() const;
     float softwareVersion() const;
+    float hardwareVersion() const;
     quint8 ch1Status() const;
     quint8 ch2Status() const;
     
@@ -57,6 +59,7 @@ public:
 signals:
     void onSerialNumberChanged();
     void onSoftwareVersionChanged();
+    void onHardwareVersionChanged();
     void onCh1StatusChanged();
     void onCh2StatusChanged();
     
@@ -65,6 +68,7 @@ public slots:
     
     void setSerialNumber(QString value);
     void setSoftwareVersion(float value);
+    void setHardwareVersion(float value);
     void setCh1Status(quint8 value);
     void setCh2Status(quint8 value);
 };

@@ -9,5 +9,6 @@
         <file>ConnectingForm.ui.qml</file>
         <file>Device.qml</file>
         <file>DeviceForm.ui.qml</file>
+        <file>JSONListModel.qml</file>
     </qresource>
 </RCC>

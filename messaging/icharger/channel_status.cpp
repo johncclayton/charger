@@ -1,8 +1,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "channel_status.h"
-#include "messaging/icharger_message_keys.h"
+#include "icharger/channel_status.h"
+#include "icharger/icharger_message_keys.h"
 
 ChannelStatus::ChannelStatus(QObject *parent) : QObject(parent) {
     

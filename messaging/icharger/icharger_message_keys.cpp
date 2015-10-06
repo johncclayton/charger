@@ -26,3 +26,7 @@ const QString STR_CHANNEL_STATUS_TOTAL_RESISTANCE("total_resistance");
 const QString STR_CHANNEL_STATUS_LINE_INTERNAL_RESISTANCE("internal_resistance");
 const QString STR_CHANNEL_STATUS_CYCLE_COUNT("cycle_count");
 const QString STR_CHANNEL_STATUS_CONTROL_STATUS("control_status");
+const QString STR_CHANNEL_STATUS_RUN_STATUS("run_status");
+
+const QString STR_CHANNEL_STATUS_RUN_ERROR("run_error");
+const QString STR_CHANNEL_STATUS_DIALOG_BOX_ID("dialog_box_id");

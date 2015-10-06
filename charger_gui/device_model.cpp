@@ -34,11 +34,6 @@ void DeviceModel::messageBusAlive(bool alive) {
 
 void DeviceModel::deviceInfoUpdated(QString key, QVariantMap data) {
     qDebug() << "received info for key" << key << "device info:" << variantMapToJson(data);
-    
-    if(!_model.contains()) {
-        return;
-    }
-    
 }
 
 void DeviceModel::devicesUpdated(QVariantMap data) {
@@ -61,5 +56,5 @@ void DeviceModel::deviceAddedRemoved(bool added, QString key) {
 }
 
 void DeviceModel::replaceModel() {
-    _ctx->setContextProperty("dataModel", _model);
+//    _ctx->setContextProperty("dataModel", _model);
 }
