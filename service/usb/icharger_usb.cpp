@@ -54,7 +54,8 @@ usb_context::~usb_context() {
 icharger_usb::icharger_usb(libusb_device* d) : 
     device(d),
     handle(0),
-    timeout_ms(1000)
+    timeout_ms(1000),
+    configuration(0)
 {
     Q_ASSERT(handle == 0);
     int r = libusb_open(device, &handle);
@@ -83,7 +84,6 @@ int icharger_usb::acquire() {
     
     Q_ASSERT(handle != 0);
     
-    int configuration = 0;
     r = libusb_get_configuration(handle, &configuration);
     if(r != 0) {
         printf("cannot obtain the current configuration: %d\r\n", r);
@@ -97,6 +97,16 @@ int icharger_usb::acquire() {
         return r;
     
     return 0;    
+}
+
+void icharger_usb::clear_halt(unsigned char endpoint) {
+    if(handle)
+        libusb_clear_halt(handle, endpoint);
+}
+
+void icharger_usb::reset() {
+    if(handle)
+        libusb_reset_device(handle);
 }
 
 //void dump_ascii_hex(char* data, int len) {
@@ -177,6 +187,7 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         } else if(r == LIBUSB_ERROR_NO_DEVICE) {
             return r;
         } else if(r != 0) {
+            clear_halt(endpoint_address);
             return error_print("an error was encountered during data transfer with endpoint address 0x%Xd", r, endpoint_address);
         }
         
