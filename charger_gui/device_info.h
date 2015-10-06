@@ -11,6 +11,8 @@ class DeviceInfo : public QObject, private QJsonDocument
 public:
     Q_PROPERTY(QString serialNumber READ serialNumber NOTIFY onSerialNumberChanged)
     Q_PROPERTY(QString imageSource READ imageSource NOTIFY onImageSourceChanged)
+    Q_PROPERTY(QString manufacturer READ manufacturer NOTIFY onManufacturerChanged)
+    Q_PROPERTY(QString product READ product NOTIFY onProductChanged)
     Q_PROPERTY(float softwareVersion READ softwareVersion NOTIFY onSoftwareVersionChanged)
     Q_PROPERTY(float hardwareVersion READ hardwareVersion NOTIFY onHardwareVersionChanged)
     Q_PROPERTY(quint8 ch1Status READ ch1Status NOTIFY onCh1StatusChanged)
@@ -30,6 +32,8 @@ public:
         
     QString serialNumber() const;
     QString imageSource() const;
+    QString manufacturer() const;
+    QString product() const;
     float softwareVersion() const;
     float hardwareVersion() const;
     quint8 ch1Status() const;
@@ -42,6 +46,8 @@ signals:
     void onSerialNumberChanged();
     void onSoftwareVersionChanged();
     void onHardwareVersionChanged();
+    void onProductChanged();
+    void onManufacturerChanged();
     void onCh1StatusChanged();
     void onCh2StatusChanged();
     
@@ -49,11 +55,12 @@ public slots:
     void setFromJson(QByteArray data);
     
     void setImageSource(QString value);
-    void setSerialNumber(QString value);
-    void setSoftwareVersion(float value);
-    void setHardwareVersion(float value);
-    void setCh1Status(quint8 value);
-    void setCh2Status(quint8 value);
+//    void setSerialNumber(QString value);
+//    void setSoftwareVersion(float value);
+//    void setHardwareVersion(float value);
+//    void setCh1Status(quint8 value);
+//    void setCh2Status(quint8 value);
+//    void setManufacturer(QString value);
     
 private:
     

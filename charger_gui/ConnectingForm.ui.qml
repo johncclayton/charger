@@ -163,7 +163,7 @@ Item {
                         Layout.rowSpan: 3
                     }
                     
-                    // row 1
+                    // row 1 - serial
                     Label {
                         id: labelSerialNumber
                         text: "Serial Number:"
@@ -180,31 +180,31 @@ Item {
                     
                     // row 2
                     Label {
-                        id: labelSoftwareVer
-                        text: "Software Version:"
-                        anchors.right: textSoftwareVer.left
+                        id: labelProduct
+                        text: "Product:"
+                        anchors.right: textProduct.left
                         anchors.rightMargin: 12
                         horizontalAlignment: Text.AlignRight                        
                     }
 
                     Text {
-                        id: textSoftwareVer
-                        text: model.modelData.softwareVersion
+                        id: textProduct
+                        text: model.modelData.product
                         horizontalAlignment: Text.AlignLeft
                     }
                     
                     // row 3
                     Label {
-                        id: labelHardwareVer
-                        text: "Hardware Version:"
-                        anchors.right: textHardwareVer.left
+                        id: labelManufacturer
+                        text: "Manufacturer:"
+                        anchors.right: textManufacturer.left
                         anchors.rightMargin: 12
                         horizontalAlignment: Text.AlignRight                        
                     }
 
                     Text {
-                        id: textHardwareVer
-                        text: model.modelData.hardwareVersion
+                        id: textManufacturer
+                        text: model.modelData.manufacturer
                         horizontalAlignment: Text.AlignLeft
                     }
                     

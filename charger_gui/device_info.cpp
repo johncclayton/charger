@@ -41,7 +41,15 @@ float DeviceInfo::hardwareVersion() const {
     return object()[STR_DEVICE_ONLY_HW_VERSION].toDouble(); 
 }
 
-void DeviceInfo::setSerialNumber(QString value) {
+QString DeviceInfo::manufacturer() const {
+    return object()[STR_DEVICE_ONLY_MANUFACTURER].toString();
+}
+
+QString DeviceInfo::product() const {
+    return object()[STR_DEVICE_ONLY_PRODUCT].toString();    
+}
+
+/*void DeviceInfo::setSerialNumber(QString value) {
     object()[STR_DEVICE_ONLY_SERIAL_NUMBER] = value;
 }
 
@@ -59,4 +67,4 @@ void DeviceInfo::setCh1Status(quint8 value) {
 
 void DeviceInfo::setCh2Status(quint8 value) {
     object()[STR_DEVICE_ONLY_CH2_STATUS] = value;
-}
+}*/

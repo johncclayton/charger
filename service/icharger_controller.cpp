@@ -87,10 +87,11 @@ void iCharger_DeviceController::handleTimeout() {
     int r = _device->get_device_only(&device);
     if(r == 0) {
         QVariantMap t = device.toVariantMap();
+        t[STR_DEVICE_ONLY_MANUFACTURER] = _device->manufacturer();
+        t[STR_DEVICE_ONLY_PRODUCT] = _device->product();
+        
         if(t != _latest_device) {
             _latest_device = t;
-            _latest_device[STR_DEVICE_ONLY_MANUFACTURER] = _device->manufacturer();
-            _latest_device[STR_DEVICE_ONLY_PRODUCT] = _device->product();
             changed = true;
         }
     }
