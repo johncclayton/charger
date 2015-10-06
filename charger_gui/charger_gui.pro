@@ -4,9 +4,11 @@ CONFIG += c++11
 QT += qml quick widgets
 
 SOURCES += main.cpp \ 
+    device_info.cpp \
     device_model.cpp
 
 HEADERS += \
+    device_info.h \
     device_model.h
 
 RESOURCES += qml.qrc

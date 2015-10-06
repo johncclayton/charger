@@ -1,6 +1,6 @@
 #include <QJsonObject>
 #include "device_info.h"
-#include "messaging/icharger/icharger_message_keys.h"
+#include "icharger/icharger_message_keys.h"
 
 DeviceInfo::DeviceInfo(QObject *parent) : QObject(parent) {    
 }

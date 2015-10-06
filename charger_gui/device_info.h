@@ -5,25 +5,13 @@
 #include <QByteArray>
 #include <QJsonDocument>
 
-/*
- * struct device_only {
-    register16   device_id;
-    s8           device_sn[12];
-    register16   sw_version;
-    register16   hw_version;
-    register16   system_length;
-    register16   memory_length;
-    register16   ch1_status;
-    register16   ch2_status;
-} __attribute__ ((packed));
-*/
-
 class DeviceInfo : public QObject, private QJsonDocument
 {
     Q_OBJECT
 public:
     Q_PROPERTY(QString serialNumber READ serialNumber NOTIFY onSerialNumberChanged)
     Q_PROPERTY(float softwareVersion READ softwareVersion NOTIFY onSoftwareVersionChanged)
+    Q_PROPERTY(float hardwareVersion READ hardwareVersion NOTIFY onHardwareVersionChanged)
     Q_PROPERTY(quint8 ch1Status READ ch1Status NOTIFY onCh1StatusChanged)
     Q_PROPERTY(quint8 ch2Status READ ch2Status NOTIFY onCh2StatusChanged)
     
@@ -38,16 +26,7 @@ public:
         CELL_VOLT   = 0x20,
         BALANCE     = 0x40
     };
-    
-    DeviceInfo& operator=(const DeviceInfo& other) {
-        setSerialNumber(other.serialNumber());
-        setSoftwareVersion(other.softwareVersion());
-        setHardwareVersion(other.hardwareVersion());
-        setCh1Status(other.ch1Status());
-        setCh2Status(other.ch2Status());
-        return *this;
-    }
-
+        
     QString serialNumber() const;
     float softwareVersion() const;
     float hardwareVersion() const;

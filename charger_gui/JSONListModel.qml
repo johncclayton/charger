@@ -31,13 +31,16 @@ Item {
     function updateJSONModel() {
         jsonModel.clear();
 
-        if ( json === "" )
+        if ( json === "" ) {
+            console.log("theres no data...");
             return;
+        }
 
         var objectArray = parseJSONString(json, query);
         for ( var key in objectArray ) {
             var jo = objectArray[key];
             jsonModel.append( jo );
+            console.log("adding new model item:" + JSON.stringify(jo))
         }
     }
 
@@ -45,7 +48,6 @@ Item {
         var objectArray = JSON.parse(jsonString);
         if ( jsonPathQuery !== "" )
             objectArray = JSONPath.jsonPath(objectArray, jsonPathQuery);
-
         return objectArray;
     }
 }

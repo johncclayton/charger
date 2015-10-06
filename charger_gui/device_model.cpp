@@ -1,12 +1,18 @@
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+
 #include "device_model.h"
+#include "device_info.h"
 #include "message_bus.h"
 #include "json_helper.h"
 
 #define KeyRole Qt::UserRole + 100
 
-DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QObject *parent) : 
+DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QQmlContext* ctx,  QObject *parent) : 
     QObject(parent),
-    _controller(c)
+    _controller(c),
+    _ctx(ctx)
 {
     MessageBus* bus = c->messageBus();
     
@@ -14,26 +20,28 @@ DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QObject *p
     connect(bus, SIGNAL(aliveChanged(bool)), this, SLOT(messageBusAlive(bool)));
     connect(bus, SIGNAL(getDeviceResponse(QString,QVariantMap)), this, SLOT(deviceInfoUpdated(QString,QVariantMap)));
     connect(bus, SIGNAL(getDevicesResponse(QVariantMap)), this, SLOT(devicesUpdated(QVariantMap)));
+    
+    connect(this, SIGNAL(jsonDataChanged()), this, SLOT(resetModels()));
+    
+    resetModels();
 }
 
 DeviceModel::~DeviceModel() {
     
 }
 
-QByteArray DeviceModel::jsonData() const {
-    QList<QVariant> items;
-    Q_FOREACH(QVariantMap p, _model.values()) {
-        items.append(QVariant(p));
+void DeviceModel::resetModels() {
+    QObjectList devices;
+    
+    Q_FOREACH(QVariantMap m, _model.values()) {
+        QVariantMap dev_info = m;
+        qDebug() << "using:" << dev_info;
+        DeviceInfo* info = new DeviceInfo;
+        info->setFromJson(variantMapToJson(dev_info));
+        devices.append(info);
     }
     
-    QVariantMap data;
-    data["count"] = items.size();
-    data["items"] = items;
-    
-    QByteArray b(variantMapToJson(data));
-    qDebug() << QString::fromUtf8(b);
-    
-    return b;
+    _ctx->setContextProperty("devices", QVariant::fromValue(devices));
 }
 
 void DeviceModel::messageBusAlive(bool alive) {
@@ -48,7 +56,7 @@ void DeviceModel::messageBusAlive(bool alive) {
 }
 
 void DeviceModel::deviceInfoUpdated(QString key, QVariantMap data) {
-    qDebug() << "data for item:" << key << "updated";
+    qDebug() << "retrieved data for item:" << key << "and stored it";
     _model[key] = data;
     Q_EMIT jsonDataChanged();
 }

@@ -113,7 +113,7 @@ void iCharger_DeviceController::handleTimeout() {
 QByteArray iCharger_DeviceController::toJson() const {
     QVariantMap charger;
     charger["key"] = _key;
-    charger["device"] = _latest_device;
+    charger["info"] = _latest_device;
     QList<QVariant> channels;
     channels << _latest_channel[0];
     channels << _latest_channel[1];

@@ -29,7 +29,7 @@ Item {
             
             PropertyChanges {
                 target: gridForConnectionDetails
-                visible: false
+                visible: true
             }
             
             PropertyChanges {
@@ -187,6 +187,23 @@ Item {
             id: modelView
             anchors.fill: parent
             visible: false
+            delegate: Row {
+                Text {
+                    text: model.modelData.serialNumber
+                    width: parent.width
+                    horizontalAlignment: Text.AlignLeft
+                }
+                Text {
+                    text: model.modelData.softwareVersion
+                    width: parent.width
+                    horizontalAlignment: Text.AlignLeft
+                }
+                Text {
+                    text: model.modelData.hardwareVersion
+                    width: parent.width
+                    horizontalAlignment: Text.AlignLeft
+                }
+            }
         }
     }
 }

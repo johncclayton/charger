@@ -10,7 +10,7 @@ ApplicationWindow {
     height: 480
     
     title: qsTr("Charger")
-        
+    
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -24,7 +24,7 @@ ApplicationWindow {
     statusBar: StatusBar {
         RowLayout {
             anchors.fill: parent
-                        
+            
             Label {
                 text: connectionState.connectionMessage
             }
@@ -35,17 +35,17 @@ ApplicationWindow {
                     if(!devices.count)
                         return "No devices found"
                     if(devices.count === 1)
-                          devices.count + " device";
+                        devices.count + " device";
                     else devices.count + " devices";
                 }
             }
         }
     }
-
+    
     Connecting {
         id: connectionState
         anchors.fill: parent
-        deviceListModel.json: devices.jsonData
+                
         cancelButton.onClicked: {
             if(connected) {
                 // TODO: Device Request + Selection
@@ -55,7 +55,6 @@ ApplicationWindow {
                 Qt.quit()
             }
         }
-        
     }
     
 }

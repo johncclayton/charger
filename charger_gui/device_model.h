@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QQmlContext>
 #include <QVariantMap>
 #include <QMap>
 #include <QList>
@@ -13,19 +14,20 @@ class DeviceModel : public QObject {
     Q_OBJECT
     
 public:
-    DeviceModel(QSharedPointer<ClientMessagingController> controller, QObject *parent = 0);
+    DeviceModel(QSharedPointer<ClientMessagingController> controller, QQmlContext* c, QObject *parent = 0);
     ~DeviceModel();
 
-    QByteArray jsonData() const;
-    quint16 deviceCount() const { return _model.size(); }
+    typedef QMap<QString, QVariantMap> RawDataMap ;
     
-    Q_PROPERTY(QByteArray jsonData READ jsonData NOTIFY jsonDataChanged)
-    Q_PROPERTY(quint16 count READ deviceCount NOTIFY jsonDataChanged)
+    quint16 count() const { return _model.size(); }
+    
+    Q_PROPERTY(quint16 count READ count NOTIFY jsonDataChanged)
     
 signals:
     void jsonDataChanged();
     
 public slots:
+    void resetModels();
     void messageBusAlive(bool alive);
     void deviceInfoUpdated(QString key, QVariantMap data);
     void devicesUpdated(QVariantMap data);
@@ -33,7 +35,8 @@ public slots:
     
 private:
     QSharedPointer<ClientMessagingController> _controller;
-    QMap<QString, QVariantMap> _model;
+    QQmlContext* _ctx;
+    RawDataMap _model;
 };
 
 #endif // DEVICEMODEL_H
