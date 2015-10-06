@@ -25,6 +25,12 @@ int hotplug_callback(struct libusb_context *ctx,
             sn = icharger_device->serialNumber();
             if(sn.isEmpty()) {
                 // try resetting the device.
+                icharger_device->reset();
+                sn = icharger_device->serialNumber();
+            }
+            
+            if(sn.isEmpty()) {
+                qDebug() << "serial number of device with vendor id:" << desc.idVendor << ", product:" << desc.idProduct << " is empty - skipping";
             }
         }
         
