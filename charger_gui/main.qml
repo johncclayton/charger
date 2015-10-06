@@ -7,7 +7,7 @@ ApplicationWindow {
     visible: true
     
     width: 640
-    height: 480
+    height: 380
     
     title: qsTr("Charger")
     
@@ -31,12 +31,14 @@ ApplicationWindow {
             
             Label {
                 Layout.alignment: Qt.AlignRight
-                text: {
-                    if(!devices.count)
-                        return "No devices found"
-                    if(devices.count === 1)
-                        devices.count + " device";
-                    else devices.count + " devices";
+                Binding on text {
+                    value: {
+                        if(!devicesModel.count)
+                            return "No devices found"
+                        if(devicesModel.count === 1)
+                            devicesModel.count + " device";
+                        else devicesModel.count + " devices";
+                    }
                 }
             }
         }
@@ -45,7 +47,7 @@ ApplicationWindow {
     Connecting {
         id: connectionState
         anchors.fill: parent
-                
+        
         cancelButton.onClicked: {
             if(connected) {
                 // TODO: Device Request + Selection

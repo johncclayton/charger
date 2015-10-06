@@ -9,6 +9,14 @@ void DeviceInfo::setFromJson(QByteArray data) {
     setObject( QJsonDocument::fromJson(data).object() );
 }
 
+QString DeviceInfo::imageSource() const {
+    return object()["img_source"].toString();
+}
+
+void DeviceInfo::setImageSource(QString value) {
+    object()["img_source"] = value;
+}
+
 QString DeviceInfo::serialNumber() const { 
     return object()[STR_DEVICE_ONLY_SERIAL_NUMBER].toString().trimmed(); 
 }

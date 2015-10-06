@@ -7,12 +7,10 @@ Item {
     id: content
     
     width: 400
-    height: 400
+    height: 250
     
     property bool connected: false
-    property alias hostname: textHostname.text
-    property alias publishingPort: textPublishPort.text
-    property alias messagingPort: textMessagePort.text
+    property int itemWidth: 50
     property alias cancelButton: actionButton
     property alias connectionMessage: labelConnectionState.text
     property alias modelView: modelView
@@ -28,13 +26,13 @@ Item {
             }
             
             PropertyChanges {
-                target: gridForConnectionDetails
+                target: actionButton
                 visible: true
             }
             
             PropertyChanges {
-                target: actionButton
-                visible: true
+                target: content
+                height: 300
             }
         },
         
@@ -60,21 +58,20 @@ Item {
             }
             
             PropertyChanges {
-                target: gridForConnectionDetails
-                visible: false
-            }
-            
-            PropertyChanges {
                 target: gridForDeviceSelection
-                anchors.bottomMargin: 12
-                rows: 1
-                columns: 1
                 opacity: 1
+                visible: true
             }
             
             PropertyChanges {
                 target: modelView
+                keyNavigationWraps: false
                 visible: true
+            }
+            
+            PropertyChanges {
+                target: content
+                height: 380
             }
         }]
     
@@ -97,67 +94,6 @@ Item {
         anchors.topMargin: 16
         indeterminate: true
     }
-    
-    GridLayout {
-        id: gridForConnectionDetails
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: progressBar.bottom
-        
-        anchors.topMargin: 12
-        
-        rows: 3
-        columns: 2
-        rowSpacing: 8
-        columnSpacing: 8
-        
-        // hostname        
-        Label {
-            id: labelHostname
-            text: qsTr("Hostname/Server:")
-            anchors.right: textHostname.left
-            anchors.rightMargin: 12
-            horizontalAlignment: Text.AlignRight
-        }
-        
-        TextField {
-            id: textHostname
-            readOnly: true
-            placeholderText: qsTr("Hostname")
-            Layout.fillWidth: true
-            Layout.minimumWidth: 220
-        }
-        
-        // publishing
-        Label {
-            id: labelPublishPort
-            text: qsTr("Publisher Port:")
-            anchors.right: textPublishPort.left
-            anchors.rightMargin: 12
-            horizontalAlignment: Text.AlignRight
-        }    
-        
-        TextField {
-            id: textPublishPort
-            readOnly: true
-            placeholderText: qsTr("Publisher Port")
-        }
-        
-        // messaging
-        Label {
-            id: labelMessage
-            text: qsTr("Messaging Port:")
-            anchors.right: textMessagePort.left
-            anchors.rightMargin: 12
-            horizontalAlignment: Text.AlignRight
-        }    
-        
-        TextField {
-            id: textMessagePort
-            readOnly: true
-            placeholderText: qsTr("Messaging Port")
-        }
-        
-    }
     // cancel me...
     Button {
         id: actionButton
@@ -171,37 +107,93 @@ Item {
     
     GridLayout {
         id: gridForDeviceSelection
-        width: 100
-        height: 100
-        anchors.rightMargin: 0
-        anchors.leftMargin: 0
+        
+        width: 300
+        visible: false
+        
+        anchors.bottom: actionButton.top
         anchors.bottomMargin: 12
         anchors.top: labelConnectionState.bottom
-        anchors.right: gridForConnectionDetails.left
-        anchors.bottom: actionButton.top
-        anchors.left: gridForConnectionDetails.right
         anchors.topMargin: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+        
+        anchors.rightMargin: 0
+        anchors.leftMargin: 0
+        
         opacity: 0
         
         ListView {
             id: modelView
+            orientation: Qt.Horizontal
             anchors.fill: parent
             visible: false
-            delegate: Row {
-                Text {
-                    text: model.modelData.serialNumber
-                    width: parent.width
-                    horizontalAlignment: Text.AlignLeft
-                }
-                Text {
-                    text: model.modelData.softwareVersion
-                    width: parent.width
-                    horizontalAlignment: Text.AlignLeft
-                }
-                Text {
-                    text: model.modelData.hardwareVersion
-                    width: parent.width
-                    horizontalAlignment: Text.AlignLeft
+            
+//            highlight: Rectangle { color: "lightsteelblue"; radius: 5; width: itemWidth * 4 }
+            focus: true
+            
+            delegate: Item {
+                width: itemWidth
+                height: 50
+                                
+                GridLayout {
+                    rows: 3
+                    columns: 3
+                    rowSpacing: 8
+                    columnSpacing: 8
+                    
+                    Image {
+                        source: model.modelData.imageSource
+                        fillMode: Image.PreserveAspectFit
+                        Layout.rowSpan: 3
+                        Layout.fillHeight: true
+                        width: 90
+                    }
+                    
+                    // row 1
+                    Label {
+                        id: labelSerialNumber
+                        text: "Serial Number:"
+                        anchors.right: textSerialNumber.left
+                        anchors.rightMargin: 12
+                        horizontalAlignment: Text.AlignRight                        
+                    }
+                    
+                    Text {
+                        id: textSerialNumber
+                        text: model.modelData.serialNumber
+                        horizontalAlignment: Text.AlignLeft
+                    }
+                    
+                    // row 2
+                    Label {
+                        id: labelSoftwareVer
+                        text: "Software Version:"
+                        anchors.right: textSoftwareVer.left
+                        anchors.rightMargin: 12
+                        horizontalAlignment: Text.AlignRight                        
+                    }
+
+                    Text {
+                        id: textSoftwareVer
+                        text: model.modelData.softwareVersion
+                        horizontalAlignment: Text.AlignLeft
+                    }
+                    
+                    // row 3
+                    Label {
+                        id: labelHardwareVer
+                        text: "Hardware Version:"
+                        anchors.right: textHardwareVer.left
+                        anchors.rightMargin: 12
+                        horizontalAlignment: Text.AlignRight                        
+                    }
+
+                    Text {
+                        id: textHardwareVer
+                        text: model.modelData.hardwareVersion
+                        horizontalAlignment: Text.AlignLeft
+                    }
+                    
                 }
             }
         }

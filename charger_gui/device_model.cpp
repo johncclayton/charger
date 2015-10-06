@@ -16,8 +16,8 @@ DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QQmlContex
 {
     MessageBus* bus = c->messageBus();
     
-    connect(bus, SIGNAL(deviceAddedRemoved(bool,QString)), this, SLOT(deviceAddedRemoved(bool,QString)));    
     connect(bus, SIGNAL(aliveChanged(bool)), this, SLOT(messageBusAlive(bool)));
+    connect(bus, SIGNAL(deviceAddedRemoved(bool,QString)), this, SLOT(deviceAddedRemoved(bool,QString)));    
     connect(bus, SIGNAL(getDeviceResponse(QString,QVariantMap)), this, SLOT(deviceInfoUpdated(QString,QVariantMap)));
     connect(bus, SIGNAL(getDevicesResponse(QVariantMap)), this, SLOT(devicesUpdated(QVariantMap)));
     
@@ -34,13 +34,14 @@ void DeviceModel::resetModels() {
     QObjectList devices;
     
     Q_FOREACH(QVariantMap m, _model.values()) {
-        QVariantMap dev_info = m;
-        qDebug() << "using:" << dev_info;
+        QVariantMap dev_info = m["info"].toMap();
         DeviceInfo* info = new DeviceInfo;
+        info->setImageSource("qrc:/images/icharger_4010_duo.png");
         info->setFromJson(variantMapToJson(dev_info));
         devices.append(info);
     }
     
+    // current list of devices available...
     _ctx->setContextProperty("devices", QVariant::fromValue(devices));
 }
 
@@ -64,7 +65,7 @@ void DeviceModel::deviceInfoUpdated(QString key, QVariantMap data) {
 void DeviceModel::devicesUpdated(QVariantMap data) {
     if(data.contains("devices") && data.contains("count")) {
         QVariantList devices(data["devices"].toList());
-        qDebug() << "got" << devices.size() << "devices for which I will get more details for";
+        qDebug() << "fetching more details for" << devices.size() << "device(s)";
         for(int index = 0; index < devices.size(); ++index) {
             const QVariantMap o = devices.at(index).toMap();
             _controller->messageBus()->getDeviceInformation(o["key"].toString());
