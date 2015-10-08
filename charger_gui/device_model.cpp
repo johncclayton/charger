@@ -64,7 +64,15 @@ void DeviceModel::messageBusAlive(bool alive) {
 void DeviceModel::deviceInfoUpdated(QString key, QVariantMap data) {
     qDebug() << "retrieved data for item:" << key << "and stored it";
     _model[key] = data;
+    
+    key.append("a");
+    _model[key] = data;
+    
+    key.append("1");
+    _model[key] = data;
+
     resetModels();
+
     Q_EMIT jsonDataChanged();
 }
 

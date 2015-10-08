@@ -10,9 +10,10 @@ Item {
     height: 250
     
     property bool connected: false
+    property int device_count: 0
+    
     property string connectingString: qsTr("Connecting...")
     property string chooseDeviceString: qsTr("Choose Device...")
-    property int itemWidth: 50
     property alias cancelButton: actionButton
     property alias connectionMessage: labelConnectionState.text
     property alias modelView: modelView
@@ -36,11 +37,56 @@ Item {
                 target: content
                 height: 300
             }
+            
+            PropertyChanges {
+                target: layoutForDeviceSelection
+                rowSpacing: 5
+            }
         },
         
         State {
-            name: "ConnectedState"
-            when: connected
+            name: "FindDevicesState"
+            when: connected && device_count == 0
+            
+            PropertyChanges {
+                target: labelConnectionState
+                text: chooseDeviceString
+            }
+            
+            PropertyChanges {
+                target: actionButton
+                visible: true
+            }
+            
+            PropertyChanges {
+                target: progressBar
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: layoutForDeviceSelection
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: modelView
+                visible: false
+            }
+            
+            PropertyChanges {
+                target: content
+                height: 380
+            }
+            
+            PropertyChanges {
+                target: infoRect
+                opacity: 1
+            }
+        },
+        
+        State {
+            name: "FoundDevicesState"
+            when: connected && device_count > 0
             
             PropertyChanges {
                 target: labelConnectionState
@@ -60,14 +106,12 @@ Item {
             }
             
             PropertyChanges {
-                target: gridForDeviceSelection
-                opacity: 1
+                target: layoutForDeviceSelection
                 visible: true
             }
             
             PropertyChanges {
                 target: modelView
-                keyNavigationWraps: false
                 visible: true
             }
             
@@ -75,11 +119,27 @@ Item {
                 target: content
                 height: 380
             }
-        }]
+            
+            PropertyChanges {
+                target: infoRect
+                opacity: 0
+            }
+        }
+    ]
+    
+    Image {
+        anchors.fill: parent
+        opacity: 0.08
+        source: "qrc:/images/icharger_308_duo.png"
+        fillMode: Image.PreserveAspectFit
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+    }
     
     Label {
         id: labelConnectionState
-        y: 33
+        anchors.top: parent.top
+        anchors.topMargin: 18
         anchors.rightMargin: 0
         anchors.leftMargin: 0
         font.pointSize: 44
@@ -96,61 +156,63 @@ Item {
         anchors.topMargin: 16
         indeterminate: true
     }
-    // cancel me...
+    
     Button {
         id: actionButton
         x: 162
         y: 349
-        text:  "Cancel"
+        isDefault: true
+        text:  qsTr("Quit")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
+        anchors.bottomMargin: 16
     }
-        
+    
     GridLayout {
-        id: gridForDeviceSelection
+        id: layoutForDeviceSelection
         
-        width: 300
+        anchors.right: parent.right
+        anchors.rightMargin: 50
+        anchors.left: parent.left
+        anchors.leftMargin: 50
         visible: false
         
         anchors.bottom: actionButton.top
         anchors.bottomMargin: 12
         anchors.top: labelConnectionState.bottom
         anchors.topMargin: 16
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -30
-        
-        anchors.rightMargin: 0
-        anchors.leftMargin: 0
-        
-        opacity: 0
         
         ListView {
             id: modelView
-            highlightMoveDuration: 200
-            keyNavigationWraps: true
+            
             anchors.fill: parent
             visible: false
-            
-            highlight: Rectangle { 
-                color: "lightsteelblue"
-                radius: 5
-            }
-            
             focus: true
             
+            highlight: Rectangle { 
+                radius: 5
+                color: "blue"
+                opacity: 0.1
+            }
+            
             delegate: Rectangle {
-                anchors.fill: parent
-                height: 50
                 
-                border.color: "black"
-                border.width: 12
-                radius: 14
-                                                
+                height: 80
+                width: modelView.width
+                
+                color: "transparent"
+                Layout.margins: 12
+                
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: modelView.currentIndex = index
+                    
+                }                
+                
                 GridLayout {
                     rows: 3
                     columns: 3
-                    rowSpacing: 8
+                    rowSpacing: 5
                     columnSpacing: 18
                     
                     Image {
@@ -165,8 +227,8 @@ Item {
                         fillMode: Image.PreserveAspectFit        
                         Layout.rowSpan: 3
                     }
-                                        
-                    // row 2
+                    
+                    // product
                     Label {
                         id: labelProduct
                         text: "Product:"
@@ -174,14 +236,14 @@ Item {
                         anchors.rightMargin: 12
                         horizontalAlignment: Text.AlignRight                        
                     }
-
+                    
                     Text {
                         id: textProduct
                         text: model.modelData.product
                         horizontalAlignment: Text.AlignLeft
                     }
                     
-                    // row 3
+                    // manufacturer
                     Label {
                         id: labelManufacturer
                         text: "Manufacturer:"
@@ -189,14 +251,14 @@ Item {
                         anchors.rightMargin: 12
                         horizontalAlignment: Text.AlignRight                        
                     }
-
+                    
                     Text {
                         id: textManufacturer
                         text: model.modelData.manufacturer
                         horizontalAlignment: Text.AlignLeft
                     }
                     
-                    // row 1 - serial
+                    // serial
                     Label {
                         id: labelSerialNumber
                         text: "Serial Number:"
@@ -210,8 +272,23 @@ Item {
                         text: model.modelData.serialNumber
                         horizontalAlignment: Text.AlignLeft
                     }
-                    
                 }
+            }
+        }
+        
+        Item {
+            id: infoRect
+            anchors.fill: parent
+            opacity: 0
+            
+            Text {
+                id: textDescription
+                text: qsTr("Dilligently looking for devicess to take control of... please wait.")
+                wrapMode: Text.WordWrap
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                anchors.fill: parent
+                font.pixelSize: 18
             }
         }
     }

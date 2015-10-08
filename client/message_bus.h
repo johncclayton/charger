@@ -24,6 +24,7 @@ public:
     Q_PROPERTY(bool alive READ alive NOTIFY aliveChanged)
     
     bool alive() const { return _alive; }
+
     void getDevices() const;
     void getDeviceInformation(QString key) const;
     

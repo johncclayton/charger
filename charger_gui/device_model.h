@@ -14,14 +14,14 @@ class DeviceModel : public QObject {
     Q_OBJECT
     
 public:
+    Q_PROPERTY(int count READ getCount NOTIFY jsonDataChanged)
+
     DeviceModel(QSharedPointer<ClientMessagingController> controller, QQmlContext* c, QObject *parent = 0);
     ~DeviceModel();
 
     typedef QMap<QString, QVariantMap> RawDataMap ;
     
-    quint16 count() const { return _model.size(); }
-    
-    Q_PROPERTY(quint16 count READ count NOTIFY jsonDataChanged)
+    int getCount() const { return _model.size(); }
     
 signals:
     void jsonDataChanged();
@@ -32,7 +32,7 @@ public slots:
     void deviceInfoUpdated(QString key, QVariantMap data);
     void devicesUpdated(QVariantMap data);
     void deviceAddedRemoved(bool added, QString key);
-    
+        
 private:
     QSharedPointer<ClientMessagingController> _controller;
     QQmlContext* _ctx;

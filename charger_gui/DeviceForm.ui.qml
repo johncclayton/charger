@@ -23,6 +23,7 @@ Item {
         Image {
             id: deviceImage
             width: (parent.width - 10) / 2
+            anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
             source: "images/icharger_4010_duo.png"
@@ -31,7 +32,12 @@ Item {
         Column {
             id: detailsColumn
             width: 200
-            height: 400
+            anchors.top: parent.top
+            anchors.topMargin: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            anchors.right: parent.right
+            anchors.rightMargin: 0
             spacing: 5
             
             Label {

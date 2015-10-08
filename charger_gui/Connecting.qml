@@ -2,7 +2,12 @@ import QtQuick 2.5
 
 ConnectingForm {
     connected: comms.messageBus.alive
+    device_count: devicesModel.count
     modelView.model: devices
+    
+    modelView.onCurrentItemChanged: {
+        console.log("current item changed")
+    }
     
     property variant connect_strings: [
         qsTr("Connecting..."),
@@ -19,7 +24,7 @@ ConnectingForm {
         qsTr("Choose a device..."),
         qsTr("Choose your weapon!"),
         qsTr("What charger?"),
-        qsTr("Go ahead... make my day, punk"),
+        qsTr("Go ahead, make my day..."),
         qsTr("Pick a charger, any charger"),
         qsTr("Don't be scared - pick one!"),
         qsTr("To charge, or not to charge..."),
@@ -36,7 +41,8 @@ ConnectingForm {
         
         onTriggered: {
             connectingString = connect_strings[Math.floor(Math.random() * connect_strings.length)];
-            chooseDeviceString = choose_strings[Math.floor(Math.random() * choose_strings.length)];
+            if(device_count > 0)
+                chooseDeviceString = choose_strings[Math.floor(Math.random() * choose_strings.length)];
         }
     }
 }

@@ -2,6 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
+import QtQuick.Window 2.0
 
 ApplicationWindow {
     visible: true
@@ -26,7 +27,7 @@ ApplicationWindow {
             anchors.fill: parent
             
             Label {
-                text: "Connected to: " + comms.hostname
+                text: comms.hostname
             }
             
             Label {
@@ -34,20 +35,45 @@ ApplicationWindow {
                 Binding on text {
                     value: {
                         if(!devicesModel.count)
-                            return "No devices found"
+                            return "Searching for devices..."
+                        
                         if(devicesModel.count === 1)
                             devicesModel.count + " device";
-                        else devicesModel.count + " devices";
+                        else 
+                            devicesModel.count + " devices";
                     }
                 }
             }
         }
     }
     
+//    Window {
+//        id: splash
+//        color: "transparent"
+//        title: "Splash Window"
+//        modality: Qt.ApplicationModal
+//        flags: Qt.SplashScreen
+//        x: (Screen.width - splashImage.width) / 2
+//        y: (Screen.height - splashImage.height) / 2
+//        width: splashImage.width
+//        height: splashImage.height
+        
+//        Image {
+//            id: splashImage
+//            source: "qrc:/images/icharger_308_duo.png"
+//            MouseArea {
+//                anchors.fill: parent
+//                onClicked: Qt.quit()
+//            }
+//        }
+        
+//        visible: true
+//    }
+    
     Connecting {
         id: connectionState
         anchors.fill: parent
-        
+                
         cancelButton.onClicked: {
             if(connected) {
                 // TODO: Device Request + Selection
