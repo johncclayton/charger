@@ -7,7 +7,5 @@ ChannelForm {
     panel.onHeightChanged: {
         panelNumberOfRows = Math.floor((horizline.y - cells.y) / cell1.height)
     }  
-    
-    panelBackgroundColor: Qt.darker(panelBorderColor, 14)
 }
 

@@ -2,18 +2,19 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
-import QtQuick.Window 2.0
+import QtQuick.Controls.Styles 1.4
 
 ApplicationWindow {
     visible: true
     
     width: 400
     height: 220
+    
     minimumWidth: 400
-    minimumHeight: 120
+    minimumHeight: 200
     
     title: qsTr("Charger")
-    
+        
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -49,45 +50,83 @@ ApplicationWindow {
         }
     }
     
-//    Connecting {
-//        id: connectionState
-//        anchors.fill: parent
-                
-//        cancelButton.onClicked: {
-//            if(connected) {
-//                // TODO: Device Request + Selection
-//                // lets ask the system for all the device information, then we move
-//                // onto device selection - which is automatic if there's only a single device.
-//            } else {
-//                Qt.quit()
-//            }
-//        }
-//    }
-
-    RowLayout { 
-        id: mycharger
-        spacing: 80
-
+    Item {
+        id: theapp
+        
         anchors.fill: parent
-    
-        Channel {
-            id: channel1
-            panelHeaderTitleLeft.text: "01-Cycle"
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: (parent.width/2) - 1
+        
+        states: [
+            State {
+                name: "Connecting"
+                when: connectServer.device_count <= 0
+            },
             
+            State {
+                name: "ConnectedAutoSelect"
+                when: devicesModel.count == 1
+                
+                PropertyChanges {
+                    target: connectServer
+                    opacity: 0                   
+                }
+                
+                PropertyChanges {
+                    target: myicharger
+                    opacity: 1
+                }
+            }
+        ]
+        
+        ConnectServer {
+            id: connectServer
+            anchors.fill: parent
+            
+            cancelButton.onClicked: {
+                if(connected) {
+                    // TODO: Device Request + Selection
+                    // lets ask the system for all the device information, then we move
+                    // onto device selection - which is automatic if there's only a single device.
+                } else {
+                    Qt.quit()
+                }
+            }
+            
+            Behavior on opacity {
+                NumberAnimation { duration: 300 }
+            }            
         }
-
-        Channel {
-            id: channel2
-            panelHeaderTitleLeft.text: "02-Balance"
-            panelBorderColor: "darkgreen"
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: (parent.width/2) - 1
+        
+        RowLayout { 
+            id: myicharger
+            spacing: 80
+            opacity: 0
+            anchors.fill: parent
+            
+            Channel {
+                id: channel1
+                panelHeaderTitleLeft.text: " 01-Cycle"
+                panelBackgroundColor: Qt.darker(panelBorderColor, 8)
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: (parent.width/2) - 1
+                
+            }
+            
+            Channel {
+                id: channel2
+                panelHeaderTitleLeft.text: " 02-Balance"
+                panelBorderColor: "#009900"
+                panelBackgroundColor: Qt.darker(panelBorderColor, 8)
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                width: (parent.width/2) - 1
+            }
+            
+            Behavior on opacity {
+                NumberAnimation { duration: 300 }
+            }
         }
     }
 }

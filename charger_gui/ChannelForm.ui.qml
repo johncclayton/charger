@@ -11,7 +11,7 @@ Item {
     
     property color panelTextColor: "white"
     property color panelHeaderTextColor: "black"
-    property color panelBorderColor: "#9CDCFC"
+    property color panelBorderColor: "#3399FF"
     property color panelBackgroundColor: panelBorderColor
     property alias panelHeaderTitleLeft: panel.headerTitleLeft
     property alias panelHeaderTitleRight: panel.headerTitleRight
@@ -21,7 +21,6 @@ Item {
     property int batteryFontPixelSize: 18
     property string voltsFontFamily: "Verdana"
     property int voltsFontPixelSize: 18
-    property double panelBackgroundOpacity: 0.2
     property color panelCellNumberColor: panelBorderColor
     
     property int panelRadius: 10
@@ -191,16 +190,16 @@ Item {
                                         
                     OneCell {
                         id: resistance1
-                        cellNumber: "Sr"
+                        cellNumber: "Sʀ"
                         cellValue: "12.9"
-                        cellUnits: "mO"
+                        cellUnits: "mΩ"
                     }
                     
                     OneCell {
                         id: resistance2
-                        cellNumber: "Lr"
+                        cellNumber: "Lʀ"
                         cellValue: "22.4"
-                        cellUnits: "mO"
+                        cellUnits: "mΩ"
                     }                        
                 }
             }

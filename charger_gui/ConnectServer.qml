@@ -1,6 +1,6 @@
 import QtQuick 2.5
 
-ConnectingForm {
+ConnectServerForm {
     connected: comms.messageBus.alive
     device_count: devicesModel.count
     modelView.model: devices

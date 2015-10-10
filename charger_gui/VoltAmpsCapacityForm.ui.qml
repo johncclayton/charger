@@ -37,8 +37,8 @@ Item {
             Layout.minimumWidth: minimumLayoutWidth
             Layout.preferredHeight: preferredLayoutHeight
             
-            spacing: 5
-                        
+            spacing: 4
+            
             Text {
                 id: textVolts
                 text: voltage + ' V'
