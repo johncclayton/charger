@@ -14,9 +14,9 @@
         <file>OneCellForm.ui.qml</file>
         <file>PanelHeader.qml</file>
         <file>PanelHeaderForm.ui.qml</file>
-        <file>VoltAmpsCapacity.qml</file>
-        <file>VoltAmpsCapacityForm.ui.qml</file>
         <file>BattModeTime.qml</file>
         <file>BattModeTimeForm.ui.qml</file>
+        <file>VoltAmpsCapacity.qml</file>
+        <file>VoltAmpsCapacityForm.ui.qml</file>
     </qresource>
 </RCC>

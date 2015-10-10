@@ -7,9 +7,9 @@ import QtQuick.Window 2.0
 ApplicationWindow {
     visible: true
     
-    width: 300
+    width: 400
     height: 220
-    minimumWidth: 300
+    minimumWidth: 400
     minimumHeight: 120
     
     title: qsTr("Charger")
@@ -64,9 +64,31 @@ ApplicationWindow {
 //        }
 //    }
 
-    ChannelForm {
+    RowLayout { 
+        id: mycharger
+        spacing: 80
+
         anchors.fill: parent
-    }
     
+        Channel {
+            id: channel1
+            panelHeaderTitleLeft.text: "01-Cycle"
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: (parent.width/2) - 1
+            
+        }
+
+        Channel {
+            id: channel2
+            panelHeaderTitleLeft.text: "02-Balance"
+            panelBorderColor: "darkgreen"
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: (parent.width/2) - 1
+        }
+    }
 }
 

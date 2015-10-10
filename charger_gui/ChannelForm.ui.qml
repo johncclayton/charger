@@ -12,7 +12,9 @@ Item {
     property color panelTextColor: "white"
     property color panelHeaderTextColor: "black"
     property color panelBorderColor: "#9CDCFC"
-    property color panelBackgroundColor: "#171B6C"
+    property color panelBackgroundColor: panelBorderColor
+    property alias panelHeaderTitleLeft: panel.headerTitleLeft
+    property alias panelHeaderTitleRight: panel.headerTitleRight
     property int panelBorderWidth: 2
     
     property string batteryFontFamily: "Courier"
@@ -20,10 +22,16 @@ Item {
     property string voltsFontFamily: "Verdana"
     property int voltsFontPixelSize: 18
     property double panelBackgroundOpacity: 0.2
-    property color panelCellNumberColor: "lightblue"
+    property color panelCellNumberColor: panelBorderColor
     
     property int panelRadius: 10
     property int panelSmallRadius: 5
+    property int panelNumberOfRows: 10
+    
+    property alias panel: panel
+    property alias horizline: horizLine
+    property alias cells: allcells
+    property alias cell1: cell1
     
     width: 300
     height: 220
@@ -33,7 +41,6 @@ Item {
         
         color: panelBackgroundColor
         border.color: panelBorderColor
-        
         anchors.fill: parent
         
         headerTitleLeft.text: qsTr("00-Charge")
@@ -53,8 +60,8 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 
-                spacing: 0
                 Layout.fillHeight: true
+                spacing: 0
                 
                 BattModeTime {
                     id: batterymode
@@ -64,7 +71,6 @@ Item {
                     anchors.bottomMargin: 3
                     anchors.top: parent.top
                     anchors.topMargin: 3
-                    
                 }
                 
                 VoltAmpsCapacity {
@@ -78,36 +84,34 @@ Item {
                     anchors.leftMargin: 3
                     anchors.right: parent.right
                     anchors.rightMargin: 5
-                    
                 }
             }
             
             
             ColumnLayout {
                 id: lower_column
-                anchors.bottomMargin: 3
+
                 anchors.top: row1layout.bottom
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
-                anchors.topMargin: 3
-                spacing: 8
                 
                 GridLayout {
                     id: allcells
                     
+                    flow: GridLayout.TopToBottom    
+                    rows: panelNumberOfRows
+                                        
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: horizLine.top
-                    anchors.bottomMargin: 3
+                                        
+                    Layout.preferredHeight: panelNumberOfRows * cell1.height
                     
-                    flow: GridLayout.TopToBottom    
-                    
-                    rows: 10
-                    columnSpacing: 8
-                    
-                    columns: 1
+                    // used to ensure the columns don't come too close / merge 
+                    columnSpacing: 12
+                    rowSpacing: 0
                     
                     OneCell {
                         id: cell1
@@ -158,6 +162,10 @@ Item {
                     OneCell {
                         cellNumber: "10"
                         cellValue: "3.75"
+                    }
+                    
+                    Item {
+                        Layout.fillHeight: true
                     }
                 }
                 
