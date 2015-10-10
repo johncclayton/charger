@@ -7,8 +7,10 @@ import QtQuick.Window 2.0
 ApplicationWindow {
     visible: true
     
-    width: 640
-    height: 380
+    width: 300
+    height: 220
+    minimumWidth: 300
+    minimumHeight: 120
     
     title: qsTr("Charger")
     
@@ -47,42 +49,23 @@ ApplicationWindow {
         }
     }
     
-//    Window {
-//        id: splash
-//        color: "transparent"
-//        title: "Splash Window"
-//        modality: Qt.ApplicationModal
-//        flags: Qt.SplashScreen
-//        x: (Screen.width - splashImage.width) / 2
-//        y: (Screen.height - splashImage.height) / 2
-//        width: splashImage.width
-//        height: splashImage.height
-        
-//        Image {
-//            id: splashImage
-//            source: "qrc:/images/icharger_308_duo.png"
-//            MouseArea {
-//                anchors.fill: parent
-//                onClicked: Qt.quit()
+//    Connecting {
+//        id: connectionState
+//        anchors.fill: parent
+                
+//        cancelButton.onClicked: {
+//            if(connected) {
+//                // TODO: Device Request + Selection
+//                // lets ask the system for all the device information, then we move
+//                // onto device selection - which is automatic if there's only a single device.
+//            } else {
+//                Qt.quit()
 //            }
 //        }
-        
-//        visible: true
 //    }
-    
-    Connecting {
-        id: connectionState
+
+    ChannelForm {
         anchors.fill: parent
-                
-        cancelButton.onClicked: {
-            if(connected) {
-                // TODO: Device Request + Selection
-                // lets ask the system for all the device information, then we move
-                // onto device selection - which is automatic if there's only a single device.
-            } else {
-                Qt.quit()
-            }
-        }
     }
     
 }

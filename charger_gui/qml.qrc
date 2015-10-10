@@ -1,16 +1,22 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>NetworkConfig.qml</file>
-        <file>NetworkConfigForm.ui.qml</file>
         <file>Channel.qml</file>
         <file>ChannelForm.ui.qml</file>
         <file>Connecting.qml</file>
         <file>ConnectingForm.ui.qml</file>
-        <file>Device.qml</file>
-        <file>DeviceForm.ui.qml</file>
+        <file>DeviceDelegate.qml</file>
+        <file>DeviceDelegateForm.ui.qml</file>
         <file>images/icharger_4010_duo.png</file>
         <file>images/icharger_308_duo.png</file>
         <file>images/icharger_406_duo.png</file>
+        <file>OneCell.qml</file>
+        <file>OneCellForm.ui.qml</file>
+        <file>PanelHeader.qml</file>
+        <file>PanelHeaderForm.ui.qml</file>
+        <file>VoltAmpsCapacity.qml</file>
+        <file>VoltAmpsCapacityForm.ui.qml</file>
+        <file>BattModeTime.qml</file>
+        <file>BattModeTimeForm.ui.qml</file>
     </qresource>
 </RCC>

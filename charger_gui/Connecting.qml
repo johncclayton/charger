@@ -6,7 +6,7 @@ ConnectingForm {
     modelView.model: devices
     
     modelView.onCurrentItemChanged: {
-        console.log("current item changed")
+        console.log("current item changed " + modelView.currentItem)
     }
     
     property variant connect_strings: [
@@ -14,9 +14,11 @@ ConnectingForm {
         qsTr("Contacting the oracle..."),
         qsTr("Looking under the carpet..."),
         qsTr("Juggling gigaflops..."),
+        qsTr("Flopping jugaflips..."),
         qsTr("Squeezing clouds..."),
         qsTr("Thinking about it..."),
         qsTr("Where's that server?"),
+        qsTr("Looking for the black box..."),
         qsTr("Bouncing stuff..."),
     ]    
     
@@ -29,21 +31,56 @@ ConnectingForm {
         qsTr("Don't be scared - pick one!"),
         qsTr("To charge, or not to charge..."),
         qsTr("How hard can this be?"),
+        qsTr("Pick one already!"),
         qsTr("Come on... pick one!"),
         qsTr("Phone a friend maybe?"),
         qsTr("Or just dont..."),
+        qsTr("To choose or not to choose..."),
     ]    
-
+    
+    property int animTime: 175
+    property string newConnectionLabelString: ""
+    
+    Behavior on connectionLabel.opacity { NumberAnimation { duration: animTime } }
+    
+    onNewConnectionLabelStringChanged: {
+        connectionLabel.opacity = 0
+        fadeTimer.running = true
+    }
+    
+    onStateChanged: {
+        stateTimer.stop()
+        stateTimer.start()
+    }
+    
     Timer {
+        id: stateTimer
+        
         repeat: true
         running: true
-        interval: 3500
+        interval: 5500
+        triggeredOnStart: true
         
         onTriggered: {
-            connectingString = connect_strings[Math.floor(Math.random() * connect_strings.length)];
             if(device_count > 0)
-                chooseDeviceString = choose_strings[Math.floor(Math.random() * choose_strings.length)];
+                newConnectionLabelString = choose_strings[Math.floor(Math.random() * choose_strings.length)];
+            else
+                newConnectionLabelString = connect_strings[Math.floor(Math.random() * connect_strings.length)];                
         }
     }
+    
+    Timer {
+        id: fadeTimer
+
+        running: false
+        repeat: false
+        interval: animTime
+        
+        onTriggered: {
+            connectionLabel.text = newConnectionLabelString
+            connectionLabel.opacity = 1
+        }
+    }
+    
 }
 
