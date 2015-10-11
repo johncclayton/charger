@@ -4,21 +4,24 @@ ConnectServerForm {
     connected: comms.messageBus.alive
     device_count: devicesModel.count
     modelView.model: devices
-    
-    modelView.onCurrentItemChanged: {
-        console.log("current item changed " + modelView.currentItem)
+        
+    onDevice_countChanged: {
+        
+        // ensure we have instantiated UIs for each model type we understand.
+//        console.log("you clicked number: " + modelView.currentIndex + " which is: " + devices[modelView.currentIndex].product)
+        
     }
     
     property variant connect_strings: [
         qsTr("Connecting..."),
         qsTr("Contacting the oracle..."),
-        qsTr("Looking under the carpet..."),
+        qsTr("Checking under the rug..."),
         qsTr("Juggling gigaflops..."),
         qsTr("Flopping jugaflips..."),
         qsTr("Squeezing clouds..."),
         qsTr("Thinking about it..."),
         qsTr("Where's that server?"),
-        qsTr("Looking for the black box..."),
+        qsTr("Looking for stuff..."),
         qsTr("Bouncing stuff..."),
     ]    
     

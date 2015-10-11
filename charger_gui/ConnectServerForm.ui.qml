@@ -14,7 +14,7 @@ Item {
     
     property alias connectionLabel: labelConnectionState
     
-    property alias cancelButton: actionButton
+    property alias actionButton: actionButton
     property alias connectionMessage: labelConnectionState.text
     property alias modelView: modelView
     
@@ -167,7 +167,6 @@ Item {
                 }                                    
             }
         }
-        
     }
 }
 

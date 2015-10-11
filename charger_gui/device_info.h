@@ -53,14 +53,7 @@ signals:
     
 public slots:
     void setFromJson(QByteArray data);
-    
     void setImageSource(QString value);
-//    void setSerialNumber(QString value);
-//    void setSoftwareVersion(float value);
-//    void setHardwareVersion(float value);
-//    void setCh1Status(quint8 value);
-//    void setCh2Status(quint8 value);
-//    void setManufacturer(QString value);
     
 private:
     QString _img_source;  

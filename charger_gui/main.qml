@@ -2,19 +2,18 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
-import QtQuick.Controls.Styles 1.4
 
 ApplicationWindow {
     visible: true
     
-    width: 400
-    height: 220
+    width: 530
+    height: 300
     
-    minimumWidth: 400
-    minimumHeight: 200
+    minimumWidth: 500
+    minimumHeight: 240
     
     title: qsTr("Charger")
-        
+    
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -50,84 +49,67 @@ ApplicationWindow {
         }
     }
     
+    Connections {
+        target: devicesModel
+        onDeviceAddedRemoved: {
+            // C++ signal sig: void deviceAddedRemoved(bool added, QString key);
+            if(added) {
+                // what's the product type? so we can construct an interface
+                stack.createChargerInterfaceForKey(key);
+            } else {
+                // remove a child with this object name...
+                stack.removeChargerInterfaceForKey(key);
+            }
+        }
+    }
+    
     Item {
         id: theapp
-        
         anchors.fill: parent
         
-        states: [
-            State {
-                name: "Connecting"
-                when: connectServer.device_count <= 0
-            },
-            
-            State {
-                name: "ConnectedAutoSelect"
-                when: devicesModel.count == 1
-                
-                PropertyChanges {
-                    target: connectServer
-                    opacity: 0                   
-                }
-                
-                PropertyChanges {
-                    target: myicharger
-                    opacity: 1
-                }
-            }
-        ]
-        
-        ConnectServer {
-            id: connectServer
+        StackView {
+            id: stack
+            initialItem: connectServer
             anchors.fill: parent
             
-            cancelButton.onClicked: {
-                if(connected) {
-                    // TODO: Device Request + Selection
-                    // lets ask the system for all the device information, then we move
-                    // onto device selection - which is automatic if there's only a single device.
-                } else {
-                    Qt.quit()
+            function createChargerInterfaceForKey(key) {
+                var component = Qt.createComponent("ChargerDuo.qml");
+                if (component.status === Component.Ready) {
+                    var new_item = component.createObject(stack);
+                    new_item.objectName = key;
+                    stack.push(new_item);
+                }
+                
+                return null;
+            }
+            
+            function removeChargerInterfaceForKey(key) {
+                for(var i = 0; i < children.length; i++) {
+                    var item = children[i];
+                    if(key === item.objectName) {
+                        if(item.Stack.status === Stack.Active)
+                            pop(null);
+                        removeItem(key, item);
+                        return;
+                    }
+                }            
+            }
+            
+            ConnectServer {
+                id: connectServer
+                anchors.fill: parent
+                
+                actionButton.onClicked: {
+                    if(connected) {
+                        // nada...
+                    } else {
+                        Qt.quit()
+                    }
                 }
             }
             
-            Behavior on opacity {
-                NumberAnimation { duration: 300 }
-            }            
         }
         
-        RowLayout { 
-            id: myicharger
-            spacing: 80
-            opacity: 0
-            anchors.fill: parent
-            
-            Channel {
-                id: channel1
-                panelHeaderTitleLeft.text: " 01-Cycle"
-                panelBackgroundColor: Qt.darker(panelBorderColor, 8)
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: (parent.width/2) - 1
-                
-            }
-            
-            Channel {
-                id: channel2
-                panelHeaderTitleLeft.text: " 02-Balance"
-                panelBorderColor: "#009900"
-                panelBackgroundColor: Qt.darker(panelBorderColor, 8)
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: (parent.width/2) - 1
-            }
-            
-            Behavior on opacity {
-                NumberAnimation { duration: 300 }
-            }
-        }
     }
 }
 

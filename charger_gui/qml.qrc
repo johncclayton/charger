@@ -18,5 +18,7 @@
         <file>BattModeTimeForm.ui.qml</file>
         <file>VoltAmpsCapacity.qml</file>
         <file>VoltAmpsCapacityForm.ui.qml</file>
+        <file>ChargerDuo.qml</file>
+        <file>ChargerDuoForm.ui.qml</file>
     </qresource>
 </RCC>
