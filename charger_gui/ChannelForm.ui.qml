@@ -31,6 +31,10 @@ Item {
     property alias horizline: horizLine
     property alias cells: allcells
     property alias cell1: cell1
+    property alias cell2: cell2
+    property alias cell3: cell3
+    property alias cell4: cell4
+    property alias cell5: cell5
     
     width: 300
     height: 220
@@ -119,21 +123,25 @@ Item {
                     }
                     
                     OneCell {
+                        id: cell2
                         cellNumber: "2"
                         cellValue: "3.75"
                     }
                     
                     OneCell {
+                        id: cell3
                         cellNumber: "3"
                         cellValue: "3.75"
                     }
                     
                     OneCell {
+                        id: cell4
                         cellNumber: "4"
                         cellValue: "3.75"
                     }
                     
                     OneCell {
+                        id: cell5
                         cellNumber: "5"
                         cellValue: "3.75"
                     }

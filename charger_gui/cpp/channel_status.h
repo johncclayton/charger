@@ -4,7 +4,10 @@
 #include <QObject>
 #include <QByteArray>
 #include <QJsonDocument>
+#include <QVariantMap>
 #include <QSharedPointer>
+
+#include "cpp/cell_state.h"
 
 class ChannelStatus : public QObject, private QJsonDocument
 {
@@ -19,6 +22,9 @@ class ChannelStatus : public QObject, private QJsonDocument
     Q_PROPERTY(double tempInternal READ tempInternal)
     Q_PROPERTY(double totalResistance READ totalResistance)
     Q_PROPERTY(double lineInternalResistance READ lineInternalResistance)
+
+    Q_PROPERTY(CellState* cell1 READ cell1)
+    
     Q_PROPERTY(quint8 cycleCount READ cycleCount)
     Q_PROPERTY(quint32 controlStatus READ controlStatus)
     Q_PROPERTY(quint32 runStatus READ runStatus)
@@ -38,6 +44,8 @@ public:
     double tempExternal() const;
     double tempInternal() const;
     
+    CellState* cell1() const;
+    
     double totalResistance() const;
     double lineInternalResistance() const;
     quint8 cycleCount() const;
@@ -51,6 +59,11 @@ signals:
     
 public slots:
     void setFromJson(QByteArray data);
+    
+private:
+    QVariantMap getCellData(int index);
+    
+    QList<CellStatePtr> _cells; // that's the max
 };
 
 typedef QSharedPointer<ChannelStatus> ChannelStatusPtr;

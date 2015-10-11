@@ -59,22 +59,3 @@ QString DeviceInfo::product() const {
     return object()[STR_DEVICE_ONLY_PRODUCT].toString();    
 }
 
-/*void DeviceInfo::setSerialNumber(QString value) {
-    object()[STR_DEVICE_ONLY_SERIAL_NUMBER] = value;
-}
-
-void DeviceInfo::setSoftwareVersion(float value) {
-    object()[STR_DEVICE_ONLY_SW_VERSION] = value;
-}
-
-void DeviceInfo::setHardwareVersion(float value) {
-    object()[STR_DEVICE_ONLY_HW_VERSION] = value;
-}
-
-void DeviceInfo::setCh1Status(quint8 value) {
-    object()[STR_DEVICE_ONLY_CH1_STATUS] = value;
-}
-
-void DeviceInfo::setCh2Status(quint8 value) {
-    object()[STR_DEVICE_ONLY_CH2_STATUS] = value;
-}*/

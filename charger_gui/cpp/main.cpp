@@ -4,7 +4,10 @@
 #include <QQmlContext>
 #include <QtQml>
 
+#include "channel_status.h"
+#include "device_info.h"
 #include "client_controller.h"
+#include "system_storage.h"
 #include "device_model.h"
 
 int main(int argc, char *argv[])
@@ -21,6 +24,10 @@ int main(int argc, char *argv[])
         if(arg == "-msg_port")
             msg_port = app.arguments().at(index + 1).toInt();
     }
+    
+    qmlRegisterType<SystemStorage>("com.coderage.messaging", 1, 0, "SystemStorage");
+    qmlRegisterType<ChannelStatus>("com.coderage.messaging", 1, 0, "ChannelStatus");
+    qmlRegisterType<DeviceInfo>("com.coderage.messaging", 1, 0, "DeviceInfo");
     
     int r = 0;
     {

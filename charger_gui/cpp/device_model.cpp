@@ -32,16 +32,23 @@ DeviceModel::~DeviceModel() {
 }
 
 void DeviceModel::resetModels() {
-    QObjectList devices;
+    Q_FOREACH(QObject* info, _devices)
+        info->deleteLater();
+    _devices.clear();
     
     Q_FOREACH(QVariantMap m, _model.values()) {
         QVariantMap dev_info = m["info"].toMap(); 
         QList<QVariant> channels = m["channels"].toList();
         
         DeviceInfo* info = new DeviceInfo;
+        info->setKey(m["key"].toString());
         info->setFromJson(variantMapToJson(dev_info));
-        info->setChannel1FromJson(variantMapToJson(channels.at(0).toMap()));
-        info->setChannel2FromJson(variantMapToJson(channels.at(1).toMap()));
+        if(channels.length() == 2) {
+            info->setChannel1FromJson(variantMapToJson(channels.at(0).toMap()));
+            info->setChannel2FromJson(variantMapToJson(channels.at(1).toMap()));
+        } else {
+            qDebug() << "didnt find channels data to load into model";
+        }
         
         if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("4010"))
             info->setImageSource("qrc:/images/icharger_4010_duo.png");
@@ -50,11 +57,29 @@ void DeviceModel::resetModels() {
         if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("308"))
             info->setImageSource("qrc:/images/icharger_308_duo.png");
         
-        devices.append(info);
+        _devices.append(info);
     }
     
     // current list of devices available...
-    _ctx->setContextProperty("devices", QVariant::fromValue(devices));
+    _ctx->setContextProperty("devices", QVariant::fromValue(_devices));
+}
+
+DeviceInfo* DeviceModel::getDeviceInfo(QString key) {
+    if(key.length() == 0)
+        return 0;
+    
+    Q_FOREACH(QObject* o, _devices) {
+        DeviceInfo* info = dynamic_cast<DeviceInfo*>(o);
+        if(info && info->key() == key) {
+            qDebug() << "get device info resulted in wonderour objects for key:" << key;
+            return info;
+        }
+    }
+    
+    qDebug() << "get device info resulted in disaster for key:" << key;
+    Q_ASSERT(false);
+    
+    return 0;
 }
 
 void DeviceModel::messageBusAlive(bool alive) {

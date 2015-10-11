@@ -35,6 +35,9 @@ public:
         BALANCE     = 0x40
     };
         
+    QString key() const { return _key; }
+    void setKey(QString key) { _key = key; }
+    
     QString serialNumber() const;
     QString imageSource() const;
     QString manufacturer() const;
@@ -69,6 +72,7 @@ public slots:
     void setImageSource(QString value);
     
 private:
+    QString _key;
     QString _img_source;  
     ChannelStatusPtr _channel[2];
 };

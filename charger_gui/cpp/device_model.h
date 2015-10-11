@@ -10,6 +10,7 @@
 #include <QList>
 
 #include "client_controller.h"
+class DeviceInfo;
 
 class DeviceModel : public QObject {
     Q_OBJECT
@@ -23,6 +24,8 @@ public:
     typedef QMap<QString, QVariantMap> RawDataMap ;
     
     int getCount() const { return _model.size(); }
+    
+    Q_INVOKABLE DeviceInfo* getDeviceInfo(QString key);
         
 signals:
     void jsonDataChanged();
@@ -40,6 +43,7 @@ private:
     QSharedPointer<ClientMessagingController> _controller;
     QQmlContext* _ctx;
     RawDataMap _model;
+    QObjectList _devices;    
 };
 
 #endif // DEVICEMODEL_H
