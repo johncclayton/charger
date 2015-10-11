@@ -20,5 +20,8 @@
         <file>VoltAmpsCapacityForm.ui.qml</file>
         <file>ChargerDuo.qml</file>
         <file>ChargerDuoForm.ui.qml</file>
+        <file>images/looking.png</file>
+        <file>VoltAmpsTemp.qml</file>
+        <file>VoltAmpsTempForm.ui.qml</file>
     </qresource>
 </RCC>

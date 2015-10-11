@@ -27,6 +27,7 @@ public:
 signals:
     void jsonDataChanged();
     void deviceAddedRemoved(bool added, QString key);
+    void deviceInfoUpdated(QString key);
     
 public slots:
     void resetModels();

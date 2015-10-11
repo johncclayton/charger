@@ -36,14 +36,20 @@ void DeviceModel::resetModels() {
     
     Q_FOREACH(QVariantMap m, _model.values()) {
         QVariantMap dev_info = m["info"].toMap(); 
+        QList<QVariant> channels = m["channels"].toList();
+        
         DeviceInfo* info = new DeviceInfo;
         info->setFromJson(variantMapToJson(dev_info));
+        info->setChannel1FromJson(variantMapToJson(channels.at(0).toMap()));
+        info->setChannel2FromJson(variantMapToJson(channels.at(1).toMap()));
+        
         if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("4010"))
             info->setImageSource("qrc:/images/icharger_4010_duo.png");
         if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("406"))
             info->setImageSource("qrc:/images/icharger_406_duo.png");
         if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("308"))
             info->setImageSource("qrc:/images/icharger_308_duo.png");
+        
         devices.append(info);
     }
     
@@ -57,22 +63,35 @@ void DeviceModel::messageBusAlive(bool alive) {
         _controller->messageBus()->getDevices();
     } else {
         // clear the data model...
-        Q_FOREACH(QString key, _model.keys())
+        Q_FOREACH(QString key, _model.keys()) {
             Q_EMIT deviceAddedRemoved(false, key);
+            _ctx->setContextProperty(key, 0);
+        }
+        
         _model.clear();
         resetModels();
+        
         Q_EMIT jsonDataChanged();
     }
 }
 
 void DeviceModel::processDeviceInfoUpdated(QString key, QVariantMap data) {
-    qDebug() << "retrieved data for item:" << key << "and stored it";
+    qDebug() << "stored data for item:" << key;
+    
+    bool newItem = !_model.contains(key);
+        
     _model[key] = data;
     
     resetModels();
 
     Q_EMIT jsonDataChanged();
-    Q_EMIT deviceAddedRemoved(true, key);
+
+    _ctx->setContextProperty(key, data);
+    
+    if(newItem)
+        Q_EMIT deviceAddedRemoved(true, key);
+    else
+        Q_EMIT deviceInfoUpdated(key);
 }
 
 void DeviceModel::processDevicesUpdated(QVariantMap data) {
@@ -87,7 +106,6 @@ void DeviceModel::processDevicesUpdated(QVariantMap data) {
 }
 
 void DeviceModel::processDeviceAddedRemoved(bool added, QString key) {
-    qDebug() << "booooooom?" << added << "," << key;
     if(added) {
         _controller->messageBus()->getDeviceInformation(key);
     } else {
@@ -95,6 +113,7 @@ void DeviceModel::processDeviceAddedRemoved(bool added, QString key) {
         // find this and remove it from the model       
         _model.remove(key);
         resetModels();
+        
         Q_EMIT jsonDataChanged();
         Q_EMIT deviceAddedRemoved(false, key);
     }

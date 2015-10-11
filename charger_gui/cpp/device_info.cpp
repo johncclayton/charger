@@ -14,9 +14,21 @@ QString DeviceInfo::imageSource() const {
     return _img_source;
 }
 
+void DeviceInfo::setChannel1FromJson(QByteArray data) {
+    _channel[0] = ChannelStatusPtr(new ChannelStatus(this));
+    _channel[0]->setFromJson(data);
+    Q_EMIT channel1Changed();
+}
+
+void DeviceInfo::setChannel2FromJson(QByteArray data) {
+    _channel[1] = ChannelStatusPtr(new ChannelStatus(this));
+    _channel[1]->setFromJson(data);
+    Q_EMIT channel2Changed();
+}
+
 void DeviceInfo::setImageSource(QString value) {
     _img_source = value;
-    Q_EMIT onImageSourceChanged();
+    Q_EMIT imageSourceChanged();
 }
 
 QString DeviceInfo::serialNumber() const { 

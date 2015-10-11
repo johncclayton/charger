@@ -61,55 +61,53 @@ ApplicationWindow {
                 stack.removeChargerInterfaceForKey(key);
             }
         }
+        
+        onDeviceInfoUpdated: {
+            console.log("data was updated for key" + key);
+        }
     }
     
-    Item {
-        id: theapp
+    
+    StackView {
+        id: stack
+        initialItem: connectServer
         anchors.fill: parent
         
-        StackView {
-            id: stack
-            initialItem: connectServer
-            anchors.fill: parent
-            
-            function createChargerInterfaceForKey(key) {
-                var component = Qt.createComponent("ChargerDuo.qml");
-                if (component.status === Component.Ready) {
-                    var new_item = component.createObject(stack);
-                    new_item.objectName = key;
-                    stack.push(new_item);
-                }
-                
-                return null;
+        function createChargerInterfaceForKey(key) {
+            var component = Qt.createComponent("ChargerDuo.qml");
+            if (component.status === Component.Ready) {
+                var new_item = component.createObject(stack, {"width": parent.width, "height": parent.height});
+                new_item.objectName = key;
+                stack.push(new_item);
             }
             
-            function removeChargerInterfaceForKey(key) {
-                for(var i = 0; i < children.length; i++) {
-                    var item = children[i];
-                    if(key === item.objectName) {
-                        if(item.Stack.status === Stack.Active)
-                            pop(null);
-                        removeItem(key, item);
-                        return;
-                    }
-                }            
-            }
-            
-            ConnectServer {
-                id: connectServer
-                anchors.fill: parent
-                
-                actionButton.onClicked: {
-                    if(connected) {
-                        // nada...
-                    } else {
-                        Qt.quit()
-                    }
-                }
-            }
-            
+            return null;
         }
         
+        function removeChargerInterfaceForKey(key) {
+            for(var i = 0; i < children.length; i++) {
+                var item = children[i];
+                if(key === item.objectName) {
+                    if(item.Stack.status === Stack.Active)
+                        pop(null);
+                    item.destroy(1000);
+                    return;
+                }
+            }            
+        }
+        
+        ConnectServer {
+            id: connectServer
+            anchors.fill: parent
+            
+            actionButton.onClicked: {
+                if(connected) {
+                    // nada...
+                } else {
+                    Qt.quit()
+                }
+            }
+        }
     }
 }
 

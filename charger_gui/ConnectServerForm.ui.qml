@@ -16,13 +16,17 @@ Item {
     
     property alias actionButton: actionButton
     property alias connectionMessage: labelConnectionState.text
-    property alias modelView: modelView
     
     states: [
         State {
             name: "ConnectingState"
             when: !connected
                         
+            PropertyChanges {
+                target: explanation
+                visible: true
+            }
+            
             PropertyChanges {
                 target: actionButton
                 visible: true
@@ -31,11 +35,6 @@ Item {
             PropertyChanges {
                 target: content
                 height: 300
-            }
-            
-            PropertyChanges {
-                target: layoutForDeviceSelection
-                rowSpacing: 5
             }
         },
         
@@ -52,45 +51,16 @@ Item {
                 target: progressBar
                 visible: false
             }
-            
-            PropertyChanges {
-                target: layoutForDeviceSelection
-                visible: false
-            }
-            
-            PropertyChanges {
-                target: modelView
-                visible: false
-            }
-        },
-        
-        State {
-            name: "FoundDevicesState"
-            when: connected && device_count > 0
-            
-            PropertyChanges {
-                target: actionButton
-                text: "Continue"
-                isDefault: true
-                visible: true
-            }
-            
-            PropertyChanges {
-                target: progressBar
-                visible: false
-            }
-            
-            PropertyChanges {
-                target: layoutForDeviceSelection
-                visible: true
-            }
-            
-            PropertyChanges {
-                target: modelView
-                visible: true
-            }
         }
     ]
+    
+    Image {
+        id: background
+        source: "qrc:/images/looking.png"
+        anchors.fill: parent
+        fillMode: Image.PreserveAspectCrop
+        opacity: 0.2
+    }
     
     Label {
         id: labelConnectionState
@@ -112,6 +82,30 @@ Item {
         indeterminate: true
     }
     
+    GroupBox {
+        id: explanation
+        
+        anchors.top: progressBar.bottom
+        anchors.bottom: actionButton.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        anchors.topMargin: 16
+        anchors.bottomMargin: 12
+
+        visible: false       
+        opacity: 1
+        
+        Text {
+            text: qsTr("The application is trying to find the server that is connected to your battery charger, please make sure its running.  This can take a few moments...")
+            anchors.fill: parent
+            wrapMode: Text.WordWrap
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
+
     Button {
         id: actionButton
         isDefault: true
@@ -121,52 +115,5 @@ Item {
         anchors.bottomMargin: 16
     }
     
-    GridLayout {
-        id: layoutForDeviceSelection
-        
-        visible: false
-        
-        anchors.top: labelConnectionState.bottom
-        anchors.bottom: actionButton.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        
-        anchors.topMargin: 16
-        anchors.bottomMargin: 12
-            
-        ListView {
-            id: modelView
-                        
-            anchors.top: layoutForDeviceSelection.top
-            anchors.left: layoutForDeviceSelection.left 
-            anchors.right: layoutForDeviceSelection.right
-            anchors.bottom: layoutForDeviceSelection.bottom
-            anchors.leftMargin: 30
-            anchors.rightMargin: 30
-            
-            visible: false
-            focus: true
-            
-            highlight: Rectangle { 
-                radius: 5
-                color: "blue"
-                opacity: 0.1
-            }
-            
-            delegate: DeviceDelegate {
-                width: modelView.width
-                
-                product: model.modelData.product
-                image.source: model.modelData.imageSource
-                manufacturer: model.modelData.manufacturer
-                serialNumber: model.modelData.serialNumber
-                
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: modelView.currentIndex = index
-                }                                    
-            }
-        }
-    }
 }
 

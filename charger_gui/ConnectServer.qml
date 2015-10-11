@@ -3,15 +3,7 @@ import QtQuick 2.5
 ConnectServerForm {
     connected: comms.messageBus.alive
     device_count: devicesModel.count
-    modelView.model: devices
         
-    onDevice_countChanged: {
-        
-        // ensure we have instantiated UIs for each model type we understand.
-//        console.log("you clicked number: " + modelView.currentIndex + " which is: " + devices[modelView.currentIndex].product)
-        
-    }
-    
     property variant connect_strings: [
         qsTr("Connecting..."),
         qsTr("Contacting the oracle..."),
