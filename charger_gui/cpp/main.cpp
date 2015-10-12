@@ -4,11 +4,13 @@
 #include <QQmlContext>
 #include <QtQml>
 
-#include "channel_status.h"
-#include "device_info.h"
 #include "client_controller.h"
+
+#include "device_info.h"
+#include "channel_status.h"
 #include "system_storage.h"
 #include "device_model.h"
+#include "cell_state.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +28,7 @@ int main(int argc, char *argv[])
     }
     
     qmlRegisterType<SystemStorage>("com.coderage.messaging", 1, 0, "SystemStorage");
+    qmlRegisterType<CellState>("com.coderage.messaging", 1, 0, "CellState");
     qmlRegisterType<ChannelStatus>("com.coderage.messaging", 1, 0, "ChannelStatus");
     qmlRegisterType<DeviceInfo>("com.coderage.messaging", 1, 0, "DeviceInfo");
     

@@ -51,6 +51,7 @@ ApplicationWindow {
     
     Connections {
         target: devicesModel
+        
         onDeviceAddedRemoved: {
             // C++ signal sig: void deviceAddedRemoved(bool added, QString key);
             if(added) {
@@ -60,10 +61,6 @@ ApplicationWindow {
                 // remove a child with this object name...
                 stack.removeChargerInterfaceForKey(key);
             }
-        }
-        
-        onDeviceInfoUpdated: {
-            console.log("data was updated for key" + key);
         }
     }
     

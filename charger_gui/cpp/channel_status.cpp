@@ -1,22 +1,37 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDebug>
 
 #include "cpp/channel_status.h"
 #include "icharger/icharger_message_keys.h"
 #include "json_helper.h"
 
 ChannelStatus::ChannelStatus(QObject *parent) : QObject(parent) {    
+    for(int index = 0; index < 10; ++index) {
+        _cells.push_back(CellStatePtr(new CellState(this)));
+    }
 }
 
 void ChannelStatus::setFromJson(QByteArray data) {
     int eChannel = channel();
+    double eOutputPower = outputPower();
+    double eOutputCurrent = outputCurrent();
+    double eOutputVoltage = outputVoltage();
+    double eOutputCapacity = outputCapacity();
+    double eInputVoltage = inputVoltage();
+    double eTempExternal = tempExternal();
+    double eTempInternal = tempInternal();
+    double eTotalResistance = totalResistance();
+    double eLineInternalResistance = lineInternalResistance();
     
     setObject( QJsonDocument::fromJson(data).object() );
 
     QVariantList cell_data = object().value("cells").toArray().toVariantList();
     
     if(!cell_data.isEmpty()) {
+        QList<CellStatePtr> old(_cells);
+        
         // remove all cell states, re-pop
         _cells.clear();
         
@@ -25,11 +40,37 @@ void ChannelStatus::setFromJson(QByteArray data) {
             _cells.push_back(newCell);
             QVariantMap data = cell_data.at(index).toMap();
             newCell->setFromJson(variantMapToJson(data));            
+                
+            if(old.size() > index) {
+                CellStatePtr oldState(old.at(index));
+                if(oldState->differsFrom(*newCell))
+                    Q_EMIT cellValuesChanged(index);
+            } else {
+                Q_EMIT cellValuesChanged(index);
+            }
         }
     }
     
     if(eChannel != channel())
-        Q_EMIT channelChanged(channel());
+        Q_EMIT channelChanged();
+    if(eOutputPower !=  outputPower())
+        Q_EMIT outputPowerChanged();
+    if(eOutputCurrent != outputCurrent())
+        Q_EMIT outputCurrentChanged();
+    if(eOutputVoltage != outputVoltage())
+        Q_EMIT outputVoltageChanged();
+    if(eOutputCapacity != outputCapacity())
+        Q_EMIT outputCapacity();
+    if(eInputVoltage != inputVoltage())
+        Q_EMIT inputVoltageChanged();
+    if(eTempExternal != tempExternal())
+        Q_EMIT tempExternalChanged();
+    if(eTempInternal != tempInternal())
+        Q_EMIT tempInternalChanged();
+    if(eTotalResistance != totalResistance())
+        Q_EMIT totalResistanceChanged();
+    if(eLineInternalResistance != lineInternalResistance())
+        Q_EMIT lineInternalResistanceChanged();
 }
 
 QVariantMap ChannelStatus::getCellData(int index) {
@@ -39,6 +80,42 @@ QVariantMap ChannelStatus::getCellData(int index) {
 
 CellState* ChannelStatus::cell1() const {
     return _cells.at(0).data();
+}
+
+CellState* ChannelStatus::cell2() const {
+    return _cells.at(1).data();
+}
+
+CellState* ChannelStatus::cell3() const {
+    return _cells.at(2).data();
+}
+
+CellState* ChannelStatus::cell4() const {
+    return _cells.at(3).data();
+}
+
+CellState* ChannelStatus::cell5() const {
+    return _cells.at(4).data();
+}
+
+CellState* ChannelStatus::cell6() const {
+    return _cells.at(5).data();
+}
+
+CellState* ChannelStatus::cell7() const {
+    return _cells.at(6).data();
+}
+
+CellState* ChannelStatus::cell8() const {
+    return _cells.at(7).data();
+}
+
+CellState* ChannelStatus::cell9() const {
+    return _cells.at(8).data();
+}
+
+CellState* ChannelStatus::cell10() const {
+    return _cells.at(9).data();
 }
 
 quint8 ChannelStatus::channel() const {

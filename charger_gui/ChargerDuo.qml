@@ -8,12 +8,24 @@ ChargerDuoForm {
     iCharger_Channel2Background: Qt.darker(iCharger_Channel2PanelColor, 8)
     
     property string modelKey: ""
-    property DeviceInfo info: devicesModel.getDeviceInfo(modelKey)
+    
+    property DeviceInfo info: DeviceInfo {}
 
-    onInfoChanged: {
-        console.log("info is now:" + info.ch1.inputVoltage)
+    volt_amps_temp.ch1amps: info_ch1.outputVoltage
+    volt_amps_temp.ch2amps: info_ch2.inputVoltage
+
+    channel1.dataSource: info.ch1
+    channel2.dataSource: info.ch2
+    
+    Connections {
+        target: devicesModel
+        onDeviceInfoUpdated: {
+            info = devicesModel.getDeviceInfo(modelKey);
+            channel1.dataSource = info.ch1;
+            channel2.dataSource = info.ch2;
+        }        
     }
-
+        
     Component.onCompleted: {
         console.log("getting device info for model key:" + thing.objectName)
         modelKey = thing.objectName

@@ -25,10 +25,40 @@ DeviceModel::DeviceModel(QSharedPointer<ClientMessagingController> c, QQmlContex
     ctx->setContextProperty("devicesModel", this);
     
     resetModels();
+    
+    startTimer(2000);
 }
 
 DeviceModel::~DeviceModel() {
     
+}
+
+void DeviceModel::timerEvent(QTimerEvent *event) {
+    Q_UNUSED(event);
+    Q_FOREACH(QString k, _model.keys()) {
+        _controller->messageBus()->getDeviceInformation(k);
+    }
+}
+
+void debugChannel(ChannelStatus* c, int n) {
+    qDebug() << n << "inputV:" << c->inputVoltage();
+    qDebug() << n << "outputV:" << c->outputVoltage();
+    qDebug() << n << "outputP:" << c->outputPower();
+    qDebug() << n << "outputC:" << c->outputCurrent();
+    
+    qDebug() << n << "tempInt:" << c->tempInternal();
+    qDebug() << n << "tempExt:" << c->tempExternal();
+
+    qDebug() << n << "cell1:" << c->cell1()->cellVoltage() << ", resistance:" << c->cell1()->cellResistance();
+    qDebug() << n << "cell2:" << c->cell2()->cellVoltage() << ", resistance:" << c->cell2()->cellResistance();
+    qDebug() << n << "cell3:" << c->cell3()->cellVoltage() << ", resistance:" << c->cell3()->cellResistance();
+    qDebug() << n << "cell4:" << c->cell4()->cellVoltage() << ", resistance:" << c->cell4()->cellResistance();
+    qDebug() << n << "cell5:" << c->cell5()->cellVoltage() << ", resistance:" << c->cell5()->cellResistance();
+    qDebug() << n << "cell6:" << c->cell6()->cellVoltage() << ", resistance:" << c->cell6()->cellResistance();
+    qDebug() << n << "cell7:" << c->cell7()->cellVoltage() << ", resistance:" << c->cell7()->cellResistance();
+    qDebug() << n << "cell8:" << c->cell8()->cellVoltage() << ", resistance:" << c->cell8()->cellResistance();
+    qDebug() << n << "cell9:" << c->cell9()->cellVoltage() << ", resistance:" << c->cell9()->cellResistance();
+    qDebug() << n << "cell10:" << c->cell10()->cellVoltage() << ", resistance:" << c->cell10()->cellResistance();
 }
 
 void DeviceModel::resetModels() {
@@ -57,10 +87,12 @@ void DeviceModel::resetModels() {
         if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("308"))
             info->setImageSource("qrc:/images/icharger_308_duo.png");
         
+        qDebug() << "key:" << info->key();
+        debugChannel(info->channel1(), 1);
+        
         _devices.append(info);
     }
-    
-    // current list of devices available...
+        
     _ctx->setContextProperty("devices", QVariant::fromValue(_devices));
 }
 
@@ -71,7 +103,6 @@ DeviceInfo* DeviceModel::getDeviceInfo(QString key) {
     Q_FOREACH(QObject* o, _devices) {
         DeviceInfo* info = dynamic_cast<DeviceInfo*>(o);
         if(info && info->key() == key) {
-            qDebug() << "get device info resulted in wonderour objects for key:" << key;
             return info;
         }
     }
@@ -122,7 +153,6 @@ void DeviceModel::processDeviceInfoUpdated(QString key, QVariantMap data) {
 void DeviceModel::processDevicesUpdated(QVariantMap data) {
     if(data.contains("devices") && data.contains("count")) {
         QVariantList devices(data["devices"].toList());
-        qDebug() << "fetching more details for" << devices.size() << "device(s)";
         for(int index = 0; index < devices.size(); ++index) {
             const QVariantMap o = devices.at(index).toMap();
             _controller->messageBus()->getDeviceInformation(o["key"].toString());

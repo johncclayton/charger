@@ -38,7 +38,10 @@ public slots:
     void processDeviceInfoUpdated(QString key, QVariantMap data);
     void processDevicesUpdated(QVariantMap data);
     void processDeviceAddedRemoved(bool added, QString key);
-        
+    
+protected:
+    void timerEvent(QTimerEvent* event);
+    
 private:
     QSharedPointer<ClientMessagingController> _controller;
     QQmlContext* _ctx;

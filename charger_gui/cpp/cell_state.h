@@ -11,20 +11,23 @@ class CellState : public QObject, private QJsonDocument
 public:
     explicit CellState(QObject *parent = 0);
     
-    Q_PROPERTY(quint32 number READ cellNumber)
-    Q_PROPERTY(QString value READ cellValue)
+    Q_PROPERTY(double voltage READ cellVoltage NOTIFY voltageChanged)
+    Q_PROPERTY(double resistance READ cellResistance NOTIFY resistanceChanged)
     Q_PROPERTY(QString units READ cellUnits WRITE setCellUnits NOTIFY unitsChanged)
     
-    quint32 cellNumber() const;
-    QString cellValue() const;
+    double cellVoltage() const;
+    double cellResistance() const;
     QString cellUnits() const;
+    
+    bool differsFrom(const CellState& other) const;
     
 signals:
     void unitsChanged();
+    void voltageChanged();
+    void resistanceChanged();
     
 public slots:
     void setFromJson(QByteArray data);
-    
     void setCellUnits(QString v) { _units = v; unitsChanged(); }
     
 private: 

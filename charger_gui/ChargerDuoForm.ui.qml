@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtQml 2.2
+import com.coderage.messaging 1.0
 
 Rectangle {
     width: 400
@@ -12,9 +13,12 @@ Rectangle {
     property color iCharger_Channel2PanelColor: "#009900"
     property color iCharger_Channel2Background: "black"
 
-    property alias ch1: channel1
-    property alias ch2: channel2
+    property alias channel1: channel1
+    property alias channel2: channel2
     property alias volt_amps_temp: volt_amps_temp
+    
+    property ChannelStatus info_ch1: ChannelStatus {}
+    property ChannelStatus info_ch2: ChannelStatus {}
     
     color: "black"
     
@@ -27,6 +31,9 @@ Rectangle {
             
             Channel {
                 id: channel1
+
+                dataSource: info_ch1
+                
                 panelHeaderTitleLeft.text: "01-Cycle"
                 panelBorderColor: iCharger_Channel1PanelColor
                 panelBackgroundColor: iCharger_Channel1Background
@@ -39,6 +46,9 @@ Rectangle {
             
             Channel {
                 id: channel2
+                
+                dataSource: info_ch2
+                
                 panelHeaderTitleLeft.text: "02-Balance"
                 panelBorderColor: iCharger_Channel2PanelColor
                 panelBackgroundColor: iCharger_Channel2Background
@@ -52,6 +62,11 @@ Rectangle {
         
         VoltAmpsTemp {
             id: volt_amps_temp   
+            
+            voltage: info_ch1.outputVoltage
+            ch1amps: info_ch1.outputCurrent
+            ch2amps: info_ch2.outputCurrent
+            temperature: info_ch1.tempInternal
             
             anchors.bottom: parent.bottom
             anchors.left: parent.left

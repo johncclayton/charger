@@ -10,7 +10,7 @@ Rectangle {
     property double voltage: 24.3
     property double ch1amps: 3.2
     property double ch2amps: 0
-    property double temp: 23
+    property double temperature: 23
     property bool tempIsCentigrade: true
     
     property alias label: dclabel
@@ -71,7 +71,7 @@ Rectangle {
         
         Text {
             id: templabel
-            text: temp + (tempIsCentigrade ? 'C' : 'F')
+            text: temperature + (tempIsCentigrade ? 'C' : 'F')
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft            

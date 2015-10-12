@@ -1,5 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Layouts 1.1
+import com.coderage.messaging 1.0 
 
 Item {
     id: content
@@ -27,15 +28,13 @@ Item {
     property int panelSmallRadius: 5
     property int panelNumberOfRows: 10
     
+    property ChannelStatus dataSource: ChannelStatus {}
+
+    property alias cell1: cell1
     property alias panel: panel
     property alias horizline: horizLine
     property alias cells: allcells
-    property alias cell1: cell1
-    property alias cell2: cell2
-    property alias cell3: cell3
-    property alias cell4: cell4
-    property alias cell5: cell5
-    
+        
     width: 300
     height: 220
     
@@ -78,6 +77,11 @@ Item {
                 
                 VoltAmpsCapacity {
                     id: voltamps
+                    
+                    voltage: dataSource.outputPower
+                    amps: dataSource.outputCurrent
+                    capacity: dataSource.outputCapacity
+                    
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 3
                     anchors.top: parent.top
@@ -119,56 +123,61 @@ Item {
                     OneCell {
                         id: cell1
                         cellNumber: "1"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell1.voltage
                     }
                     
                     OneCell {
                         id: cell2
                         cellNumber: "2"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell2.voltage
                     }
                     
                     OneCell {
                         id: cell3
                         cellNumber: "3"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell3.voltage
                     }
                     
                     OneCell {
                         id: cell4
                         cellNumber: "4"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell4.voltage
                     }
                     
                     OneCell {
                         id: cell5
                         cellNumber: "5"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell5.voltage
                     }
                     
                     OneCell {
+                        id: cell6
                         cellNumber: "6"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell6.voltage
                     }
                     
                     OneCell {
+                        id: cell7
                         cellNumber: "7"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell7.voltage
                     }
                     
                     OneCell {
+                        id: cell8
                         cellNumber: "8"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell8.voltage
                     }
                     
                     OneCell {
+                        id: cell9
                         cellNumber: "9"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell9.voltage
                     }
                     
                     OneCell {
+                        id: cell10
                         cellNumber: "10"
-                        cellValue: "3.75"
+                        cellValue: dataSource.cell10.voltage
                     }
                     
                     Item {
@@ -199,14 +208,14 @@ Item {
                     OneCell {
                         id: resistance1
                         cellNumber: "Sʀ"
-                        cellValue: "12.9"
+                        cellValue: dataSource.totalResistance
                         cellUnits: "mΩ"
                     }
                     
                     OneCell {
                         id: resistance2
                         cellNumber: "Lʀ"
-                        cellValue: "22.4"
+                        cellValue: dataSource.lineInternalResistance
                         cellUnits: "mΩ"
                     }                        
                 }

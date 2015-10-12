@@ -9,7 +9,7 @@ Item {
     
     property double voltage: 23.010
     property double amps: 26.84
-    property double capacity: 2500
+    property double capacity: 0
     
     property alias textVolts: textVolts
     property alias textAmps:textAmps
@@ -18,7 +18,7 @@ Item {
     property int minimumLayoutWidth: 0
     property int preferredLayoutHeight: 0
     property alias columnLayout: columnLayout
-    
+        
     Rectangle {
         id: rectangle1
         color: "black"
