@@ -49,16 +49,16 @@ void debugChannel(ChannelStatus* c, int n) {
     qDebug() << n << "tempInt:" << c->tempInternal();
     qDebug() << n << "tempExt:" << c->tempExternal();
 
-    qDebug() << n << "cell1:" << c->cell1()->cellVoltage() << ", resistance:" << c->cell1()->cellResistance();
-    qDebug() << n << "cell2:" << c->cell2()->cellVoltage() << ", resistance:" << c->cell2()->cellResistance();
-    qDebug() << n << "cell3:" << c->cell3()->cellVoltage() << ", resistance:" << c->cell3()->cellResistance();
-    qDebug() << n << "cell4:" << c->cell4()->cellVoltage() << ", resistance:" << c->cell4()->cellResistance();
-    qDebug() << n << "cell5:" << c->cell5()->cellVoltage() << ", resistance:" << c->cell5()->cellResistance();
-    qDebug() << n << "cell6:" << c->cell6()->cellVoltage() << ", resistance:" << c->cell6()->cellResistance();
-    qDebug() << n << "cell7:" << c->cell7()->cellVoltage() << ", resistance:" << c->cell7()->cellResistance();
-    qDebug() << n << "cell8:" << c->cell8()->cellVoltage() << ", resistance:" << c->cell8()->cellResistance();
-    qDebug() << n << "cell9:" << c->cell9()->cellVoltage() << ", resistance:" << c->cell9()->cellResistance();
-    qDebug() << n << "cell10:" << c->cell10()->cellVoltage() << ", resistance:" << c->cell10()->cellResistance();
+    qDebug() << n << "cell1:" << c->cell1()->voltage() << ", resistance:" << c->cell1()->resistance();
+    qDebug() << n << "cell2:" << c->cell2()->voltage() << ", resistance:" << c->cell2()->resistance();
+    qDebug() << n << "cell3:" << c->cell3()->voltage() << ", resistance:" << c->cell3()->resistance();
+    qDebug() << n << "cell4:" << c->cell4()->voltage() << ", resistance:" << c->cell4()->resistance();
+    qDebug() << n << "cell5:" << c->cell5()->voltage() << ", resistance:" << c->cell5()->resistance();
+    qDebug() << n << "cell6:" << c->cell6()->voltage() << ", resistance:" << c->cell6()->resistance();
+    qDebug() << n << "cell7:" << c->cell7()->voltage() << ", resistance:" << c->cell7()->resistance();
+    qDebug() << n << "cell8:" << c->cell8()->voltage() << ", resistance:" << c->cell8()->resistance();
+    qDebug() << n << "cell9:" << c->cell9()->voltage() << ", resistance:" << c->cell9()->resistance();
+    qDebug() << n << "cell10:" << c->cell10()->voltage() << ", resistance:" << c->cell10()->resistance();
 }
 
 void DeviceModel::resetModels() {

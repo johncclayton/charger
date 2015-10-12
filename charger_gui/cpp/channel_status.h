@@ -89,7 +89,7 @@ public slots:
     void setFromJson(QByteArray data);
     
 private:
-    QVariantMap getCellData(int index);
+    CellState* findCellNumber(int num) const;
     
     QList<CellStatePtr> _cells; // 10 is the max
 };

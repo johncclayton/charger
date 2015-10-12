@@ -73,49 +73,56 @@ void ChannelStatus::setFromJson(QByteArray data) {
         Q_EMIT lineInternalResistanceChanged();
 }
 
-QVariantMap ChannelStatus::getCellData(int index) {
-    QList<QVariant> v = object()[STR_CHANNEL_STATUS_CELLS].toArray().toVariantList();
-    return v.at(index).toMap();
+CellState* ChannelStatus::findCellNumber(int num) const {
+    CellStatePtr s = _cells.at(num);
+    if(s->number() == num)
+        return s.data();
+    for(int i = 0; i < 10; ++i) {
+        if(_cells.at(i)->number() == num)
+            return _cells.at(i).data();
+    }
+    
+    Q_ASSERT(false);
 }
 
 CellState* ChannelStatus::cell1() const {
-    return _cells.at(0).data();
+    return findCellNumber(0);
 }
 
 CellState* ChannelStatus::cell2() const {
-    return _cells.at(1).data();
+    return findCellNumber(1);
 }
 
 CellState* ChannelStatus::cell3() const {
-    return _cells.at(2).data();
+    return findCellNumber(2);
 }
 
 CellState* ChannelStatus::cell4() const {
-    return _cells.at(3).data();
+    return findCellNumber(3);
 }
 
 CellState* ChannelStatus::cell5() const {
-    return _cells.at(4).data();
+    return findCellNumber(4);
 }
 
 CellState* ChannelStatus::cell6() const {
-    return _cells.at(5).data();
+    return findCellNumber(5);
 }
 
 CellState* ChannelStatus::cell7() const {
-    return _cells.at(6).data();
+    return findCellNumber(6);
 }
 
 CellState* ChannelStatus::cell8() const {
-    return _cells.at(7).data();
+    return findCellNumber(7);
 }
 
 CellState* ChannelStatus::cell9() const {
-    return _cells.at(8).data();
+    return findCellNumber(8);
 }
 
 CellState* ChannelStatus::cell10() const {
-    return _cells.at(9).data();
+    return findCellNumber(9);
 }
 
 quint8 ChannelStatus::channel() const {

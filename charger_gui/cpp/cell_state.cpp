@@ -9,36 +9,44 @@ CellState::CellState(QObject *parent) : QObject(parent) {
 }
 
 void CellState::setFromJson(QByteArray data) {
-    double oldValue = cellVoltage();
-    double oldR = cellResistance();
-    QString oldUnits = cellUnits();
+    double oldValue = voltage();
+    double oldR = resistance();
+    int eNum = number();
+    QString oldUnits = units();
     
     setObject( QJsonDocument::fromJson(data).object() );    
     
-    if(oldValue != cellVoltage())
+    if(oldValue != voltage())
         Q_EMIT voltageChanged();
-    if(oldR != cellResistance())
+    if(oldR != resistance())
         Q_EMIT resistanceChanged();
-    if(oldUnits != cellUnits())
+    if(oldUnits != units())
         Q_EMIT unitsChanged();
+    if(eNum != number())
+        Q_EMIT numberChanged();
 }
 
-double CellState::cellVoltage() const {
-    return object()[STR_CHANNEL_STATUS_CELL_VOLTAGE].toDouble(); 
+int CellState::number() const {
+    return object()[STR_CHANNEL_STATUS_CELL_NUMBER].toInt(); 
 }
 
-double CellState::cellResistance() const {
+double CellState::voltage() const {
+    return object()[STR_CHANNEL_STATUS_CELL_VOLTAGE].toInt() / 1000.0; 
+}
+
+double CellState::resistance() const {
     return object()[STR_CHANNEL_STATUS_CELL_RESISTANCE].toDouble(); 
 }
 
-QString CellState::cellUnits() const {
+QString CellState::units() const {
     return _units;
 }
 
 bool CellState::differsFrom(const CellState& other) const {
-    return  cellVoltage() != other.cellVoltage() ||
-            cellResistance() != other.cellResistance() ||
-            cellUnits() != other.cellUnits();
+    return  voltage() != other.voltage() ||
+            number() != other.number() ||
+            resistance() != other.resistance() ||
+            units() != other.units();
 }
 
 
