@@ -7,6 +7,10 @@
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
 
+    Q_ASSERT( sizeof(register16) == 2 );
+    Q_ASSERT( sizeof(register32) == 4 );
+    Q_ASSERT( sizeof(device_only) == 26 );
+
     int pub_port = 0;
     int msg_port = 0;
     bool test = false;
