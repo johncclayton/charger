@@ -9,8 +9,6 @@
 
 #define VALUE_ORDER_KEY	0x55aa
 
-#pragma pack(1)
-
 enum ProgramType {
 	RUNOP_CHARGE,
 	RUNOP_STORAGE,
@@ -74,6 +72,7 @@ typedef qint16    s16;
 typedef quint8    u8;
 typedef qint8     s8;
 
+#pragma pack(1)
 union register16 {
     union {
         u16 value;
@@ -209,6 +208,8 @@ struct read_data_registers {
         quantity_to_read.low = (char)(num_registers & 0xff);
     }
 } __attribute__ ((packed));
+
+#pragma pack()
 
 enum Channel {
 	CHANNEL_1,
