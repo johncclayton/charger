@@ -41,7 +41,6 @@ void MessageBus::setMessageSocket(ZMQSocket* s) {
 }
 
 void MessageBus::getDevices() const {
-    qDebug() << "asking for all devices";
     syncRequest("get-devices");    
 }
 

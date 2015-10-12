@@ -144,6 +144,7 @@ void AppController::processMessageRequest(QList<QByteArray> return_path, QList<Q
     if(!response.isEmpty() && msg_handler) {
         QList<QByteArray> data;
         data.append(variantMapToJson(response));
+        qDebug() << "sending:" << data;
         msg_handler->sendResponse(return_path, data);
     }
     

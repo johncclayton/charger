@@ -3,13 +3,20 @@ TEMPLATE = app
 CONFIG += c++11
 QT += qml quick widgets
 
-SOURCES += main.cpp \ 
-    device_info.cpp \
-    device_model.cpp
+SOURCES += \
+    cpp/main.cpp \ 
+    cpp/channel_status.cpp \
+    cpp/cell_state.cpp \
+    cpp/device_info.cpp \
+    cpp/device_model.cpp \
+    cpp/system_storage.cpp
 
 HEADERS += \
-    device_info.h \
-    device_model.h
+    cpp/channel_status.h \
+    cpp/cell_state.h \
+    cpp/device_info.h \
+    cpp/device_model.h \
+    cpp/system_storage.h
 
 RESOURCES += qml.qrc
 INCLUDEPATH += ../client

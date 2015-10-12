@@ -6,8 +6,11 @@ import QtQuick.Extras 1.4
 ApplicationWindow {
     visible: true
     
-    width: 640
-    height: 380
+    width: 530
+    height: 300
+    
+    minimumWidth: 500
+    minimumHeight: 240
     
     title: qsTr("Charger")
     
@@ -26,7 +29,7 @@ ApplicationWindow {
             anchors.fill: parent
             
             Label {
-                text: connectionState.connectionMessage
+                text: comms.hostname
             }
             
             Label {
@@ -34,30 +37,73 @@ ApplicationWindow {
                 Binding on text {
                     value: {
                         if(!devicesModel.count)
-                            return "No devices found"
+                            return "Searching for devices..."
+                        
                         if(devicesModel.count === 1)
                             devicesModel.count + " device";
-                        else devicesModel.count + " devices";
+                        else 
+                            devicesModel.count + " devices";
                     }
                 }
             }
         }
     }
     
-    Connecting {
-        id: connectionState
-        anchors.fill: parent
+    Connections {
+        target: devicesModel
         
-        cancelButton.onClicked: {
-            if(connected) {
-                // TODO: Device Request + Selection
-                // lets ask the system for all the device information, then we move
-                // onto device selection - which is automatic if there's only a single device.
+        onDeviceAddedRemoved: {
+            // C++ signal sig: void deviceAddedRemoved(bool added, QString key);
+            if(added) {
+                // what's the product type? so we can construct an interface
+                stack.createChargerInterfaceForKey(key);
             } else {
-                Qt.quit()
+                // remove a child with this object name...
+                stack.removeChargerInterfaceForKey(key);
             }
         }
     }
     
+    
+    StackView {
+        id: stack
+        initialItem: connectServer
+        anchors.fill: parent
+        
+        function createChargerInterfaceForKey(key) {
+            var component = Qt.createComponent("ChargerDuo.qml");
+            if (component.status === Component.Ready) {
+                var new_item = component.createObject(stack, {"objectName": key, "width": parent.width, "height": parent.height});
+                stack.push(new_item);
+            }
+            
+            return null;
+        }
+        
+        function removeChargerInterfaceForKey(key) {
+            for(var i = 0; i < children.length; i++) {
+                var item = children[i];
+                if(key === item.objectName) {
+                    if(item.Stack.status === Stack.Active)
+                        pop(null);
+                    item.destroy(1000);
+                    return;
+                }
+            }            
+        }
+        
+        ConnectServer {
+            id: connectServer
+            anchors.fill: parent
+            
+            actionButton.onClicked: {
+                if(connected) {
+                    // nada...
+                } else {
+                    Qt.quit()
+                }
+            }
+        }
+    }
 }
 
