@@ -89,6 +89,7 @@ void DeviceModel::resetModels() {
         
         qDebug() << "key:" << info->key();
         debugChannel(info->channel1(), 1);
+        debugChannel(info->channel2(), 2);
         
         _devices.append(info);
     }

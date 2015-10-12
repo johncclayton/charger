@@ -1,11 +1,15 @@
 #ifndef ICHARGER_DATA_H
 #define ICHARGER_DATA_H
 
+#include <QtGlobal>
+
 #define MAX_CELLS           16
 #define LIST_MEM_MAX        64
 #define MODEL_MAX           2
 
 #define VALUE_ORDER_KEY	0x55aa
+
+#pragma pack(1)
 
 enum ProgramType {
 	RUNOP_CHARGE,
@@ -63,12 +67,12 @@ enum RegistrySelectionOp
 	REG_VOLT
 };
 
-typedef unsigned long   u32;
-typedef signed long     s32;
-typedef unsigned short  u16;
-typedef signed short    s16;
-typedef unsigned char   u8;
-typedef signed char     s8;
+typedef quint32   u32;
+typedef qint32    s32;
+typedef quint16   u16;
+typedef qint16    s16;
+typedef quint8    u8;
+typedef qint8     s8;
 
 union register16 {
     union {
