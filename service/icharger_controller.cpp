@@ -33,7 +33,6 @@ struct ChannelStatusJson {
         data[STR_CHANNEL_STATUS_OUTPUT_CAPACITY] = quint32(c.output_capacity.value);
         
         data[STR_CHANNEL_STATUS_INPUT_VOLTAGE] = c.input_voltage.value / 1000.0;
-        
         data[STR_CHANNEL_STATUS_TEMP_INTERNAL] = c.temp_internal.value / 10.0;
         data[STR_CHANNEL_STATUS_TEMP_EXTERNAL] = c.temp_external.value / 10.0;
         
@@ -44,7 +43,7 @@ struct ChannelStatusJson {
             
             QVariantMap cell;
             cell[STR_CHANNEL_STATUS_CELL_NUMBER] = index;
-            cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = c.cell_voltage[index] / 1000.0;
+            cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = ((double)c.cell_voltage[index]) / 1000.0;
             cell[STR_CHANNEL_STATUS_CELL_BALANCE_STATUS] = c.balance_status[index];
             cell[STR_CHANNEL_STATUS_CELL_RESISTANCE] = c.cell_resistance[index];
             cells << cell;
