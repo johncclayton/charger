@@ -50,18 +50,18 @@ int AppController::init(int pub_port, int msg_port) {
         // Bonjour system needs to publish our ZMQ publisher port
         _bonjour_msg = new BonjourServiceRegister(this);
         _bonjour_pub = new BonjourServiceRegister(this);
-
+        
         _registry = new DeviceRegistry(_usb.ctx, _pub, this);
         
         connect(_registry, SIGNAL(deviceActivated(QString)),
-                         this, SLOT(deviceAdded(QString)));
+                this, SLOT(deviceAdded(QString)));
         connect(_registry, SIGNAL(deviceDeactivated(QString)),
-                         this, SLOT(deviceRemoved(QString)));
-               
+                this, SLOT(deviceRemoved(QString)));
+        
         // Respond to changes to the publisher port
         connect(_pub.data(), SIGNAL(portChanged(int)), 
                 this, SLOT(registerPublisherPort(int)));
-                
+        
         // bind the publisher to cause it to find a local ephemeral port and publish it
         if(!_pub->bind(pub_port)) {
             qDebug() << "unable to bind the zmq publisher to its interface";
@@ -84,7 +84,7 @@ int AppController::init(int pub_port, int msg_port) {
         connect(_hotplug_handler, SIGNAL(hotplugEvent(bool,int,int,QString)), 
                 this, SLOT(notifyHotplugEvent(bool,int,int,QString)), Qt::QueuedConnection);
         _hotplug_handler->start();
-               
+        
         return 0;
     }
     
@@ -113,7 +113,7 @@ void AppController::registerMessagePort(int new_port) {
 
 void AppController::notifyHotplugEvent(bool added, int vendor, int product, QString sn)  {
     Q_ASSERT(_registry);
-
+    
     qDebug() << "hotplug event for vendor:" << vendor << ", product:" << product << ", serial number:" << sn;
     if(added)
         _registry->activateDevice(vendor, product, sn);
@@ -131,17 +131,22 @@ void AppController::deviceRemoved(QString key) {
 
 void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
     QVariantMap response;
-
-qDebug() << "entire request payload:" << payload;
-
+    
+    qDebug() << "entire request payload:" << payload;
+    
     QString request = QString::fromUtf8(payload.at(0));
-qDebug() << "request has" << payload.size() << "packets (expecting 2)";
-qDebug() << "request verb:" << request;
+    qDebug() << "request has" << payload.size() << "packets (expecting 2)";
+    qDebug() << "request verb:" << request;
+    
     if(request == "get-devices") {
         response = doGetDevices();
-    } else if(request == "get-device") {
+    } else if(request == "get-device" && payload.size() == 2) {
         QString key = payload.at(1);
+        qDebug() << "get-device for key:" << key;
         response = doGetDevice(key);
+    } else {
+        qDebug() << "request payload not recognized - ignoring";
+        return;
     }
     
     MessageHandler* msg_handler = dynamic_cast<MessageHandler*>(sender());
@@ -156,7 +161,7 @@ qDebug() << "request verb:" << request;
 
 QVariantList AppController::getAllDevices() { 
     DeviceMap all_devices = _registry->devices();
-
+    
     QVariantList device_list;
     for(DeviceMap::const_iterator it = all_devices.begin(); it != all_devices.end(); ++it) {
         QVariantMap device;
@@ -167,7 +172,7 @@ QVariantList AppController::getAllDevices() {
         device["manufacturer"] = it.value()->device()->manufacturer();
         device_list.append(device);
     }
-
+    
     return device_list;
 }    
 
