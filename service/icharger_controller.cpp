@@ -98,23 +98,26 @@ void iCharger_DeviceController::handleTimeout() {
             _latest_device = t;
             changed = true;
         }
-    }
-    
-    // fetch info for ch1 and ch2
-    channel_status c;
-    for(int index = 0; index < 2; ++index) {
-        memset(&c, 0, sizeof(c));
-        r = _device->get_channel_status(index, &c);
-        if(r == 0) {
-            ChannelStatusJson channel;
-            QVariantMap t = channel.toVariantMap(c, index);
-            if(t != _latest_channel[index]) {
-                _latest_channel[index] = t;
-                changed = true;
+        
+        // fetch info for ch1 and ch2
+        channel_status c;
+        for(int index = 0; index < 2; ++index) {
+            memset(&c, 0, sizeof(c));
+            r = _device->get_channel_status(index, &c);
+            if(r == 0) {
+                ChannelStatusJson channel;
+                QVariantMap t = channel.toVariantMap(c, index);
+                if(t != _latest_channel[index]) {
+                    _latest_channel[index] = t;
+                    changed = true;
+                }
             }
         }
+    } else {
+        qDebug() << "error getting device only info - resetting";
+        _device->reset();
     }
-    
+        
     if(changed)
         Q_EMIT onChargerStateChanged();
 }
@@ -128,9 +131,5 @@ QByteArray iCharger_DeviceController::toJson() const {
     channels << _latest_channel[1];
     charger["channels"] = channels;
 
-    QByteArray r = variantMapToJson(charger);
-//    qDebug() << "JSON: " << r;
-
-    return r;
+    return variantMapToJson(charger);
 }
-

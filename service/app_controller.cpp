@@ -190,15 +190,15 @@ QVariantMap AppController::doGetDevices() {
 QVariantMap AppController::doGetDevice(QString key) {
     if(!_registry->devices().contains(key))
         return QVariantMap();
+    
     iCharger_DeviceController_ptr device(_registry->devices().find(key).value());
     QVariantMap response;
     response["action"] = "get-device";
     response["key"] = key;
-    
     response["device"] = jsonToVariantMap(device->toJson());
     
-    QVariantMap ch1 = response["device"].toMap().value("channels").toList().at(0).toMap();
-    qDebug() << "ch1:" << ch1;
+//    QVariantMap ch1 = response["device"].toMap().value("channels").toList().at(0).toMap();
+//    qDebug() << "ch1:" << ch1;
     
     return response;
 }
