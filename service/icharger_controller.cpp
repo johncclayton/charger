@@ -13,8 +13,8 @@ struct DeviceOnlyJson {
         
         data[STR_DEVICE_ONLY_ID] = d.device_id.value;
         data[STR_DEVICE_ONLY_SERIAL_NUMBER] = QString::fromLatin1((const char*)d.device_sn, 12).trimmed();
-        data[STR_DEVICE_ONLY_HW_VERSION] = d.hw_version.value / 1000.0;
-        data[STR_DEVICE_ONLY_SW_VERSION] = d.sw_version.value / 1000.0;
+        data[STR_DEVICE_ONLY_HW_VERSION] = d.hw_version.value;
+        data[STR_DEVICE_ONLY_SW_VERSION] = d.sw_version.value;
         data[STR_DEVICE_ONLY_CH1_STATUS] = d.ch1_status.value;
         data[STR_DEVICE_ONLY_CH2_STATUS] = d.ch2_status.value;
         
@@ -29,23 +29,27 @@ struct ChannelStatusJson {
         data[STR_CHANNEL_STATUS_CHANNEL_NUM] = channel;
         data[STR_CHANNEL_STATUS_OUTPUT_POWER] = quint32(c.output_power.value);
         data[STR_CHANNEL_STATUS_OUTPUT_CURRENT] = c.output_current.value;
-        data[STR_CHANNEL_STATUS_OUTPUT_VOLTAGE] = c.output_voltage.value / 1000.0;
+        data[STR_CHANNEL_STATUS_OUTPUT_VOLTAGE] = c.output_voltage.value;
         data[STR_CHANNEL_STATUS_OUTPUT_CAPACITY] = quint32(c.output_capacity.value);
         
-        data[STR_CHANNEL_STATUS_INPUT_VOLTAGE] = c.input_voltage.value / 1000.0;
-        data[STR_CHANNEL_STATUS_TEMP_INTERNAL] = c.temp_internal.value / 10.0;
-        data[STR_CHANNEL_STATUS_TEMP_EXTERNAL] = c.temp_external.value / 10.0;
+        data[STR_CHANNEL_STATUS_INPUT_VOLTAGE] = c.input_voltage.value;
+        data[STR_CHANNEL_STATUS_TEMP_INTERNAL] = c.temp_internal.value;
+        data[STR_CHANNEL_STATUS_TEMP_EXTERNAL] = c.temp_external.value;
         
         QVariantList cells;
         for(int index = 0; index < MAX_CELLS; ++index) {
-            if(c.cell_voltage[index] == 1024 && c.cell_resistance[index] == 1024)
-                continue;
-            
             QVariantMap cell;
             cell[STR_CHANNEL_STATUS_CELL_NUMBER] = index;
-            cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = ((double)c.cell_voltage[index]) / 1000.0;
+            cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = c.cell_voltage[index];
             cell[STR_CHANNEL_STATUS_CELL_BALANCE_STATUS] = c.balance_status[index];
             cell[STR_CHANNEL_STATUS_CELL_RESISTANCE] = c.cell_resistance[index];
+
+            if(c.cell_voltage[index] == 1024 && c.cell_resistance[index] == 1024) {
+            	cell[STR_CHANNEL_STATUS_CELL_VOLTAGE] = 1024;
+            	cell[STR_CHANNEL_STATUS_CELL_BALANCE_STATUS] = 1024;
+            	cell[STR_CHANNEL_STATUS_CELL_RESISTANCE] = 1024;
+            } 
+
             cells << cell;
         }    
         
