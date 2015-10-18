@@ -132,17 +132,15 @@ void AppController::deviceRemoved(QString key) {
 void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
     QVariantMap response;
     
-    qDebug() << "entire request payload:" << payload;
-    
     QString request = QString::fromUtf8(payload.at(0));
-    qDebug() << "request has" << payload.size() << "packets (expecting 2)";
-    qDebug() << "request verb:" << request;
+//    qDebug() << "request has" << payload.size() << "packets (expecting 2)";
+//    qDebug() << "request verb:" << request;
     
     if(request == "get-devices") {
         response = doGetDevices();
     } else if(request == "get-device" && payload.size() == 2) {
         QString key = payload.at(1);
-        qDebug() << "get-device for key:" << key;
+//        qDebug() << "get-device for key:" << key;
         response = doGetDevice(key);
     } else {
         qDebug() << "request payload not recognized - ignoring";
@@ -153,7 +151,7 @@ void AppController::processMessageRequest(QList<QByteArray> return_path, QList<Q
     if(!response.isEmpty() && msg_handler) {
         QList<QByteArray> data;
         data.append(variantMapToJson(response));
-        qDebug() << "sending:" << data;
+//        qDebug() << "sending:" << data;
         msg_handler->sendResponse(return_path, data);
     }
     
