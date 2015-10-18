@@ -35,6 +35,8 @@ bool MessageHandler::bind(int port) {
 void MessageHandler::processMessageRequest(QList<QByteArray> msg) {
     QList<QByteArray> return_path;
 
+qDebug() << "on the wire:" << msg;
+
     int index = 0;
     while(!msg.at(index).isEmpty() && index < msg.size()) {
         return_path << msg.at(index);
