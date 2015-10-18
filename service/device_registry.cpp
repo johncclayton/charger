@@ -24,6 +24,7 @@ void DeviceRegistry::activateDevice(int vendor, int product, QString sn) {
         icharger_usb_ptr obj(match[index]);
         iCharger_DeviceController_ptr device_ptr(new iCharger_DeviceController(key, obj));
         if(0 == device_ptr->device()->acquire()) {
+            qDebug() << "device registered:" << key;
             _devices.insert(key, device_ptr);
             Q_EMIT deviceActivated(key);
         } else {

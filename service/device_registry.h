@@ -20,7 +20,7 @@ public:
     DeviceRegistry(libusb_context* ctx, Publisher_ptr pub, QObject* owner = 0);
     virtual ~DeviceRegistry();
     
-    QString deviceKey(int vendor, int product, QString sn);
+    static QString deviceKey(int vendor, int product, QString sn);
     
     void activateDevice(int vendor, int product, QString sn);
     void deactivateDevice(int vendor, int product);
