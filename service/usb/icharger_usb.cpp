@@ -190,9 +190,9 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         } else if(r == LIBUSB_ERROR_NO_DEVICE) {
             return r;
         } else if(r != 0) {
-            error_print("an error was encountered during data transfer with endpoint address 0x%Xd", r, endpoint_address);
-            if(0 != clear_halt(endpoint_address))
-		reset();
+            error_print("an error was encountered during data transfer with endpoint address 0x%Xd - resetting", r, endpoint_address);
+            perror("error with  usb transfer");
+    		reset();
             return r;
         }
         

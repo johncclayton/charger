@@ -14,12 +14,18 @@ socket.connect("tcp://pi.home:23011")
 time.sleep(1)
 
 print "connected..."
-msg = { "action": "get-device", "key": dev_key }
 
 print "sending message..."
-socket.send_multipart([b'', "get-device", json.dumps(msg)])
+socket.send_multipart([b'', "get-device", dev_key])
 
 print "waiting for reply..."
-resp = socket.recv_multipart()
+resp = json.loads(socket.recv_multipart()[1:][0])
+ch1 = resp['device']['channels'][0]
 
-print resp
+cells = ch1['cells']
+print "cell 1:", float(cells[0]["voltage"])
+print "cell 2:", float(cells[1]["voltage"])
+print "cell 3:", float(cells[2]["voltage"])
+print "cell 4:", float(cells[3]["voltage"])
+print "cell 5:", float(cells[4]["voltage"])
+print "cell 6:", float(cells[5]["voltage"])
