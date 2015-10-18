@@ -127,6 +127,10 @@ QByteArray iCharger_DeviceController::toJson() const {
     channels << _latest_channel[0];
     channels << _latest_channel[1];
     charger["channels"] = channels;
-    return variantMapToJson(charger);
+
+    QByteArray r = variantMapToJson(charger);
+//    qDebug() << "JSON: " << r;
+
+    return r;
 }
 

@@ -132,7 +132,11 @@ void AppController::deviceRemoved(QString key) {
 void AppController::processMessageRequest(QList<QByteArray> return_path, QList<QByteArray> payload) {
     QVariantMap response;
 
+qDebug() << "entire request payload:" << payload;
+
     QString request = QString::fromUtf8(payload.at(0));
+qDebug() << "request has" << payload.size() << "packets (expecting 2)";
+qDebug() << "request verb:" << request;
     if(request == "get-devices") {
         response = doGetDevices();
     } else if(request == "get-device") {
