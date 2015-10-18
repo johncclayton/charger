@@ -54,6 +54,8 @@ public slots:
     void deviceAdded(QString key);
     void deviceRemoved(QString key);
     
+    QVariantList getAllDevices();
+    
 protected:
     void timerEvent(QTimerEvent *event);
     

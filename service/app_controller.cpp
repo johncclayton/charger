@@ -150,13 +150,9 @@ void AppController::processMessageRequest(QList<QByteArray> return_path, QList<Q
     
 }
 
-QVariantMap AppController::doGetDevices() {
+QVariantList AppController::getAllDevices() { 
     DeviceMap all_devices = _registry->devices();
-    QVariantMap response;
-    
-    response["action"] = "get-devices";
-    response["count"] = all_devices.count();
-    
+
     QVariantList device_list;
     for(DeviceMap::const_iterator it = all_devices.begin(); it != all_devices.end(); ++it) {
         QVariantMap device;
@@ -167,8 +163,17 @@ QVariantMap AppController::doGetDevices() {
         device["manufacturer"] = it.value()->device()->manufacturer();
         device_list.append(device);
     }
+
+    return device_list;
+}    
+
+QVariantMap AppController::doGetDevices() {
+    QVariantMap response;
     
-    response["devices"] = device_list;
+    QVariantList all_devices = getAllDevices();
+    response["action"] = "get-devices";
+    response["count"] = all_devices.count();
+    response["devices"] = all_devices;
     
     return response;
 }
@@ -180,6 +185,11 @@ QVariantMap AppController::doGetDevice(QString key) {
     QVariantMap response;
     response["action"] = "get-device";
     response["key"] = key;
+    
     response["device"] = jsonToVariantMap(device->toJson());
+    
+    QVariantMap ch1 = response["device"].toMap().value("channels").toList().at(0).toMap();
+    qDebug() << "ch1:" << ch1;
+    
     return response;
 }
