@@ -3,6 +3,7 @@
 #include <QtGlobal>
 #include <QDebug>
 #include <QThread>
+#include <QFile>
 #include <QString>
 #include <QStringList>
 #include <QScopedPointer>
@@ -190,13 +191,17 @@ QVariantMap AppController::doGetDevice(QString key) {
         return QVariantMap();
     
     iCharger_DeviceController_ptr device(_registry->devices().find(key).value());
+    
     QVariantMap response;
     response["action"] = "get-device";
     response["key"] = key;
     response["device"] = jsonToVariantMap(device->toJson());
-    
-//    QVariantMap ch1 = response["device"].toMap().value("channels").toList().at(0).toMap();
-//    qDebug() << "ch1:" << ch1;
+
+    // write to disk so I can feed this into the front end for testing.
+    QByteArray data = variantMapToJson(response);
+    QFile device_data("device.json");
+    device_data.open(QFile::WriteOnly);
+    device_data.write(data);
     
     return response;
 }
