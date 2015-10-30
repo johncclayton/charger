@@ -9,7 +9,7 @@ CellState::CellState(QObject *parent) : QObject(parent) {
 }
 
 void CellState::setFromJson(QByteArray data) {
-    double oldValue = voltage();
+    QString oldValue = voltage();
     double oldR = resistance();
     int eNum = number();
     QString oldUnits = units();
@@ -30,8 +30,8 @@ int CellState::number() const {
     return object()[STR_CHANNEL_STATUS_CELL_NUMBER].toInt(); 
 }
 
-double CellState::voltage() const {
-    return object()[STR_CHANNEL_STATUS_CELL_VOLTAGE].toInt() / 1000.0; 
+QString CellState::voltage() const {
+    return QString::number(object()[STR_CHANNEL_STATUS_CELL_VOLTAGE].toInt() / 1000.0, 'f', 2); 
 }
 
 double CellState::resistance() const {

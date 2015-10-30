@@ -11,12 +11,12 @@ class CellState : public QObject, private QJsonDocument
 public:
     explicit CellState(QObject *parent = 0);
     
-    Q_PROPERTY(double voltage READ voltage NOTIFY voltageChanged)
+    Q_PROPERTY(QString voltage READ voltage NOTIFY voltageChanged)
     Q_PROPERTY(double resistance READ resistance NOTIFY resistanceChanged)
     Q_PROPERTY(int number READ number NOTIFY numberChanged)
     Q_PROPERTY(QString units READ units WRITE setCellUnits NOTIFY unitsChanged)
     
-    double voltage() const;
+    QString voltage() const;
     double resistance() const;
     int number() const;
     QString units() const;

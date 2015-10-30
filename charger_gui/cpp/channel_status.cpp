@@ -75,13 +75,16 @@ void ChannelStatus::setFromJson(QByteArray data) {
 
 CellState* ChannelStatus::findCellNumber(int num) const {
     CellStatePtr s = _cells.at(num);
+    
     if(s->number() == num)
         return s.data();
+    
     for(int i = 0; i < 10; ++i) {
         if(_cells.at(i)->number() == num)
             return _cells.at(i).data();
     }
     
+    qDebug() << "failure finding cell:" << num;
     Q_ASSERT(false);
 }
 
