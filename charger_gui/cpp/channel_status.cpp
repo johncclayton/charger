@@ -7,7 +7,7 @@
 #include "icharger/icharger_message_keys.h"
 #include "json_helper.h"
 
-ChannelStatus::ChannelStatus(QObject *parent) : QObject(parent) {    
+ChannelStatus::ChannelStatus(QObject *parent) : QObject(parent), _totalVoltsAllCells(0), _totalVoltsDeltaAllCells(0) {    
     for(int index = 0; index < 10; ++index) {
         _cells.push_back(CellStatePtr(new CellState(this)));
     }
@@ -24,16 +24,22 @@ void ChannelStatus::setFromJson(QByteArray data) {
     double eTempInternal = tempInternal();
     double eTotalResistance = totalResistance();
     double eLineInternalResistance = lineInternalResistance();
+    QString etotalVoltsAllCells = totalVoltsAllCells();
+    QString etotalVoltsDeltaAllCells = totalVoltsDeltaAllCells();
     
     setObject( QJsonDocument::fromJson(data).object() );
 
     QVariantList cell_data = object().value("cells").toArray().toVariantList();
+    
+    double voltsLow = 99;
+    double voltsHigh = 0;
     
     if(!cell_data.isEmpty()) {
         QList<CellStatePtr> old(_cells);
         
         // remove all cell states, re-pop
         _cells.clear();
+        _totalVoltsAllCells = 0;
         
         for(int index = 0; index < 10; ++index) {
             CellStatePtr newCell(CellStatePtr(new CellState(this)));
@@ -41,6 +47,15 @@ void ChannelStatus::setFromJson(QByteArray data) {
             QVariantMap data = cell_data.at(index).toMap();
             newCell->setFromJson(variantMapToJson(data));            
                 
+            double v = newCell->voltage().toDouble();
+            
+            _totalVoltsAllCells += v;
+            
+            if(v > 0.001) {
+                voltsLow = qMin(voltsLow, v);
+                voltsHigh = qMax(voltsHigh, v);
+            }
+                    
             if(old.size() > index) {
                 CellStatePtr oldState(old.at(index));
                 if(oldState->differsFrom(*newCell))
@@ -49,7 +64,14 @@ void ChannelStatus::setFromJson(QByteArray data) {
                 Q_EMIT cellValuesChanged(index);
             }
         }
+        
+        _totalVoltsDeltaAllCells = voltsHigh - voltsLow;
     }
+    
+    if(etotalVoltsAllCells != totalVoltsAllCells())
+        Q_EMIT totalVoltsAllCells();
+    if(etotalVoltsDeltaAllCells != totalVoltsDeltaAllCells())
+        Q_EMIT totalVoltsDeltaAllCellsChanged();
     
     if(eChannel != channel())
         Q_EMIT channelChanged();
@@ -85,7 +107,8 @@ CellState* ChannelStatus::findCellNumber(int num) const {
     }
     
     qDebug() << "failure finding cell:" << num;
-    Q_ASSERT(false);
+//    Q_ASSERT(false);
+    return 0;
 }
 
 CellState* ChannelStatus::cell1() const {
@@ -126,6 +149,14 @@ CellState* ChannelStatus::cell9() const {
 
 CellState* ChannelStatus::cell10() const {
     return findCellNumber(9);
+}
+
+QString ChannelStatus::totalVoltsAllCells() const {
+    return QString::number(_totalVoltsAllCells, 'f', 2); 
+}
+
+QString ChannelStatus::totalVoltsDeltaAllCells() const {
+    return QString::number(_totalVoltsDeltaAllCells, 'f', 2); 
 }
 
 quint8 ChannelStatus::channel() const {

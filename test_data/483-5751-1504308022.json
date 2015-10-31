@@ -1,0 +1,249 @@
+{
+    "action": "get-device",
+    "device": {
+        "channels": [
+            {
+                "cells": [
+                    {
+                        "balance_status": 0,
+                        "cell": 0,
+                        "resistance": 0,
+                        "voltage": 3718
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 1,
+                        "resistance": 0,
+                        "voltage": 3824
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 2,
+                        "resistance": 0,
+                        "voltage": 3830
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 3,
+                        "resistance": 0,
+                        "voltage": 3834
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 4,
+                        "resistance": 0,
+                        "voltage": 3842
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 5,
+                        "resistance": 0,
+                        "voltage": 3842
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 6,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 7,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 8,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 9,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 10,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 11,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 12,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 13,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 14,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 15,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    }
+                ],
+                "channel": 0,
+                "control_status": 0,
+                "cycle_count": 0,
+                "dialog_box_id": 0,
+                "input_voltage": 24173,
+                "internal_resistance": 0,
+                "output_capacity": 0,
+                "output_current": 0,
+                "output_power": 0,
+                "output_voltage": 40066,
+                "run_error": 0,
+                "run_status": 0,
+                "temp_external": 0,
+                "temp_internal": 250,
+                "total_resistance": 0
+            },
+            {
+                "cells": [
+                    {
+                        "balance_status": 0,
+                        "cell": 0,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 1,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 2,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 3,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 4,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 5,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 6,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 7,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 8,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 0,
+                        "cell": 9,
+                        "resistance": 0,
+                        "voltage": 0
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 10,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 11,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 12,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 13,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 14,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    },
+                    {
+                        "balance_status": 1024,
+                        "cell": 15,
+                        "resistance": 1024,
+                        "voltage": 1024
+                    }
+                ],
+                "channel": 1,
+                "control_status": 0,
+                "cycle_count": 0,
+                "dialog_box_id": 256,
+                "input_voltage": 24173,
+                "internal_resistance": 0,
+                "output_capacity": 0,
+                "output_current": 0,
+                "output_power": 0,
+                "output_voltage": 40171,
+                "run_error": 0,
+                "run_status": 0,
+                "temp_external": 0,
+                "temp_internal": 250,
+                "total_resistance": 0
+            }
+        ],
+        "info": {
+            "ch1_status": 0,
+            "ch2_status": 0,
+            "hw_ver": 2000,
+            "id": 64,
+            "manufacturer": "Junsi Electronic",
+            "product": "Junsi iCharger 4010Duo USB HID",
+            "sn": "1504308022",
+            "sw_ver": 2107
+        },
+        "key": "483-5751-1504308022"
+    },
+    "key": "483-5751-1504308022"
+}

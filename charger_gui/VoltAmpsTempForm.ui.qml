@@ -26,22 +26,35 @@ Rectangle {
         
         Layout.preferredHeight: preferredHeight
         
-        Text {
-            id: dclabel
-            text: 'DC ' + voltage + ' V'
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignLeft            
-            anchors.left: parent.left
-            anchors.top: parent.top
-            color: textColor
+        RowLayout {
+            Text {
+                id: dclabel
+                text: 'DC '
+                anchors.verticalCenter: parent.verticalCenter
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignLeft            
+                anchors.left: parent.left
+                anchors.top: parent.top
+                color: "green"
+            }
+            
+            Text {
+                id: dcvalue
+                text: voltage + 'V'
+                anchors.verticalCenter: parent.verticalCenter
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignLeft            
+                anchors.left: dclabel.right
+                anchors.top: parent.top
+                color: textColor
+            }
         }
-                
+        
         Item {
             id: filler1
             width: 10
         }
-
+        
         Text {
             id: ch1amplabel
             text: ch1amps + 'A'

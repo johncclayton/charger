@@ -22,6 +22,10 @@ class ChannelStatus : public QObject, private QJsonDocument
     Q_PROPERTY(double tempInternal READ tempInternal NOTIFY tempInternalChanged)
     Q_PROPERTY(double totalResistance READ totalResistance NOTIFY totalResistanceChanged)
     Q_PROPERTY(double lineInternalResistance READ lineInternalResistance NOTIFY lineInternalResistanceChanged)
+    
+    // summary fields - these depend on the values for other cells
+    Q_PROPERTY(QString totalVoltsAllCells READ totalVoltsAllCells NOTIFY totalVoltsAllCellsChanged)
+    Q_PROPERTY(QString totalVoltsDeltaAllCells READ totalVoltsDeltaAllCells NOTIFY totalVoltsDeltaAllCellsChanged)
 
     Q_PROPERTY(CellState* cell1 READ cell1 NOTIFY cellValuesChanged)
     Q_PROPERTY(CellState* cell2 READ cell2 NOTIFY cellValuesChanged)
@@ -72,6 +76,9 @@ public:
     quint32 runError() const;
     quint32 dialogBoxId() const;
     
+    QString totalVoltsAllCells() const;
+    QString totalVoltsDeltaAllCells() const;
+    
 signals:
     void cellValuesChanged(int index);
     void channelChanged();
@@ -84,6 +91,8 @@ signals:
     void tempInternalChanged();
     void totalResistanceChanged();
     void lineInternalResistanceChanged();
+    void totalVoltsAllCellsChanged();
+    void totalVoltsDeltaAllCellsChanged();
     
 public slots:
     void setFromJson(QByteArray data);
@@ -92,6 +101,8 @@ private:
     CellState* findCellNumber(int num) const;
     
     QList<CellStatePtr> _cells; // 10 is the max
+    double _totalVoltsAllCells;
+    double _totalVoltsDeltaAllCells;
 };
 
 typedef QSharedPointer<ChannelStatus> ChannelStatusPtr;

@@ -59,6 +59,9 @@ void debugChannel(ChannelStatus* c, int n) {
     qDebug() << n << "cell8:" << c->cell8()->voltage() << ", resistance:" << c->cell8()->resistance();
     qDebug() << n << "cell9:" << c->cell9()->voltage() << ", resistance:" << c->cell9()->resistance();
     qDebug() << n << "cell10:" << c->cell10()->voltage() << ", resistance:" << c->cell10()->resistance();
+    
+    qDebug() << n << "totalV:" << c->totalVoltsAllCells();
+    qDebug() << n << "totalDeltaV:" << c->totalVoltsDeltaAllCells();
 }
 
 void DeviceModel::resetModels() {

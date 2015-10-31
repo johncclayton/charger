@@ -30,8 +30,8 @@ public:
     explicit ClientMessagingController(QObject *parent = 0);
     virtual ~ClientMessagingController();
     
-    void init(int pub_port = 0, int msg_port = 0);
-    
+    void init(int pub_port = 0, int msg_port = 0, QString test_dir = QString());
+        
     MessageBus* messageBus() const { return _message_bus; }
     
 signals:
@@ -46,7 +46,14 @@ public slots:
     void serviceResolutionError(QString type, int err);    
     void serviceRemoved(QString type);
         
+protected:
+    void timerEvent(QTimerEvent* event);    
+    
 private:
+    /** Called from init to engage the test mode where data is solely retrieved from the testing directory */
+    void setupFakeDataFromDirectory(QString dir);
+    void fetchAndInjectTestingData();
+
     QString hostname() const { return _host; }
     void setHostname(QString value);
     
@@ -71,6 +78,7 @@ private:
     
     MessageBus* _message_bus;
         
+    QString _test_dir;
     QString _host;
     int _pub_port, _msg_port;
 };

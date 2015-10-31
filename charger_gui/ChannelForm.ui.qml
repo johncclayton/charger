@@ -18,6 +18,12 @@ Item {
     property alias panelHeaderTitleRight: panel.headerTitleRight
     property int panelBorderWidth: 2
     
+    property color selectableTabBackgroundNotSelectedColor: "transparent"
+    property color selectableTabBackgroundSelectedColor: panelBorderColor
+    
+    property color selectableTabNotSelectedTextColor: panelBorderColor
+    property color selectableTabSelectedTextColor: panelTextColor
+    
     property string batteryFontFamily: "Courier"
     property int batteryFontPixelSize: 18
     property string voltsFontFamily: "Verdana"
@@ -29,11 +35,17 @@ Item {
     property int panelNumberOfRows: 10
     
     property ChannelStatus dataSource: ChannelStatus {}
-
+    property ChannelViewModel viewModel: ChannelViewModel {}
+    property string myCellUnits: viewModel.cellState == ChannelViewModel.CELLS ? 'v' : 'r'
+    
     property alias cell1: cell1
     property alias panel: panel
     property alias horizline: horizLine
     property alias cells: allcells
+    
+    property alias header_cells: header_cells
+    property alias header_ir: header_ir
+    property alias header_info: header_info
         
     width: 300
     height: 220
@@ -51,18 +63,22 @@ Item {
         ColumnLayout {
             id: main_column
             
-            spacing: 5
+            spacing: 2
             anchors.fill: parent
+            Layout.fillHeight: true
             
+            /** battery info / time and the volts/amps used */
             RowLayout {
                 id: row1layout
-                height: 92
+                //                height: 92
                 
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
                 
-                Layout.fillHeight: true
+                Layout.fillHeight: false
+                Layout.preferredHeight: 92
+                
                 spacing: 0
                 
                 BattModeTime {
@@ -94,133 +110,234 @@ Item {
                 }
             }
             
-            
-            ColumnLayout {
-                id: lower_column
-
+            /** header panel for cells/IR/info selection */
+            Rectangle {
+                id: header
+                
+                anchors.margins: 3
+                
                 anchors.top: row1layout.bottom
+                anchors.left: parent.left
                 anchors.right: parent.right
+                
+                Layout.preferredHeight: header_cells.preferredLayoutHeight
+                
+                color: "transparent"
+                
+                ColumnLayout {
+                    anchors.fill: parent
+                    
+                    RowLayout {
+                        id: header_layout
+                        anchors.fill: parent
+                        
+                        SelectableTab {
+                            id: header_cells
+                            selected: viewModel.cellState == ChannelViewModel.CELLS
+                            title: " Cells "
+                        }
+                        
+                        Rectangle { 
+                            id: split1
+                            width: 1
+                            height: 10
+                            color: "transparent"
+                            border.width: 1
+                            border.color: panelBorderColor
+                        }                            
+                        
+                        SelectableTab {
+                            id: header_ir
+                            title: " IR "
+                            selected: viewModel.cellState == ChannelViewModel.RESISTANCE
+                        }
+                        
+                        Rectangle { 
+                            id: split2
+                            width: 1
+                            height: 10
+                            color: "transparent"
+                            border.width: 1
+                            border.color: panelBorderColor
+                        }                            
+                        
+                        SelectableTab {
+                            id: header_info
+                            title: " Info "
+                            selected: viewModel.cellState == ChannelViewModel.INFO
+                        }
+                        
+                        Rectangle { 
+                            id: split13
+                            width: 1
+                            height: 10
+                            color: "transparent"
+                            border.width: 1
+                            border.color: panelBorderColor
+                        }                            
+                        
+                        Item { 
+                            Layout.fillWidth: true
+                        }
+                    }
+                    
+                    Rectangle {
+                        Layout.fillWidth: true
+                        border.width: 1
+                        border.color: panelBorderColor
+                        height: 1
+                    }
+                }
+            }
+            
+            /** actual cell area - shared with cells themselves and the summary of volts/resistance */            
+            ColumnLayout {
+                id: cells_column
+                
+                Layout.margins: 0  
+                Layout.fillWidth: true
+                
+                anchors.top: header.bottom
+                anchors.topMargin: 5
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
+                anchors.right: parent.right
                 
                 GridLayout {
                     id: allcells
                     
                     flow: GridLayout.TopToBottom    
                     rows: panelNumberOfRows
-                                        
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: horizLine.top
-                                        
-                    Layout.preferredHeight: panelNumberOfRows * cell1.height
-                    
-                    // used to ensure the columns don't come too close / merge 
                     columnSpacing: 12
                     rowSpacing: 0
                     
+                    Layout.preferredHeight: cells_column.height - (horizLine.height + irlayout.height)
+                    Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+                    
+                    anchors.bottom: horizLine.top
+                    anchors.top: header.bottom
+                    anchors.left: cells_column.left
+                    anchors.right: cells_column.right
+                                        
                     OneCell {
                         id: cell1
                         cellNumber: "1"
-                        cellValue: dataSource.cell1.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell1.voltage : dataSource.cell1.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell2
                         cellNumber: "2"
-                        cellValue: dataSource.cell2.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell2.voltage : dataSource.cell2.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell3
                         cellNumber: "3"
-                        cellValue: dataSource.cell3.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell3.voltage : dataSource.cell3.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell4
                         cellNumber: "4"
-                        cellValue: dataSource.cell4.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell4.voltage : dataSource.cell4.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell5
                         cellNumber: "5"
-                        cellValue: dataSource.cell5.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell5.voltage : dataSource.cell5.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell6
                         cellNumber: "6"
-                        cellValue: dataSource.cell6.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell6.voltage : dataSource.cell6.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell7
                         cellNumber: "7"
-                        cellValue: dataSource.cell7.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell7.voltage : dataSource.cell7.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell8
                         cellNumber: "8"
-                        cellValue: dataSource.cell8.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell8.voltage : dataSource.cell8.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell9
                         cellNumber: "9"
-                        cellValue: dataSource.cell9.voltage
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell9.voltage : dataSource.cell9.resistance
+                        cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell10
                         cellNumber: "10"
-                        cellValue: dataSource.cell10.voltage
-                    }
-                    
-                    Item {
-                        Layout.fillHeight: true
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell10.voltage : dataSource.cell10.resistance
+                        cellUnits: myCellUnits
                     }
                 }
                 
                 Rectangle {
                     id: horizLine
-                    height: 1
-                    color: panelBorderColor
+                    
+                    color: "transparent"
+                    border.color: panelBorderColor
+                    
                     anchors.bottom: irlayout.top
                     anchors.bottomMargin: 4
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    
+                    Layout.fillWidth: true                    
+                    Layout.preferredHeight: 1
                 }
                 
                 RowLayout {
                     id: irlayout
                     
-                    anchors.left: parent.left
+                    anchors.left: cells_column.left
                     anchors.leftMargin: 5
-                    anchors.right: parent.right
+                    
+                    anchors.right: cells_column.right
                     anchors.rightMargin: 5
-                    anchors.bottom: parent.bottom
+                    
+                    anchors.bottom: cells_column.bottom
                     anchors.bottomMargin: 3
-                                        
+                    
+                    Layout.preferredHeight: summary1.preferredHeight
+                    
                     OneCell {
-                        id: resistance1
-                        cellNumber: "Sʀ"
-                        cellValue: dataSource.totalResistance
-                        cellUnits: "mΩ"
+                        id: summary1
+                        cellNumber: viewModel.cellState == ChannelViewModel.CELLS ? "Sv" : "Sʀ"
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.totalVoltsAllCells : dataSource.totalResistance
+                        cellUnits: viewModel.cellState == ChannelViewModel.CELLS ? "mV" : "mΩ"
                     }
                     
                     OneCell {
-                        id: resistance2
-                        cellNumber: "Lʀ"
-                        cellValue: dataSource.lineInternalResistance
-                        cellUnits: "mΩ"
+                        id: summary2
+                        cellNumber: viewModel.cellState == ChannelViewModel.CELLS ? "ΔV" : "Lʀ"
+                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.totalVoltsDeltaAllCells : dataSource.lineInternalResistance
+                        cellUnits: viewModel.cellState == ChannelViewModel.CELLS ? "mV" : "mΩ"
                     }                        
                 }
-            }
+                
+            }                
+            
         }
     }
+    
 }
+
+
 

@@ -1,4 +1,6 @@
 #include <QDebug>
+#include <QFile>
+#include <QFileInfo>
 
 #include "nzmqt/nzmqt.hpp"
 #include "message_bus.h"
@@ -9,13 +11,23 @@ using namespace nzmqt;
 #define SECONDS_5_MS (1000 * 5)
 
 MessageBus::MessageBus(QObject *parent) : 
-    QObject(parent), _pub(0), _msg(0), _alive(false)
+    QObject(parent), _pub(0), _msg(0), _alive(false), _testing(false)
 {
     _lastHeartbeat = QDateTime();
     startTimer(1000);    
 }
 
 MessageBus::~MessageBus() {
+}
+
+void MessageBus::setTesting(bool value) { 
+    if(value != _testing) {
+        _testing = value; 
+        Q_EMIT testingChanged(value);
+    }
+
+    if(value)
+        setAlive(true);
 }
 
 void MessageBus::setPublishSocket(ZMQSocket* s) {
@@ -45,7 +57,6 @@ void MessageBus::getDevices() const {
 }
 
 void MessageBus::getDeviceInformation(QString key) const {
-    qDebug() << "fetching details about device:" << key;
     QList<QByteArray> req;
     req << "get-device";
     req << key.toUtf8();
@@ -62,6 +73,11 @@ void MessageBus::setAlive(bool value) {
 
 void MessageBus::timerEvent(QTimerEvent* event) {
     Q_UNUSED(event);
+    
+    // if we're in testing mode - fake it. 
+    if(_testing)
+        return;
+    
     // if we get to 5 seconds without a heartbeat... ISSUES!
     QDateTime n = QDateTime::currentDateTime();
     double diff = n.toMSecsSinceEpoch() - _lastHeartbeat.toMSecsSinceEpoch();
@@ -77,8 +93,28 @@ void MessageBus::processMessageResponse(QList<QByteArray> msg) {
         if(action == "get-devices") {
             Q_EMIT getDevicesResponse(payload);
         } else if(action == "get-device") {
-            Q_EMIT getDeviceResponse(payload["key"].toString(), payload["device"].toMap());
+            // write this to the last snapshot of the device info received
+            QString key = payload["key"].toString();
+//            QFileInfo jsonFile(QString("%1.json").arg(key));
+//            qDebug() << "writing data to:" << jsonFile.absoluteFilePath();
+//            QFile saveData(jsonFile.absoluteFilePath());
+//            if(saveData.open(QIODevice::ReadWrite)) {
+//                saveData.write(msg.at(1));
+//                saveData.close();
+//                // use reinjectMessageResponse to push this back in...
+//            }
+            Q_EMIT getDeviceResponse(key, payload["device"].toMap());
         }
+    }
+}
+
+void MessageBus::reinjectMessageResponse(QByteArray msg) {
+    QVariantMap payload = jsonToVariantMap(msg);
+    QString action = payload["action"].toString();
+    if(action == "get-device") {
+        QString key = payload["key"].toString();
+        qDebug() << "re-injection for key:" << key;
+        Q_EMIT getDeviceResponse(key, payload["device"].toMap());
     }
 }
 
@@ -97,12 +133,16 @@ void MessageBus::processNotification(QList<QByteArray> msg) {
     Q_EMIT notificationReceived(topic, msg.mid(1));
 }
 
-bool MessageBus::syncRequest(QList<QByteArray> requestPayload) const {   
+bool MessageBus::syncRequest(QList<QByteArray> requestPayload) const {
+    if(_testing)
+        return true;
     requestPayload.prepend(QByteArray());
     return _msg->sendMessage(requestPayload);
 }
 
 bool MessageBus::syncRequest(QByteArray requestPayload) const {   
+    if(_testing)
+        return true;    
     QList<QByteArray> msg;
     msg << requestPayload;
     return syncRequest(msg);

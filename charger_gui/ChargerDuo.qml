@@ -10,20 +10,16 @@ ChargerDuoForm {
     property string modelKey: ""
     property DeviceInfo info: DeviceInfo {}
 
-    volt_amps_temp.ch1amps: info_ch1.outputVoltage
-    volt_amps_temp.ch2amps: info_ch2.inputVoltage
-
     channel1.dataSource: info.ch1
     channel2.dataSource: info.ch2
-    
+
     Connections {
         target: devicesModel
         onDeviceInfoUpdated: {
             info = devicesModel.getDeviceInfo(modelKey);
             channel1.dataSource = info.ch1;
             channel2.dataSource = info.ch2;
-            
-//            console.log("ch1:" + JSON.stringify(info_ch1));
+            volt_amps_temp.voltage = info.ch1.inputVoltage / 1000.0;
         }        
     }
         

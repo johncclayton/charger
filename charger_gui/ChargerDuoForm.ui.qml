@@ -8,7 +8,7 @@ Rectangle {
     height: 400
     
     property string key: ""
-    property color iCharger_Channel1PanelColor: "lightblue"
+    property color iCharger_Channel1PanelColor: "#0F77F7"
     property color iCharger_Channel1Background: "black"
     property color iCharger_Channel2PanelColor: "#009900"
     property color iCharger_Channel2Background: "black"
@@ -27,7 +27,7 @@ Rectangle {
         
         RowLayout { 
             anchors.fill: parent
-            spacing: 0
+            spacing: 2
             
             Channel {
                 id: channel1
@@ -37,11 +37,13 @@ Rectangle {
                 panelHeaderTitleLeft.text: "01-Cycle"
                 panelBorderColor: iCharger_Channel1PanelColor
                 panelBackgroundColor: iCharger_Channel1Background
+                
                 anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: volt_amps_temp.height
-                Layout.preferredWidth: parent.width / 2
+                
+                Layout.preferredWidth: (parent.width / 2) - 1
             }
             
             Channel {
@@ -52,17 +54,18 @@ Rectangle {
                 panelHeaderTitleLeft.text: "02-Balance"
                 panelBorderColor: iCharger_Channel2PanelColor
                 panelBackgroundColor: iCharger_Channel2Background
+                
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: volt_amps_temp.height
-                Layout.preferredWidth: parent.width / 2
+                Layout.preferredWidth: (parent.width / 2) - 1
             }
         }
         
         VoltAmpsTemp {
             id: volt_amps_temp   
-            
+                        
             voltage: info_ch1.outputVoltage
             ch1amps: info_ch1.outputCurrent
             ch2amps: info_ch2.outputCurrent
@@ -71,6 +74,9 @@ Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
+            
+            anchors.leftMargin: 2
+            anchors.rightMargin: 2
         }
     }
 }

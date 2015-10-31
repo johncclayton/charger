@@ -22,18 +22,27 @@ public:
     virtual ~MessageBus();
     
     Q_PROPERTY(bool alive READ alive NOTIFY aliveChanged)
+    Q_PROPERTY(bool testing READ testing NOTIFY testingChanged)
     
     bool alive() const { return _alive; }
+    void setAlive(bool value);
 
+    bool testing() const { return _testing; }
+    void setTesting(bool value);
+    
     void getDevices() const;
     void getDeviceInformation(QString key) const;
     
     void setPublishSocket(nzmqt::ZMQSocket* s);
     void setMessageSocket(nzmqt::ZMQSocket* s);
     
+    // for testing purposes - can inject the correct JSON as if it came from the wire
+    void reinjectMessageResponse(QByteArray msg);
+    
 signals:
     void heartbeat();
-    void aliveChanged(bool value);
+    void aliveChanged(bool);
+    void testingChanged(bool);
     
     void getDeviceResponse(QString key, QVariantMap resp);
     void getDevicesResponse(QVariantMap resp);
@@ -53,9 +62,7 @@ protected:
      * the server crashed - so the server sends something on /hearbeat every second.
      */
     void timerEvent(QTimerEvent* event);
-    
-    void setAlive(bool value);
-    
+        
 private:
     
     /**
@@ -69,7 +76,7 @@ private:
     nzmqt::ZMQSocket* _pub;
     nzmqt::ZMQSocket* _msg;
     
-    bool _alive;
+    bool _alive, _testing;
     QDateTime _lastHeartbeat;
 };
 

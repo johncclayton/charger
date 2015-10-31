@@ -23,5 +23,7 @@
         <file>images/looking.png</file>
         <file>VoltAmpsTemp.qml</file>
         <file>VoltAmpsTempForm.ui.qml</file>
+        <file>SelectableTab.qml</file>
+        <file>SelectableTabForm.ui.qml</file>
     </qresource>
 </RCC>

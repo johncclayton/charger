@@ -6,18 +6,20 @@ QT += qml quick widgets
 SOURCES += \
     cpp/main.cpp \ 
     cpp/channel_status.cpp \
+    cpp/channel_view_model.cpp \
     cpp/cell_state.cpp \
     cpp/device_info.cpp \
     cpp/device_model.cpp \
-    cpp/system_storage.cpp
+    cpp/system_storage.cpp \
 
 HEADERS += \
     cpp/channel_status.h \
+    cpp/channel_view_model.h \
     cpp/cell_state.h \
     cpp/device_info.h \
     cpp/device_model.h \
-    cpp/system_storage.h
-
+    cpp/system_storage.h 
+    
 RESOURCES += qml.qrc
 INCLUDEPATH += ../client
 INCLUDEPATH += ../bonjour

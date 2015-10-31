@@ -1,5 +1,7 @@
 #include <QHostInfo>
 #include <QUuid>
+#include <QDirIterator>
+#include <QFile>
 
 #include "client_controller.h"
 #include "nzmqt/nzmqt.hpp"
@@ -34,7 +36,12 @@ ClientMessagingController::~ClientMessagingController() {
     closeSubscribeSocket();
 }
 
-void ClientMessagingController::init(int pub_port, int msg_port) {
+void ClientMessagingController::init(int pub_port, int msg_port, QString test_dir) {
+    /** if testing - can bypass all setup */
+    if(!test_dir.isEmpty()) {
+        setupFakeDataFromDirectory(test_dir);
+        return;
+    }
     
     // kick off browsing for both service types but only when the ports are not specified.
     if(pub_port == 0 || msg_port == 0) {
@@ -42,12 +49,44 @@ void ClientMessagingController::init(int pub_port, int msg_port) {
         _resolve_message->init();
         _resolve_subscribe->init();
     } else {
-        qDebug() << QString("binding to localhost ports (you will need to have forwarded them appropriately through ssh, e.g. -L%1:<remote ip>:%2)...").arg(msg_port).arg(msg_port);
+        qDebug() << QString("binding to localhost ports (you will need to have forwarded them appropriately through ssh, e.g. -L%1:<remote ip to the computer that is connected to the charger>:%2)...").arg(msg_port).arg(msg_port);
         QHostInfo localhost = QHostInfo();
         localhost.setHostName("localhost");
         
         resolvedService(message_service, localhost, msg_port);
         resolvedService(publisher_service, localhost, pub_port);
+    }
+}
+
+void ClientMessagingController::timerEvent(QTimerEvent *event) {
+    Q_UNUSED(event);
+    
+    if(!_message_bus->testing())
+        return;
+    
+    fetchAndInjectTestingData();   
+}
+
+void ClientMessagingController::setupFakeDataFromDirectory(QString dir) {
+    _test_dir = dir;
+    _message_bus->setTesting(true);
+    
+    startTimer(1000);
+    
+    fetchAndInjectTestingData();
+}
+
+void ClientMessagingController::fetchAndInjectTestingData() {
+    QDirIterator it(_test_dir, QStringList() << "*.json", QDir::Files);
+    while (it.hasNext()) {
+        QFile jsonFile(it.next());
+        if(jsonFile.open(QIODevice::ReadOnly)) {
+            QByteArray allData = jsonFile.readAll();
+            if(!allData.isEmpty()) {
+                // inject into the message bus as a device update
+                _message_bus->reinjectMessageResponse(allData);
+            }
+        }
     }
 }
 
