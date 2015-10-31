@@ -36,7 +36,6 @@ Item {
     
     property ChannelStatus dataSource: ChannelStatus {}
     property ChannelViewModel viewModel: ChannelViewModel {}
-    property string myCellUnits: viewModel.cellState == ChannelViewModel.CELLS ? 'v' : 'r'
     
     property alias cell1: cell1
     property alias panel: panel
@@ -183,6 +182,7 @@ Item {
                     
                     Rectangle {
                         Layout.fillWidth: true
+                        color: "transparent"
                         border.width: 1
                         border.color: panelBorderColor
                         height: 1
@@ -222,70 +222,70 @@ Item {
                     OneCell {
                         id: cell1
                         cellNumber: "1"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell1.voltage : dataSource.cell1.resistance
+                        cellValue: cell1Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell2
                         cellNumber: "2"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell2.voltage : dataSource.cell2.resistance
+                        cellValue: cell2Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell3
                         cellNumber: "3"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell3.voltage : dataSource.cell3.resistance
+                        cellValue: cell3Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell4
                         cellNumber: "4"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell4.voltage : dataSource.cell4.resistance
+                        cellValue: cell4Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell5
                         cellNumber: "5"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell5.voltage : dataSource.cell5.resistance
+                        cellValue: cell5Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell6
                         cellNumber: "6"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell6.voltage : dataSource.cell6.resistance
+                        cellValue: cell6Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell7
                         cellNumber: "7"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell7.voltage : dataSource.cell7.resistance
+                        cellValue: cell7Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell8
                         cellNumber: "8"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell8.voltage : dataSource.cell8.resistance
+                        cellValue: cell8Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell9
                         cellNumber: "9"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell9.voltage : dataSource.cell9.resistance
+                        cellValue: cell9Value
                         cellUnits: myCellUnits
                     }
                     
                     OneCell {
                         id: cell10
                         cellNumber: "10"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.cell10.voltage : dataSource.cell10.resistance
+                        cellValue: cell10Value
                         cellUnits: myCellUnits
                     }
                 }
@@ -319,16 +319,16 @@ Item {
                     
                     OneCell {
                         id: summary1
-                        cellNumber: viewModel.cellState == ChannelViewModel.CELLS ? "Sv" : "Sʀ"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.totalVoltsAllCells : dataSource.totalResistance
-                        cellUnits: viewModel.cellState == ChannelViewModel.CELLS ? "mV" : "mΩ"
+                        cellNumber: summary1number
+                        cellValue: summary1value
+                        cellUnits: summary1units
                     }
                     
                     OneCell {
                         id: summary2
-                        cellNumber: viewModel.cellState == ChannelViewModel.CELLS ? "ΔV" : "Lʀ"
-                        cellValue: viewModel.cellState == ChannelViewModel.CELLS ? dataSource.totalVoltsDeltaAllCells : dataSource.lineInternalResistance
-                        cellUnits: viewModel.cellState == ChannelViewModel.CELLS ? "mV" : "mΩ"
+                        cellNumber: summary2number
+                        cellValue: summary2value
+                        cellUnits: summary2units
                     }                        
                 }
                 

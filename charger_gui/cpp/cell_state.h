@@ -12,29 +12,22 @@ public:
     explicit CellState(QObject *parent = 0);
     
     Q_PROPERTY(QString voltage READ voltage NOTIFY voltageChanged)
-    Q_PROPERTY(double resistance READ resistance NOTIFY resistanceChanged)
+    Q_PROPERTY(QString resistance READ resistance NOTIFY resistanceChanged)
     Q_PROPERTY(int number READ number NOTIFY numberChanged)
-    Q_PROPERTY(QString units READ units WRITE setCellUnits NOTIFY unitsChanged)
     
     QString voltage() const;
-    double resistance() const;
+    QString resistance() const;
     int number() const;
-    QString units() const;
     
     bool differsFrom(const CellState& other) const;
     
 signals:
-    void unitsChanged();
     void voltageChanged();
     void numberChanged();
     void resistanceChanged();
     
 public slots:
     void setFromJson(QByteArray data);
-    void setCellUnits(QString v) { _units = v; unitsChanged(); }
-    
-private: 
-    QString _units;
 };
 
 typedef QSharedPointer<CellState> CellStatePtr;

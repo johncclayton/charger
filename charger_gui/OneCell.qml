@@ -11,8 +11,9 @@ OneCellForm {
     
     preferredWidth:  cellFontMetrics.boundingRect(cellNumber).width + 
                      cellFontMetrics.boundingRect(cellUnits).width +            
-                     Math.max(value.width, label.width) + 
+                     value.width + label.width + 
                      (2 * layoutFields.anchors.margins)
+    
     preferredHeight: cellFontMetrics.height + (2 * layoutFields.anchors.margins) 
 }
 
