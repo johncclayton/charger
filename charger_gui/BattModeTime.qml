@@ -8,15 +8,20 @@ BattModeTimeForm {
         font.pointSize: textCharge.font.pointSize
     }
     
-    preferredLayoutWidth: Math.max(bmf.boundingRect(textBattery.text).width, 
-                                   bmf.boundingRect(textCharge.text).width, 
-                                   bmf.boundingRect("DISCHARGE").width, 
-                                   bmf.boundingRect("BALANCE").width, 
-                                   bmf.boundingRect("CYCLE").width, 
-                                   bmf.boundingRect("STORAGE").width, 
-                                   bmf.boundingRect(textCharge.text).width, 
-                                   bmf.boundingRect(textTime.text).width) + layoutFields.anchors.margins
+    property string batteryTypeStr: "LiPo6S"
+    property string chargeModeStr: "DISCHARGE" 
+    property string timeSpentStr: "01:12"
     
-    preferredLayoutHeight: bmf.boundingRect(textBattery.text).height * 4
+    property int preferredLayoutWidth: Math.max(
+                                           bmf.boundingRect(textBattery.text).width, 
+                                           bmf.boundingRect(textCharge.text).width, 
+                                           bmf.boundingRect("DISCHARGE").width, 
+                                           bmf.boundingRect("BALANCE").width, 
+                                           bmf.boundingRect("CYCLE").width, 
+                                           bmf.boundingRect("STORAGE").width, 
+                                           bmf.boundingRect(textCharge.text).width, 
+                                           bmf.boundingRect(textTime.text).width) + layoutFields.anchors.margins
+    
+    property int preferredLayoutHeight: bmf.boundingRect(textBattery.text).height * 4
 }
 

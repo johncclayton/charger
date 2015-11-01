@@ -5,10 +5,6 @@ Item {
     width: minimumLayoutWidth
     height: preferredLayoutHeight
     
-    property int preferredLayoutHeight: 0
-    property int minimumLayoutWidth: 0
-    property bool selected: false
-    
     property alias text: text
     property alias title: text.text
     property alias columnLayout: layout

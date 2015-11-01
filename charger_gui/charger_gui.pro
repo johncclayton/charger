@@ -11,6 +11,7 @@ SOURCES += \
     cpp/device_info.cpp \
     cpp/device_model.cpp \
     cpp/system_storage.cpp \
+    cpp/format.cpp
 
 HEADERS += \
     cpp/channel_status.h \
@@ -18,7 +19,8 @@ HEADERS += \
     cpp/cell_state.h \
     cpp/device_info.h \
     cpp/device_model.h \
-    cpp/system_storage.h 
+    cpp/system_storage.h \ 
+    cpp/format.h
     
 RESOURCES += qml.qrc
 INCLUDEPATH += ../client

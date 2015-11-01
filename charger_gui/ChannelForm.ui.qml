@@ -10,42 +10,21 @@ Item {
     // make use of them deep inside the PanelHeader parts - which is cool because then
     // I don't need to redefine them 6 times in each subcomponent.
     
-    property color panelTextColor: "white"
-    property color panelHeaderTextColor: "black"
-    property color panelBorderColor: "#3399FF"
-    property color panelBackgroundColor: panelBorderColor
     property alias panelHeaderTitleLeft: panel.headerTitleLeft
     property alias panelHeaderTitleRight: panel.headerTitleRight
-    property int panelBorderWidth: 2
-    
-    property color selectableTabBackgroundNotSelectedColor: "transparent"
-    property color selectableTabBackgroundSelectedColor: panelBorderColor
-    
-    property color selectableTabNotSelectedTextColor: panelBorderColor
-    property color selectableTabSelectedTextColor: panelTextColor
-    
-    property string batteryFontFamily: "Courier"
-    property int batteryFontPixelSize: 18
-    property string voltsFontFamily: "Verdana"
-    property int voltsFontPixelSize: 18
-    property color panelCellNumberColor: panelBorderColor
-    
-    property int panelRadius: 10
-    property int panelSmallRadius: 5
-    property int panelNumberOfRows: 10
-    
-    property ChannelStatus dataSource: ChannelStatus {}
-    property ChannelViewModel viewModel: ChannelViewModel {}
-    
+        
     property alias cell1: cell1
     property alias panel: panel
     property alias horizline: horizLine
+    property alias irlayout: irlayout
     property alias cells: allcells
+    property alias cells_column: cells_column
     
     property alias header_cells: header_cells
     property alias header_ir: header_ir
     property alias header_info: header_info
-        
+    property alias header_wrapper_ir_info: header_wrapper_ir_info
+    
     width: 300
     height: 220
     
@@ -69,7 +48,6 @@ Item {
             /** battery info / time and the volts/amps used */
             RowLayout {
                 id: row1layout
-                //                height: 92
                 
                 anchors.top: parent.top
                 anchors.left: parent.left
@@ -135,45 +113,53 @@ Item {
                             selected: viewModel.cellState == ChannelViewModel.CELLS
                             title: " Cells "
                         }
-                        
-                        Rectangle { 
-                            id: split1
-                            width: 1
-                            height: 10
-                            color: "transparent"
-                            border.width: 1
-                            border.color: panelBorderColor
-                        }                            
-                        
-                        SelectableTab {
-                            id: header_ir
-                            title: " IR "
-                            selected: viewModel.cellState == ChannelViewModel.RESISTANCE
+
+                        /** 
+                            exists only as a container that makes it easier to switch off all the splitter elements         
+                            and IR / info tabs while charging is NOT taking place 
+                          */
+                        Item {
+                            id: header_wrapper_ir_info
+                            
+                            Rectangle { 
+                                id: split1
+                                width: 1
+                                height: 10
+                                color: "transparent"
+                                border.width: 1
+                                border.color: panelBorderColor
+                            }                            
+                            
+                            SelectableTab {
+                                id: header_ir
+                                title: " IR "
+                                selected: viewModel.cellState == ChannelViewModel.RESISTANCE
+                            }
+                            
+                            Rectangle { 
+                                id: split2
+                                width: 1
+                                height: 10
+                                color: "transparent"
+                                border.width: 1
+                                border.color: panelBorderColor
+                            }                            
+                            
+                            SelectableTab {
+                                id: header_info
+                                title: " Info "
+                                selected: viewModel.cellState == ChannelViewModel.INFO
+                            }
+                            
+                            Rectangle { 
+                                id: split13
+                                width: 1
+                                height: 10
+                                color: "transparent"
+                                border.width: 1
+                                border.color: panelBorderColor
+                            }     
                         }
-                        
-                        Rectangle { 
-                            id: split2
-                            width: 1
-                            height: 10
-                            color: "transparent"
-                            border.width: 1
-                            border.color: panelBorderColor
-                        }                            
-                        
-                        SelectableTab {
-                            id: header_info
-                            title: " Info "
-                            selected: viewModel.cellState == ChannelViewModel.INFO
-                        }
-                        
-                        Rectangle { 
-                            id: split13
-                            width: 1
-                            height: 10
-                            color: "transparent"
-                            border.width: 1
-                            border.color: panelBorderColor
-                        }                            
                         
                         Item { 
                             Layout.fillWidth: true
@@ -211,14 +197,14 @@ Item {
                     columnSpacing: 12
                     rowSpacing: 0
                     
-                    Layout.preferredHeight: cells_column.height - (horizLine.height + irlayout.height)
+                    Layout.preferredHeight: cellsPreferredHeight
                     Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                     
                     anchors.bottom: horizLine.top
                     anchors.top: header.bottom
                     anchors.left: cells_column.left
                     anchors.right: cells_column.right
-                                        
+                    
                     OneCell {
                         id: cell1
                         cellNumber: "1"

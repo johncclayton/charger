@@ -73,7 +73,7 @@ ApplicationWindow {
         function createChargerInterfaceForKey(key) {
             var component = Qt.createComponent("ChargerDuo.qml");
             if (component.status === Component.Ready) {
-                var new_item = component.createObject(stack, {"objectName": key, "width": parent.width, "height": parent.height});
+                var new_item = component.createObject(stack, {"modelKey": key, "width": parent.width, "height": parent.height});
                 stack.push(new_item);
             }
             

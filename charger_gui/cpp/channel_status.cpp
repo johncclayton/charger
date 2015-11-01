@@ -26,12 +26,13 @@ void ChannelStatus::setFromJson(QByteArray data) {
     double eLineInternalResistance = lineInternalResistance();
     QString etotalVoltsAllCells = totalVoltsAllCells();
     QString etotalVoltsDeltaAllCells = totalVoltsDeltaAllCells();
+    bool eRunning = running();
     
     setObject( QJsonDocument::fromJson(data).object() );
 
     QVariantList cell_data = object().value("cells").toArray().toVariantList();
     
-    double voltsLow = 99;
+    double voltsLow = 999;
     double voltsHigh = 0;
     
     if(!cell_data.isEmpty()) {
@@ -66,6 +67,8 @@ void ChannelStatus::setFromJson(QByteArray data) {
         }
         
         _totalVoltsDeltaAllCells = voltsHigh - voltsLow;
+        if(_totalVoltsDeltaAllCells < -998)
+            _totalVoltsDeltaAllCells = 0;
     }
     
     if(etotalVoltsAllCells != totalVoltsAllCells())
@@ -93,6 +96,9 @@ void ChannelStatus::setFromJson(QByteArray data) {
         Q_EMIT totalResistanceChanged();
     if(eLineInternalResistance != lineInternalResistance())
         Q_EMIT lineInternalResistanceChanged();
+    
+    if(eRunning != running())
+        Q_EMIT runningChanged();
 }
 
 CellState* ChannelStatus::findCellNumber(int num) const {
@@ -109,6 +115,10 @@ CellState* ChannelStatus::findCellNumber(int num) const {
     qDebug() << "failure finding cell:" << num;
 //    Q_ASSERT(false);
     return 0;
+}
+
+bool ChannelStatus::running() const {
+    return outputCurrent() && outputPower();
 }
 
 CellState* ChannelStatus::cell1() const {

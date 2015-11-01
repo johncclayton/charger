@@ -22,6 +22,7 @@ class ChannelStatus : public QObject, private QJsonDocument
     Q_PROPERTY(double tempInternal READ tempInternal NOTIFY tempInternalChanged)
     Q_PROPERTY(double totalResistance READ totalResistance NOTIFY totalResistanceChanged)
     Q_PROPERTY(double lineInternalResistance READ lineInternalResistance NOTIFY lineInternalResistanceChanged)
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
     
     // summary fields - these depend on the values for other cells
     Q_PROPERTY(QString totalVoltsAllCells READ totalVoltsAllCells NOTIFY totalVoltsAllCellsChanged)
@@ -47,6 +48,7 @@ class ChannelStatus : public QObject, private QJsonDocument
 public:
     explicit ChannelStatus(QObject *parent = 0);
     
+    bool running() const;
     quint8 channel() const;
     quint32 outputPower() const;
     double outputCurrent() const;
@@ -80,6 +82,7 @@ public:
     QString totalVoltsDeltaAllCells() const;
     
 signals:
+    void runningChanged();
     void cellValuesChanged(int index);
     void channelChanged();
     void outputCurrentChanged();

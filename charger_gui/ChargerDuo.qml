@@ -1,31 +1,34 @@
 import QtQuick 2.5
 import com.coderage.messaging 1.0 
 
-ChargerDuoForm {
-    id: thing
-    
-    iCharger_Channel1Background: Qt.darker(iCharger_Channel1PanelColor, 8)
-    iCharger_Channel2Background: Qt.darker(iCharger_Channel2PanelColor, 8)
-    
+ChargerDuoForm {   
     property string modelKey: ""
+
+    property color iCharger_Channel1PanelColor: "#0F77F7"
+    property color iCharger_Channel1Background: Qt.darker(iCharger_Channel1PanelColor, 8)
+    property color iCharger_Channel2PanelColor: "#009900"
+    property color iCharger_Channel2Background: Qt.darker(iCharger_Channel2PanelColor, 8)
+    
+    property string voltageStr: Format.valueStr(info.ch1.inputVoltage / 1000.0)
+    property string ch1ampsStr: Format.valueStr(info_ch1.outputCurrent)
+    property string ch2ampsStr: Format.valueStr(info_ch2.outputCurrent)
+    property string tempInternalStr: Format.valueStr(info_ch1.tempInternal  / 10.0)
+
     property DeviceInfo info: DeviceInfo {}
-
-    channel1.dataSource: info.ch1
-    channel2.dataSource: info.ch2
-
+    property ChannelStatus info_ch1: ChannelStatus {}
+    property ChannelStatus info_ch2: ChannelStatus {}
+    
     Connections {
         target: devicesModel
         onDeviceInfoUpdated: {
             info = devicesModel.getDeviceInfo(modelKey);
-            channel1.dataSource = info.ch1;
-            channel2.dataSource = info.ch2;
-            volt_amps_temp.voltage = info.ch1.inputVoltage / 1000.0;
+            info_ch1 = info.ch1;
+            info_ch2 = info.ch2;
         }        
     }
         
     Component.onCompleted: {
-        console.log("getting device info for model key:" + thing.objectName)
-        modelKey = thing.objectName
+        console.log("assigned to show info for model key:" + modelKey)
     }
 
     Component.onDestruction: {

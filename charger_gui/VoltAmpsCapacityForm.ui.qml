@@ -7,16 +7,10 @@ Item {
     width: 200
     height: 100
     
-    property double voltage: 23.010
-    property double amps: 26.84
-    property double capacity: 0
-    
     property alias textVolts: textVolts
     property alias textAmps:textAmps
     property alias textCapacity: textCapacity
     
-    property int minimumLayoutWidth: 0
-    property int preferredLayoutHeight: 0
     property alias columnLayout: columnLayout
         
     Rectangle {

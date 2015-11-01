@@ -7,10 +7,6 @@ Item {
     width: 100
     height: 100
         
-    property string batteryType: "LiPo6S"
-    property string chargeMode: "DISCHARGE" 
-    property string timeSpent: "01:12"
-    
     property alias content: content    
     property alias textBattery: textBattType
     property alias textCharge: textChargeMode
@@ -18,8 +14,6 @@ Item {
     property alias textFiller: filler
     
     property alias layoutFields: layoutFields
-    property int preferredLayoutWidth: 0
-    property int preferredLayoutHeight: 0
     
     ColumnLayout {
         id: layoutFields
@@ -31,7 +25,7 @@ Item {
         
         Text {
             id: textBattType
-            text: batteryType
+            text: batteryTypeStr
             
             horizontalAlignment: Text.AlignLeft
             font.pointSize: batteryFontPixelSize
@@ -42,7 +36,7 @@ Item {
         
         Text {
             id: textChargeMode
-            text: chargeMode
+            text: chargeModeStr
             font.bold: true
             horizontalAlignment: Text.AlignLeft
             font.pointSize: batteryFontPixelSize
@@ -57,7 +51,7 @@ Item {
         
         Text {
             id: textTime1
-            text: 'm' + timeSpent
+            text: 'm' + timeSpentStr
             font.bold: true
             horizontalAlignment: Text.AlignLeft
             font.pointSize: batteryFontPixelSize

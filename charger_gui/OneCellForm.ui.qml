@@ -4,15 +4,9 @@ import QtQuick.Layouts 1.1
 Item {
     width: preferredWidth
     height: preferredHeight
+//    visible: visible
     
     id: content
-    
-    property string cellNumber: ""
-    property string cellValue: "3.75"
-    property string cellUnits: 'v'
-    
-    property int preferredWidth: 0
-    property int preferredHeight: 0
     
     property alias label: thelabel
     property alias value: thevalue

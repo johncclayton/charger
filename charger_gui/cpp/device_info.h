@@ -23,6 +23,8 @@ public:
     Q_PROPERTY(ChannelStatus* ch1 READ channel1 NOTIFY channel1Changed)
     Q_PROPERTY(ChannelStatus* ch2 READ channel2 NOTIFY channel2Changed)
     
+    Q_PROPERTY(bool running READ running NOTIFY runningChanged)
+    
     explicit DeviceInfo(QObject *parent = 0);
     
     enum StatusBits {
@@ -49,10 +51,12 @@ public:
     
     ChannelStatus* channel1() const { return _channel[0].data(); }
     ChannelStatus* channel2() const { return _channel[1].data(); }
+    bool running() const;
     
     Q_ENUMS(Status)
     
 signals:
+    void runningChanged();
     void imageSourceChanged();
     void serialNumberChanged();
     void softwareVersionChanged();

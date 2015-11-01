@@ -6,18 +6,9 @@ Rectangle {
     height: 30
     
     color: "black"
-    
-    property double voltage: 24.3
-    property double ch1amps: 3.2
-    property double ch2amps: 0
-    property double temperature: 23
-    property bool tempIsCentigrade: true
-    
+        
     property alias label: dclabel
     property alias layoutFields: layoutFields
-    
-    property int preferredHeight: 30
-    property color textColor: "white"
     
     RowLayout {
         id: layoutFields

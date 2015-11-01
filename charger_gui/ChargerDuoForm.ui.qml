@@ -7,18 +7,9 @@ Rectangle {
     width: 400
     height: 400
     
-    property string key: ""
-    property color iCharger_Channel1PanelColor: "#0F77F7"
-    property color iCharger_Channel1Background: "black"
-    property color iCharger_Channel2PanelColor: "#009900"
-    property color iCharger_Channel2Background: "black"
-
     property alias channel1: channel1
     property alias channel2: channel2
     property alias volt_amps_temp: volt_amps_temp
-    
-    property ChannelStatus info_ch1: ChannelStatus {}
-    property ChannelStatus info_ch2: ChannelStatus {}
     
     color: "black"
     
@@ -66,10 +57,10 @@ Rectangle {
         VoltAmpsTemp {
             id: volt_amps_temp   
                         
-            voltage: info_ch1.outputVoltage
-            ch1amps: info_ch1.outputCurrent
-            ch2amps: info_ch2.outputCurrent
-            temperature: info_ch1.tempInternal
+            voltage: voltageStr
+            ch1amps: ch1ampsStr
+            ch2amps: ch2ampsStr
+            temperature: tempInternalStr
             
             anchors.bottom: parent.bottom
             anchors.left: parent.left

@@ -31,6 +31,16 @@ void DeviceInfo::setImageSource(QString value) {
     Q_EMIT imageSourceChanged();
 }
 
+bool DeviceInfo::running() const { 
+    if(_channel[0] && _channel[0]->running())
+        return true;
+        
+    if(_channel[1] && _channel[1]->running())
+        return true;
+
+    return false;
+}
+
 QString DeviceInfo::serialNumber() const { 
     return object()[STR_DEVICE_ONLY_SERIAL_NUMBER].toString().trimmed(); 
 }
