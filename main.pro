@@ -4,11 +4,11 @@ CONFIG += ordered
 SUBDIRS = bonjour \
           messaging \
           client \  
-          service \ 
+#          service \ 
           charger_gui 
 
 messaging.depends = bonjour
 client.depends = messaging
-service.depends = messaging
+#service.depends = messaging
 
 charger_gui.depends = bonjour, messaging, client

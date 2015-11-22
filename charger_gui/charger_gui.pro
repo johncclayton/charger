@@ -22,7 +22,10 @@ HEADERS += \
     cpp/system_storage.h \ 
     cpp/format.h
     
-RESOURCES += qml.qrc
+RESOURCES += \
+    qml.qrc \
+    icharger/icharger.qrc
+
 INCLUDEPATH += ../client
 INCLUDEPATH += ../bonjour
 INCLUDEPATH += ../messaging
@@ -31,15 +34,20 @@ LIBS += ../messaging/libmessaging.a
 LIBS += ../bonjour/libbonjour.a
 TARGET = Charger
 
-unix:!macx {
-    INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
-    LIBS += ../3rdparty/build/lib/libusb-1.0.a -L/usr/lib/arm-linux-gnueabihf -lzmq -ldns_sd -lrt -ludev
-    LIBS += -lqjson 
+#unix:!macx {
+#    INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
+#    LIBS += ../3rdparty/build/lib/libusb-1.0.a -L/usr/lib/arm-linux-gnueabihf -lzmq -ldns_sd -lrt -ludev
+#    LIBS += -lqjson 
+#}
+
+ios {
+    INCLUDEPATH += /usr/local/include
+    LIBS += -L/usr/local/lib -lzmq 
 }
 
 macx {
-    INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
-    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq 
+    INCLUDEPATH += /usr/local/include
+    LIBS += -L/usr/local/lib -lzmq 
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model

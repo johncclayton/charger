@@ -9,13 +9,17 @@ TARGET = client
 INCLUDEPATH += $$PWD $$PWD/.. ../service ../client
 
 unix:!macx {
-    INCLUDEPATH += ../3rdparty/build/include/libusb-1.0
-    LIBS += ../3rdparty/build/lib/libusb-1.0.a -L/usr/lib/arm-linux-gnueabihf -lzmq -ldns_sd -lrt -ludev
+    LIBS += -L/usr/lib/arm-linux-gnueabihf -lzmq -ldns_sd -lrt -ludev
+}
+
+ios {
+    INCLUDEPATH += /usr/local/include
+    LIBS += -L/usr/local/lib -lzmq 
 }
 
 macx {
-    INCLUDEPATH += /usr/local/include /usr/local/include/libusb-1.0
-    LIBS += -L/usr/local/lib -lusb-1.0 -lzmq 
+    INCLUDEPATH += /usr/local/include 
+    LIBS += -L/usr/local/lib -lzmq 
 }
 
 HEADERS += \

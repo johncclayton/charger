@@ -1,7 +1,9 @@
 #include <QHostInfo>
 #include <QUuid>
 #include <QDirIterator>
+#include <QDir>
 #include <QFile>
+#include <QSettings>
 
 #include "client_controller.h"
 #include "nzmqt/nzmqt.hpp"
@@ -69,7 +71,11 @@ void ClientMessagingController::timerEvent(QTimerEvent *event) {
 
 void ClientMessagingController::setupFakeDataFromDirectory(QString dir) {
     _test_dir = dir;
-    _message_bus->setTesting(true);
+    
+    QSettings testSettings(QString("%1%2%3").arg(dir).arg(QDir::separator(), "test.ini"),
+                           QSettings::IniFormat);
+    
+    _message_bus->setTestSettings(testSettings);
     
     startTimer(1000);
     

@@ -89,10 +89,7 @@ void DeviceModel::resetModels() {
             info->setImageSource("qrc:/images/icharger_406_duo.png");
         if(info->product().contains("icharger", Qt::CaseInsensitive) && info->product().contains("308"))
             info->setImageSource("qrc:/images/icharger_308_duo.png");
-        
-        debugChannel(info->channel1(), 1);
-        debugChannel(info->channel2(), 2);
-        
+                
         _devices.append(info);
     }
         

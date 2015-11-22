@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/icharger_4010_duo.png</file>
+        <file>images/icharger_308_duo.png</file>
+        <file>images/icharger_406_duo.png</file>
+    </qresource>
+    <qresource prefix="/icharger">
+        <file>Channel.qml</file>
+        <file>ChannelForm.ui.qml</file>
+        <file>DeviceDelegate.qml</file>
+        <file>DeviceDelegateForm.ui.qml</file>
+        <file>OneCell.qml</file>
+        <file>OneCellForm.ui.qml</file>
+        <file>PanelHeader.qml</file>
+        <file>PanelHeaderForm.ui.qml</file>
+        <file>BattModeTime.qml</file>
+        <file>BattModeTimeForm.ui.qml</file>
+        <file>VoltAmpsCapacity.qml</file>
+        <file>VoltAmpsCapacityForm.ui.qml</file>
+        <file>ChargerDuo.qml</file>
+        <file>ChargerDuoForm.ui.qml</file>
+        <file>VoltAmpsTemp.qml</file>
+        <file>VoltAmpsTempForm.ui.qml</file>
+        <file>SelectableTab.qml</file>
+        <file>SelectableTabForm.ui.qml</file>
+        <file>SimpleChargerControl.qml</file>
+        <file>SimpleChargerControlForm.ui.qml</file>
+    </qresource>
+</RCC>

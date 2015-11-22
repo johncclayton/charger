@@ -20,6 +20,11 @@ MessageBus::MessageBus(QObject *parent) :
 MessageBus::~MessageBus() {
 }
 
+void MessageBus::setTestSettings(QSettings& settings) {
+    _test_settings["active"] = settings.value("active", true); 
+    setTesting(true);
+}
+
 void MessageBus::setTesting(bool value) { 
     if(value != _testing) {
         _testing = value; 
@@ -27,7 +32,7 @@ void MessageBus::setTesting(bool value) {
     }
 
     if(value)
-        setAlive(true);
+        setAlive(tsActive());
 }
 
 void MessageBus::setPublishSocket(ZMQSocket* s) {
@@ -109,6 +114,11 @@ void MessageBus::processMessageResponse(QList<QByteArray> msg) {
 }
 
 void MessageBus::reinjectMessageResponse(QByteArray msg) {
+    if(!tsActive()) {
+        qDebug() << "not injecting data - as the test harness says we are inactive";
+        return;
+    }
+    
     QVariantMap payload = jsonToVariantMap(msg);
     QString action = payload["action"].toString();
     if(action == "get-device") {

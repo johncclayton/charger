@@ -2,8 +2,11 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Extras 1.4
+import QtQml.StateMachine 1.0 
 
 ApplicationWindow {
+    id: app
+    
     visible: true
     
     width: 530
@@ -11,9 +14,9 @@ ApplicationWindow {
     
     minimumWidth: 500
     minimumHeight: 240
-    
+        
     title: qsTr("Charger")
-    
+        
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -23,6 +26,8 @@ ApplicationWindow {
             }
         }
     }
+    
+    Accessible.name: "Charger App"
     
     statusBar: StatusBar {
         RowLayout {
@@ -64,26 +69,74 @@ ApplicationWindow {
         }
     }
     
-    
+//    StateMachine {
+//        id: connectionStateMachine
+        
+//        initialState: connectingState
+        
+//        State {
+//            id: connectingState
+//        }
+        
+//        State { 
+//            id: connectedState 
+//        }
+        
+//        State {
+//            id: notStartedState
+//        }
+        
+//        State { 
+//            id: runningState
+//        }
+        
+//        State {
+//            id: errorState
+//        }
+        
+//        FinalState {
+//            id: quittingState
+//        }
+//    }
+        
     StackView {
         id: stack
         initialItem: connectServer
         anchors.fill: parent
+               
+        property var component;
+        
+        function finishedLoading(key) {
+            if(component.status === Component.Ready) {
+                var new_item = component.createObject(stack, {"modelKey": key, "width": parent.width, "height": parent.height});
+                if(new_item) {
+                    console.log("iCharger DUO UI activated for key:", key);
+                    stack.push(new_item);
+                } else {
+                    console.log("error creating object");           
+                }
+            } 
+            else if(component.status === Component.Error) {
+                console.log("Error loading the component:", component.errorString());       
+            }
+        }
         
         function createChargerInterfaceForKey(key) {
-            var component = Qt.createComponent("ChargerDuo.qml");
-            if (component.status === Component.Ready) {
-                var new_item = component.createObject(stack, {"modelKey": key, "width": parent.width, "height": parent.height});
-                stack.push(new_item);
+            console.log("activating charger duo...");
+            component = Qt.createComponent("icharger/ChargerDuo.qml");
+            if(component.status === Component.Ready) {
+                finishedLoading(key);
+            } else if(component.status === Component.Loading) {
+                component.statusChanged.connect(function() { finishedLoading(key) });
+            } else if(component.status === Component.Error) {
+                console.log("error creating component:", component.errorString());           
             }
-            
-            return null;
         }
         
         function removeChargerInterfaceForKey(key) {
             for(var i = 0; i < children.length; i++) {
                 var item = children[i];
-                if(key === item.objectName) {
+                if(key === item.modelKey) {
                     if(item.Stack.status === Stack.Active)
                         pop(null);
                     item.destroy(1000);

@@ -38,6 +38,8 @@ ConnectServerForm {
     
     Behavior on connectionLabel.opacity { NumberAnimation { duration: animTime } }
     
+    Accessible.name: "Connection Window"
+    
     onNewConnectionLabelStringChanged: {
         connectionLabel.opacity = 0
         fadeTimer.running = true

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHostInfo>
+#include <QVariantMap>
 
 #include "message_bus.h"
 #include "registered_type_resolver.h"
@@ -79,6 +80,8 @@ private:
     MessageBus* _message_bus;
         
     QString _test_dir;
+    QVariantMap _test_settings;
+    
     QString _host;
     int _pub_port, _msg_port;
 };

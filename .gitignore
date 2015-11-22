@@ -8,3 +8,4 @@ lib*.a
 charger
 *.deb
 main.pro.user
+3rdparty/libusb-1.0.20

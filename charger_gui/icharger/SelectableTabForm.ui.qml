@@ -12,6 +12,7 @@ Item {
     
     Rectangle {
         anchors.fill: parent 
+        Accessible.ignored: true
         
         color: selected ? selectableTabBackgroundSelectedColor : selectableTabBackgroundNotSelectedColor
         

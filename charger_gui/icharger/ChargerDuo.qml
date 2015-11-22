@@ -1,9 +1,12 @@
 import QtQuick 2.5
+import QtQuick.Controls 1.4
 import com.coderage.messaging 1.0 
 
-ChargerDuoForm {   
+StackView {
+    initialItem: channelStatus
+    
     property string modelKey: ""
-
+    
     property color iCharger_Channel1PanelColor: "#0F77F7"
     property color iCharger_Channel1Background: Qt.darker(iCharger_Channel1PanelColor, 8)
     property color iCharger_Channel2PanelColor: "#009900"
@@ -13,10 +16,20 @@ ChargerDuoForm {
     property string ch1ampsStr: Format.valueStr(info_ch1.outputCurrent)
     property string ch2ampsStr: Format.valueStr(info_ch2.outputCurrent)
     property string tempInternalStr: Format.valueStr(info_ch1.tempInternal  / 10.0)
-
+    
     property DeviceInfo info: DeviceInfo {}
     property ChannelStatus info_ch1: ChannelStatus {}
     property ChannelStatus info_ch2: ChannelStatus {}
+    
+//    SimpleChargerControl {
+//        id: selectMode
+//        anchors.fill: parent
+//    }
+    
+    ChargerDuoForm {   
+        id: channelStatus 
+        anchors.fill: parent
+    }
     
     Connections {
         target: devicesModel
@@ -26,13 +39,12 @@ ChargerDuoForm {
             info_ch2 = info.ch2;
         }        
     }
-        
+    
     Component.onCompleted: {
         console.log("assigned to show info for model key:" + modelKey)
     }
-
+    
     Component.onDestruction: {
         console.log("iChargerDUO UI being destroyed");
     }
 }
-

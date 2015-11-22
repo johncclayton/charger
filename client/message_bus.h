@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTimerEvent>
+#include <QSettings>
 #include <QVariantMap>
 #include <QDateTime>
 
@@ -29,6 +30,8 @@ public:
 
     bool testing() const { return _testing; }
     void setTesting(bool value);
+    
+    void setTestSettings(QSettings& settings);
     
     void getDevices() const;
     void getDeviceInformation(QString key) const;
@@ -64,6 +67,7 @@ protected:
     void timerEvent(QTimerEvent* event);
         
 private:
+    bool tsActive() { return _test_settings["active"].toBool(); }
     
     /**
      * @brief syncRequest publishes a request payload to the back end service and expects
@@ -77,6 +81,7 @@ private:
     nzmqt::ZMQSocket* _msg;
     
     bool _alive, _testing;
+    QVariantMap _test_settings;
     QDateTime _lastHeartbeat;
 };
 

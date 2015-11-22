@@ -107,6 +107,9 @@ Item {
     }
 
     Button {
+        Accessible.name: "Quit Button"
+        Accessible.role: Accessible.Button
+        
         id: actionButton
         isDefault: true
         text:  qsTr("Quit")

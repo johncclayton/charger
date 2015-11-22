@@ -4,12 +4,7 @@ import com.coderage.messaging 1.0
 
 Item {
     id: content
-    
-    // bit of a trick: these are *required* everywhere inside PanelHeader component
-    // but use of QML Component scope rules means I can define/declare them here and
-    // make use of them deep inside the PanelHeader parts - which is cool because then
-    // I don't need to redefine them 6 times in each subcomponent.
-    
+        
     property alias panelHeaderTitleLeft: panel.headerTitleLeft
     property alias panelHeaderTitleRight: panel.headerTitleRight
         
