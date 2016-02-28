@@ -59,8 +59,10 @@ icharger_usb::icharger_usb(libusb_device* d) :
 {
     Q_ASSERT(handle == 0);
     int r = libusb_open(device, &handle);
-    if(r != 0)
+    if(r != 0) {
+        error_print("unable to open the usb device - error is: %d", r);
         handle = 0;
+    }
     
     libusb_get_device_descriptor(device, &descriptor);    
 }
