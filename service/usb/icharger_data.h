@@ -201,7 +201,7 @@ struct read_data_registers {
     register16 starting_address;
     register16 quantity_to_read;
     
-    read_data_registers(int base_addr, int num_registers) {
+    read_data_registers(uint8_t base_addr, uint8_t num_registers) {
         starting_address.high = base_addr >> 8;
         starting_address.low = (char)(base_addr & 0xff);
         quantity_to_read.high = num_registers >> 8;
