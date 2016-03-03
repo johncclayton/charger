@@ -43,6 +43,14 @@ int error_print(const char* msg, int rc, ...) {
     return rc;
 }
 
+void dump_ascii_hex(char* data, int len) {
+    printf("from addr: %d for %d bytes\r\n", (void *)data, len);
+    for(int i = 0; i < len; ++i) {
+        printf("%2d: %2x %c\r\n", i, data[i], data[i]);
+    }
+    printf("----\r\n");
+}
+
 usb_context::usb_context() : ctx(0), result(0) {
     result = libusb_init(&ctx);
 }
