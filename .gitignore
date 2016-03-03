@@ -1,5 +1,4 @@
 *.o
-build/
 moc_*.cpp
 .depend
 read_test
@@ -8,4 +7,6 @@ lib*.a
 charger
 *.deb
 main.pro.user
-3rdparty/libusb-1.0.20
+3rdparty/libusb-1.0.20*
+3rdparty/libsodium-1.0.8*
+3rdparty/zeromq-4.1.4*

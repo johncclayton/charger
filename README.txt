@@ -1,4 +1,5 @@
 Prerequisites: 
+- libusb - compiled via 3rdparty directory
 - q4 + dev tools
 - libsodium
 - zeromq
