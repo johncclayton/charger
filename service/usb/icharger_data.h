@@ -201,11 +201,12 @@ struct read_data_registers {
     register16 starting_address;
     register16 quantity_to_read;
     
-    read_data_registers(uint8_t base_addr, uint8_t num_registers) {
+    read_data_registers(u16 base_addr, u16 num_registers) {
         starting_address.high = base_addr >> 8;
-        starting_address.low = (char)(base_addr & 0xff);
+        starting_address.low = (u8)(base_addr & 0x00ff);
+
         quantity_to_read.high = num_registers >> 8;
-        quantity_to_read.low = (char)(num_registers & 0xff);
+        quantity_to_read.low = (u8)(num_registers & 0x00ff);
     }
 } __attribute__ ((packed));
 
