@@ -64,7 +64,7 @@ icharger_usb::icharger_usb(libusb_device* d) :
         handle = 0;
     }
     
-    libusb_get_device_descriptor(device, &descriptor);    
+    libusb_get_device_descriptor(device, &descriptor);
 }
 
 icharger_usb::~icharger_usb() {
@@ -98,15 +98,15 @@ int icharger_usb::acquire() {
     if(r < 0)
         return r;
     
-    return 0;    
+    return 0;
 }
 
 int icharger_usb::clear_halt(unsigned char endpoint) {
     if(handle) {
         int r = libusb_clear_halt(handle, endpoint);
-	if(r != 0)
-		error_print("unable to clear halt condition", r);
-	return r;
+        if(r != 0)
+            error_print("unable to clear halt condition", r);
+        return r;
     }
 
     return 0;
@@ -115,20 +115,20 @@ int icharger_usb::clear_halt(unsigned char endpoint) {
 int icharger_usb::reset() {
     if(handle) {
         int r = libusb_reset_device(handle);
-	if(r != 0)
-		error_print("unable to reset the device", r);
-	return r;
+        if(r != 0)
+            error_print("unable to reset the device", r);
+        return r;
     }
 
     return 0;
 }
 
 int icharger_usb::vendorId() const {
-    return descriptor.idVendor;    
+    return descriptor.idVendor;
 }
 
 int icharger_usb::productId() const {
-    return descriptor.idProduct;    
+    return descriptor.idProduct;
 }
 
 QString icharger_usb::descriptor_str(uint8_t desc_idx) {    
@@ -173,7 +173,7 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         int transferred = 0;
         
         if(handle == 0) {
-           return LIBUSB_ERROR_NO_DEVICE;
+            return LIBUSB_ERROR_NO_DEVICE;
         }
         
         r = libusb_interrupt_transfer(
@@ -194,7 +194,7 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
         } else if(r != 0) {
             error_print("an error was encountered during data transfer with endpoint address 0x%Xd - resetting", r, endpoint_address);
             perror("error with  usb transfer");
-    		reset();
+            reset();
             return r;
         }
         
@@ -229,14 +229,14 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
     // ask the iCharger to send back the registers
     int r = usb_data_transfer(END_POINT_ADDRESS_WRITE, data, sizeof(data));
     if(r == 0) {
-        memset(data, 0, sizeof(data));     
+        memset(data, 0, sizeof(data));
         r = usb_data_transfer(END_POINT_ADDRESS_READ, (char *)&data, sizeof(data));
         if(r == 0) {
             if(data[HID_PACK_LEN] > HID_PACK_MAX) {
                 return MB_ELEN;
             }
             
-            //dump_ascii_hex(data, data[HID_PACK_LEN]);	
+            //dump_ascii_hex(data, data[HID_PACK_LEN]);
             
             if(data[HID_PACK_MODBUS] == func_code) {
                 switch(func_code) {
@@ -254,12 +254,12 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
                     
                     break;
                 case MB_FUNC_WRITE_MULTIPLE_REGISTERS:
-                    data[HID_PACK_LEN] = 5 + (data[HID_PACK_MODBUS + 5] * 2 + 1);	
+                    data[HID_PACK_LEN] = 5 + (data[HID_PACK_MODBUS + 5] * 2 + 1);
                     break;
                 }
             } else {
                 if(data[HID_PACK_MODBUS] == (func_code | 0x80))
-                    return (ModbusRequestError) data[HID_PACK_MODBUS + 1];	
+                    return (ModbusRequestError) data[HID_PACK_MODBUS + 1];
                 else
                     return MB_ERETURN;
             }
@@ -354,7 +354,7 @@ ModbusRequestError icharger_usb::write_request(int base_addr, int num_registers,
 
 // 0x04 - read input registers at base address 0x0000
 ModbusRequestError icharger_usb::get_device_only(device_only* output) {	
-    return read_request(MB_FUNC_READ_INPUT_REGISTER, BASE_ADDR_DEVICE_ONLY, sizeof(device_only) / 2, (char *)output); 
+    return read_request(MB_FUNC_READ_INPUT_REGISTER, BASE_ADDR_DEVICE_ONLY, sizeof(device_only) / 2, (char *)output);
 }
 
 ModbusRequestError icharger_usb::get_channel_status(int channel /* 0 or 1 */, channel_status* output) {
@@ -375,11 +375,11 @@ ModbusRequestError icharger_usb::get_system_storage(system_storage* output) {
     device_only dev;
     ModbusRequestError r = get_device_only(&dev);
     if(r == MB_EOK) {
-        return read_request(MB_FUNC_READ_HOLDING_REGISTER, BASE_ADDR_SYSTEM_STORAGE, 
+        return read_request(MB_FUNC_READ_HOLDING_REGISTER, BASE_ADDR_SYSTEM_STORAGE,
                             sizeof(system_storage) / 2, (char *)output);
     }
     
-    return MB_EX_ILLEGAL_DATA_ADDRESS;	
+    return MB_EX_ILLEGAL_DATA_ADDRESS;
 }
 
 ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramType program, int mem_index) {
@@ -390,13 +390,13 @@ ModbusRequestError icharger_usb::order(OrderAction action, Channel ch, ProgramTy
         data[0] = program;
         data[1] = mem_index;
         data[2] = (int)ch;
-        data[3] = VALUE_ORDER_KEY; 
+        data[3] = VALUE_ORDER_KEY;
         data[4] = action;
         return write_request(REG_SEL_OP, 5, (char *)data);
         
     case ORDER_STOP:
         data[0] = VALUE_ORDER_KEY;
-        data[1] = action;	
+        data[1] = action;
         return write_request(REG_ORDER_KEY, 2, (char *)data);
         
     default:

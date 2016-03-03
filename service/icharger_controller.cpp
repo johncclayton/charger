@@ -114,7 +114,7 @@ void iCharger_DeviceController::handleTimeout() {
             }
         }
     } else {
-        qDebug() << "error getting device only info - resetting";
+        qDebug() << "error getting device only info - resetting, err:" << r;
         _device->reset();
     }
         
