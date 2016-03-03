@@ -4,6 +4,10 @@
 #include "usb/icharger_usb.h"
 #include "libusb.h"
 
+HotplugCallbackAdapter::Receiver::~Receiver() {
+
+}
+
 int hotplug_callback(struct libusb_context *ctx, 
                      struct libusb_device *dev,
                      libusb_hotplug_event event, 

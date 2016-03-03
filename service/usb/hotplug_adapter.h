@@ -2,6 +2,7 @@
 #define USB_HOTPLUGLISTENER_H
 
 struct libusb_context;
+#include <QString>
 
 /**
  * @brief The HotplugEventAdapter class is responsible to matching hotplug events to the USB driver code 
@@ -14,6 +15,7 @@ class HotplugCallbackAdapter
 {
 public:
     struct Receiver {
+        virtual ~Receiver();
         virtual void callback(bool activation, int vendorId, int productId, QString sn) = 0;
     };
 

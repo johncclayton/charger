@@ -1,5 +1,5 @@
-#ifndef __DEV_REG_H
-#define __DEV_REG_H
+#ifndef DEVICE_REGR_H
+#define DEVICE_REGR_H
 
 #include <QObject>
 #include <QMap>

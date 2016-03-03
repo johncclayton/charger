@@ -23,12 +23,13 @@ void DeviceRegistry::activateDevice(int vendor, int product, QString sn) {
         QString key(deviceKey(vendor, product, sn));
         icharger_usb_ptr obj(match[index]);
         iCharger_DeviceController_ptr device_ptr(new iCharger_DeviceController(key, obj));
-        if(0 == device_ptr->device()->acquire()) {
+        int r = device_ptr->device()->acquire();
+        if(0 == r) {
             qDebug() << "device registered:" << key;
             _devices.insert(key, device_ptr);
             Q_EMIT deviceActivated(key);
         } else {
-            qDebug() << "wasn't able to claim the device - ignoring it";
+            qDebug() << "wasn't able to claim the device - result code:" << r;
         }
     }
 }
