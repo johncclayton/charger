@@ -4,7 +4,7 @@ CONFIG += ordered
 SUBDIRS = bonjour \
           messaging \
           client \  
-#          service \ 
+          service \
           charger_gui 
 
 messaging.depends = bonjour

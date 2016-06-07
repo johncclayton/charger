@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 D=zeromq-4.1.4
 T=$D.tar
 F=$T.gz
@@ -11,4 +13,4 @@ if [ -d "$D" ]; then
 	rm -rf "$D"
 fi
 
-tar xzf $F && cd $D && ./configure --disable-shared --enable-static --prefix=$B --with-libsodium=$B && make && make install
+tar xzf $F && cd $D && ./configure --host=arm-linux-gnueabihf --disable-shared --enable-static --prefix=$B --with-libsodium=$B && make && make install

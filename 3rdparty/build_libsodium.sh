@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 
 D=libsodium-1.0.8
 T=$D.tar

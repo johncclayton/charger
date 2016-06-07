@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 D=libusb-1.0.20
 T=$D.tar
 F=$T.bz2
@@ -15,4 +17,4 @@ if [ ! -f "$T" ]; then
 	bunzip2 $F 
 fi
 
-tar xf $T && cd $D && ./configure --enable-static --disable-shared --prefix=$B && make && make install
+tar xf $T && cd $D && ./configure --host=arm-linux-gnueabihf --enable-static --disable-udev --disable-shared --prefix=$B && make && make install

@@ -11,6 +11,13 @@ Arch
 
 Everything hangs together based on ZeroMQ.  This allows me to write the components in whatever language I want, applicable to the task at hand. 
 
+Compiling libusb
+================
+Install libudev via this:
+    apt-get install libudev0
+
+
+
 USB Interface
 =============
 The iCharger communicates via USB.  It's driven by the icharger_usb program that provides the following service end-points: 
