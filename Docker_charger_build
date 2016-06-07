@@ -1,0 +1,3 @@
+FROM hypriot/rpi-node:wheezy
+MAINTAINER john_clayton@me.com
+CMD [ "/bin/bash" ]
