@@ -19,7 +19,7 @@
         <address>dynamic</address>
     </device>
     <gui enabled="true" tls="false" debugging="false">
-        <address>127.0.0.1:8384</address>
+        <address>0.0.0.0:8384</address>
         <apikey>QhoZnkdCcGGyntP4QSbZZPR9RjtYzSYK</apikey>
         <theme>default</theme>
     </gui>

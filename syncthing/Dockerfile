@@ -15,11 +15,11 @@ COPY supervisor_config.ini /etc/supervisor/conf.d/syncthing.conf
 RUN useradd -m syncthing
 RUN mkdir -p /home/syncthing/.config/syncthing
 
-COPY config.xml /home/syncthing/.config/syncthing/
-COPY cert.pem /home/syncthing/.config/syncthing/
-COPY https-cert.pem /home/syncthing/.config/syncthing/
-COPY https-key.pem /home/syncthing/.config/syncthing/
+COPY syncthing_config/* /home/syncthing/.config/syncthing/
+RUN sudo chown -R syncthing:syncthing /home/syncthing/.config/syncthing
 
 EXPOSE 8384
 EXPOSE 22000
 EXPOSE 21027
+
+CMD [ "/usr/bin/syncthing" ]
