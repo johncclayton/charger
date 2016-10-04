@@ -20,4 +20,6 @@ COPY cert.pem /home/syncthing/.config/syncthing/
 COPY https-cert.pem /home/syncthing/.config/syncthing/
 COPY https-key.pem /home/syncthing/.config/syncthing/
 
-
+EXPOSE 8384
+EXPOSE 22000
+EXPOSE 21027
