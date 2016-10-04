@@ -33,3 +33,32 @@ For example, to get information about the iCharger system you would do the follo
 After this has been done, further state responses are received on the pub/sub bus as any data changes.  The frequencly of updates is controlled by 
 the icharger_usb service. 
 
+Installing the Raspian Image from Mac
+=====================================
+
+Go get Raspian from: https://www.raspberrypi.org/downloads/raspbian/
+
+To overwrite the SD card (16 gig minimum), find the disk number (not partition):
+
+diskutil list
+diskutil unmountDisk /dev/disk2
+sudo dd bs=1m if=<name of image>.img of=/dev/rdisk2
+
+Boot the image and run:
+  sudo raspi-config
+
+Change it to boot to console instead of UI, change GPU mem to 256 MB.
+
+Modify the apt sources to get Qt 5 - uncomment the deb-src line:
+  sudo nano /etc/apt/sources.list
+
+Then update apt:
+  sudo apt-get update
+  sudo apt-get build-dep qt4-x11
+  sudo apt-get build-dep libqt5gui5
+  sudo apt-get install libudev-dev libinput-dev libts-dev libxcb-xinerama0-dev
+
+  sudo mkdir /usr/local/qt5pi
+  sudo chown pi:pi /usr/local/qt5pi
+
+

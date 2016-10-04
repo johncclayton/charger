@@ -1,7 +1,0 @@
-FROM hypriot/rpi-node:wheezy
-MAINTAINER john_clayton@me.com
-
-RUN mkdir /src
-RUN apt-get install qt4-dev
-
-CMD [ "/bin/bash" ]
