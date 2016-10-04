@@ -1,6 +1,7 @@
 <configuration version="16">
-    <folder id="eyxuc-fmuum" label="Default Folder (eyxuc-fmuum)" path="/home/syncthing/Sync/" type="readwrite" rescanIntervalS="60" ignorePerms="false" autoNormalize="true">
-        <device id="WAN5VRW-BXKR4OP-WIIZDJX-VS3EMOV-APYN4SI-JIECEQL-NA4WIK7-EQQMWA5"></device>
+ <folder id="dvmxe-dvkvn" label="charger_source" path="/data/charger/" type="readwrite" rescanIntervalS="5" ignorePerms="false" autoNormalize="true">
+        <device id="X3XLQJP-TZACMEW-OAWLEKH-R3XGETZ-USBLSEV-YB43DY5-7UTSFYQ-XOETHAU"></device>
+        <device id="ZS43R66-FM6YUU3-IWDJIFY-U3BK7B4-4KBN5K5-UGMCGPD-I5SAQZB-AUD4WQU"></device>
         <minDiskFreePct>1</minDiskFreePct>
         <versioning></versioning>
         <copiers>0</copiers>
@@ -11,23 +12,26 @@
         <scanProgressIntervalS>0</scanProgressIntervalS>
         <pullerSleepS>0</pullerSleepS>
         <pullerPauseS>0</pullerPauseS>
-        <maxConflicts>-1</maxConflicts>
+        <maxConflicts>10</maxConflicts>
         <disableSparseFiles>false</disableSparseFiles>
         <disableTempIndexes>false</disableTempIndexes>
     </folder>
-    <device id="WAN5VRW-BXKR4OP-WIIZDJX-VS3EMOV-APYN4SI-JIECEQL-NA4WIK7-EQQMWA5" name="a711e46f04e4" compression="metadata" introducer="false">
-        <address>dynamic</address>
+    <device id="X3XLQJP-TZACMEW-OAWLEKH-R3XGETZ-USBLSEV-YB43DY5-7UTSFYQ-XOETHAU" name="charger" compression="metadata" introducer="false">
+        <address>tcp4://192.168.178.104</address>
+    </device>
+    <device id="ZS43R66-FM6YUU3-IWDJIFY-U3BK7B4-4KBN5K5-UGMCGPD-I5SAQZB-AUD4WQU" name="laptop" compression="metadata" introducer="false">
+        <address>tcp4://192.168.178.143</address>
     </device>
     <gui enabled="true" tls="false" debugging="false">
         <address>0.0.0.0:8384</address>
         <apikey>QhoZnkdCcGGyntP4QSbZZPR9RjtYzSYK</apikey>
-        <theme>default</theme>
+        <theme>dark</theme>
     </gui>
     <options>
         <listenAddress>default</listenAddress>
         <globalAnnounceServer>default</globalAnnounceServer>
-        <globalAnnounceEnabled>true</globalAnnounceEnabled>
-        <localAnnounceEnabled>true</localAnnounceEnabled>
+        <globalAnnounceEnabled>false</globalAnnounceEnabled>
+        <localAnnounceEnabled>false</localAnnounceEnabled>
         <localAnnouncePort>21027</localAnnouncePort>
         <localAnnounceMCAddr>[ff12::8384]:21027</localAnnounceMCAddr>
         <maxSendKbps>0</maxSendKbps>
