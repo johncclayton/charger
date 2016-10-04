@@ -12,3 +12,5 @@ RUN sudo apt-get install syncthing -y
 RUN sudo apt-get install supervisor -y
 COPY supervisor_config.ini /etc/supervisor/conf.d/syncthing.conf
 
+RUN useradd -m syncthing
+
