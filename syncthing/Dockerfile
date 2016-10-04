@@ -7,19 +7,14 @@ RUN wget --no-check-certificate -O - https://syncthing.net/release-key.txt | sud
 RUN echo "deb http://apt.syncthing.net/ syncthing release" | sudo tee -a /etc/apt/sources.list.d/syncthing-release.list
 RUN sudo apt-get update
 
-RUN sudo apt-get install syncthing -y
-
-RUN sudo apt-get install supervisor -y
+RUN sudo apt-get install syncthing supervisor -y
 COPY supervisor_config.ini /etc/supervisor/conf.d/syncthing.conf
 
-RUN useradd -m syncthing
-RUN mkdir -p /home/syncthing/.config/syncthing
+RUN useradd -m syncthing && mkdir -p /home/syncthing/.config/syncthing
 
 COPY syncthing_config/* /home/syncthing/.config/syncthing/
 RUN sudo chown -R syncthing:syncthing /home/syncthing/.config/syncthing
 
-EXPOSE 8384
-EXPOSE 22000
-EXPOSE 21027
+EXPOSE 8384 22000 21027
 
 CMD [ "/usr/bin/syncthing" ]
