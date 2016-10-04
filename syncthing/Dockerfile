@@ -13,4 +13,11 @@ RUN sudo apt-get install supervisor -y
 COPY supervisor_config.ini /etc/supervisor/conf.d/syncthing.conf
 
 RUN useradd -m syncthing
+RUN mkdir -p /home/syncthing/.config/syncthing
+
+COPY config.xml /home/syncthing/.config/syncthing/
+COPY cert.pem /home/syncthing/.config/syncthing/
+COPY https-cert.pem /home/syncthing/.config/syncthing/
+COPY https-key.pem /home/syncthing/.config/syncthing/
+
 
