@@ -24,6 +24,8 @@
     </device>
     <gui enabled="true" tls="false" debugging="false">
         <address>0.0.0.0:8384</address>
+        <user>charger</user>
+        <password>$2a$10$n37Lq/1ZKtcQzl7HEaYGUe/jioAS3wLh4ZZYshtz6wmt.zi0JWe6e</password>
         <apikey>QhoZnkdCcGGyntP4QSbZZPR9RjtYzSYK</apikey>
         <theme>dark</theme>
     </gui>
