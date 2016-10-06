@@ -20,4 +20,4 @@ COPY syncthing_config/* /syncthing/config/
 
 EXPOSE 8384 22000 21027
 
-CMD [ "/usr/bin/syncthing", "-no-browser" "-home=/syncthing/config" ]
+CMD [ "/usr/bin/syncthing", "-home=/syncthing/config" ]
