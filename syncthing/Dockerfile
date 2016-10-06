@@ -8,13 +8,17 @@ RUN echo "deb http://apt.syncthing.net/ syncthing release" | sudo tee -a /etc/ap
 RUN sudo apt-get update
 
 RUN sudo apt-get install syncthing supervisor -y
+
+# setup the supervisord configuration for syncthing
 COPY supervisor_config.ini /etc/supervisor/conf.d/syncthing.conf
 
-RUN useradd -m syncthing && mkdir -p /home/syncthing/.config/syncthing
+# add the syncthing user and a configuration directory
+RUN useradd -m syncthing && mkdir -p /syncthing/config
 
-COPY syncthing_config/* /home/syncthing/.config/syncthing/
-RUN sudo chown -R syncthing:syncthing /home/syncthing/.config/syncthing
+# pop. the config directory
+COPY syncthing_config/* /syncthing/config/
+RUN sudo chown -R syncthing:syncthing /syncthing/config
 
 EXPOSE 8384 22000 21027
 
-CMD [ "/usr/bin/syncthing" ]
+CMD [ "/usr/bin/syncthing", "-no-browser" "-home=/syncthing/config" ]
