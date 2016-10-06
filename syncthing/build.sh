@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker build -t johncclayton/syncthing-build .
+docker build -t johncclayton/syncthing-build $* .
