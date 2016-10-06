@@ -4,15 +4,11 @@ services:
     image: johncclayton/charger-build
     container_name: "charger"
 
-    ports:
-      - 20445:20445
-      - 20446:20446
-      - 20030:20030
-
     restart: unless-stopped
 
     volumes:
       - data:/data
+
     networks:
       - net
 

@@ -1,6 +1,13 @@
 FROM hypriot/rpi-python
 MAINTAINER john_clayton@me.com
 
-VOLUME /data
 RUN pip install pyusb
+
+COPY requirements.txt /
+RUN pip install -r /requirements.txt
+
+#WORKDIR /data/charger
+
+CMD [ "bash" ]
+
 
