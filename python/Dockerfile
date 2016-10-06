@@ -6,8 +6,7 @@ RUN pip install pyusb
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
-#WORKDIR /data/charger
-
+WORKDIR /data/charger
 CMD [ "python", "-u", "main.py" ]
 
 
