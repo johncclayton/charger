@@ -1,0 +1,36 @@
+version: '2'
+services:
+  runtime:
+    image: johncclayton/charger-build
+    container_name: "charger"
+
+    ports:
+      - 20445:20445
+      - 20446:20446
+      - 20030:20030
+
+    restart: unless-stopped
+
+    volumes:
+      - data:/data
+    networks:
+      - net
+
+  sync:
+    image: johncclayton/syncthing-build
+    container_name: "syncthing"
+
+    volumes:
+      - data:/data
+
+    networks:
+      - net
+
+volumes:
+  data:
+    external: false
+
+networks:
+  net:
+  
+
