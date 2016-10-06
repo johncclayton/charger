@@ -12,12 +12,11 @@ RUN sudo apt-get install syncthing supervisor -y
 # setup the supervisord configuration for syncthing
 COPY supervisor_config.ini /etc/supervisor/conf.d/syncthing.conf
 
-# add the syncthing user and a configuration directory
-RUN useradd -m syncthing && mkdir -p /syncthing/config
+# add the configuration directory
+RUN mkdir -p /syncthing/config
 
 # pop. the config directory
 COPY syncthing_config/* /syncthing/config/
-RUN sudo chown -R syncthing:syncthing /syncthing/config
 
 EXPOSE 8384 22000 21027
 
