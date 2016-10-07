@@ -2,9 +2,16 @@ version: '2'
 services:
   runtime:
     image: johncclayton/charger-build
+    build:
+      context: ./python
+
     container_name: "charger"
 
     restart: unless-stopped
+
+    privileged: true
+    devices:
+      - "/dev/usb:/dev/usb"
 
     ports:
       - "5000:5000"
@@ -17,6 +24,9 @@ services:
 
   sync:
     image: johncclayton/syncthing-build
+    build:
+      context: ./syncthing
+
     container_name: "syncthing"
 
     restart: unless-stopped
