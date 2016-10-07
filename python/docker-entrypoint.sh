@@ -1,5 +1,4 @@
 #!/bin/bash
-echo "Running charger service..."
 
 if [ -d "/data/charger" ]; then
 	cd /data/charger 
