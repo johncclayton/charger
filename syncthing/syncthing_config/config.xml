@@ -1,5 +1,5 @@
 <configuration version="16">
- <folder id="dvmxe-dvkvn" label="charger_source" path="/data/charger/" type="readwrite" rescanIntervalS="5" ignorePerms="false" autoNormalize="true">
+ <folder id="dvmxe-dvkvn" label="charger_source" path="/data/charger/" type="readwrite" rescanIntervalS="2" ignorePerms="false" autoNormalize="true">
         <device id="X3XLQJP-TZACMEW-OAWLEKH-R3XGETZ-USBLSEV-YB43DY5-7UTSFYQ-XOETHAU"></device>
         <device id="ZS43R66-FM6YUU3-IWDJIFY-U3BK7B4-4KBN5K5-UGMCGPD-I5SAQZB-AUD4WQU"></device>
         <minDiskFreePct>1</minDiskFreePct>

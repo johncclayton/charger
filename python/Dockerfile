@@ -6,7 +6,11 @@ RUN pip install pyusb
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
-WORKDIR /data/charger
-CMD [ "python", "-u", "main.py" ]
+COPY docker-entrypoint.sh / 
+RUN chmod +x /docker-entrypoint.sh 
+
+EXPOSE 5000
+
+CMD [ "/docker-entrypoint.sh" ]
 
 

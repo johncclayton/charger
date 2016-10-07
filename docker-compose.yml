@@ -6,6 +6,9 @@ services:
 
     restart: unless-stopped
 
+    ports:
+      - "5000:5000"
+
     volumes:
       - data:/data
 
@@ -15,6 +18,11 @@ services:
   sync:
     image: johncclayton/syncthing-build
     container_name: "syncthing"
+
+    restart: unless-stopped
+
+    ports:
+      - "8384:8384"
 
     volumes:
       - data:/data
