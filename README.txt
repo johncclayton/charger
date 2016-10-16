@@ -1,4 +1,43 @@
-Prerequisites: 
+Introduction
+============
+
+Typically I have the iCharger plugged into a Raspberry Pi 3, and I develop either on a Windows or Mac laptop.
+
+The code runs as a series of microservices using Docker for deployment.
+
+Checking in code on a laptop in order to pull it via Git into the runtime environment is a total pain, therefore I am
+ using syncthing to keep code in sync between multiple dev devices and the runtime world of Docker.
+
+Syncthing is an opensource multi-master synchronisation service that runs on almost anything (yay), and is secure (yay),
+but it a pain in the butt to set up (boo).  Enter the tools in the syncthing/ directory to help with this (yay).
+
+To get a dev system up and running, you will need:
+ - a dev laptop - anything, Mac/Windows will do
+ - a runtime device + an iCharger 4010 Duo
+
+Syncthing Preparation
+---------------------
+
+Syncthing uses PKI technology to identify endpoints (machines/devices).  To setup the development environment you will
+need the following identities:
+ - Raspberry Pi 3 machine, that runs Docker, name: charger
+ - Dev machine, that is Win or Mac, name: dev-host
+
+Generate a syncthing identity for each device.  All identities are included the config for the syncthing service.  If
+you create a new identity afterwards, you will need to re-create the docker images for each deployment device/context.
+
+Create deployment images for the services, these get baked into the docker runtime images
+
+Deploy and enjoy - everything just works because syncthing uses Dynamic lookup.
+
+
+
+
+
+
+THE OLD INTERFACE
+
+Prerequisites:
 - libusb - compiled via 3rdparty directory
 - q4 + dev tools
 - libsodium

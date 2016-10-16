@@ -1,20 +1,10 @@
-FROM hypriot/rpi-python
+FROM alpine:latest
 MAINTAINER john_clayton@me.com
 
-RUN apt-get update
-RUN apt-get -y install wget
-RUN wget --no-check-certificate -O - https://syncthing.net/release-key.txt | sudo apt-key add -
-RUN echo "deb http://apt.syncthing.net/ syncthing release" | sudo tee -a /etc/apt/sources.list.d/syncthing-release.list
-RUN sudo apt-get update
-
-RUN sudo apt-get install syncthing -y
-
-# add the configuration directory
-RUN mkdir -p /syncthing/config
-
-# pop. the config directory
-COPY syncthing_config/* /syncthing/config/
+RUN apk update && apk add syncthing
+ENV KEY_HOSTS="rpi3 dev1 dev2"
+COPY generate-identities.sh /
 
 EXPOSE 8384 22000 21027
 
-CMD [ "/usr/bin/syncthing", "-home=/syncthing/config" ]
+CMD [ "/bin/sh" ]
