@@ -7,10 +7,7 @@ RUN wget --no-check-certificate -O - https://syncthing.net/release-key.txt | sud
 RUN echo "deb http://apt.syncthing.net/ syncthing release" | sudo tee -a /etc/apt/sources.list.d/syncthing-release.list
 RUN sudo apt-get update
 
-RUN sudo apt-get install syncthing supervisor -y
-
-# setup the supervisord configuration for syncthing
-COPY supervisor_config.ini /etc/supervisor/conf.d/syncthing.conf
+RUN sudo apt-get install syncthing -y
 
 # add the configuration directory
 RUN mkdir -p /syncthing/config
