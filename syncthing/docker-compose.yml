@@ -1,0 +1,24 @@
+version: '2'
+services:
+  runtime:
+    image: johncclayton/syncthing-cli
+    build:
+      context: .
+
+    container_name: "syncthing-cli"
+
+    restart: unless-stopped
+
+    ports:
+      - "8384:8384"
+
+    environment:
+      KEY_HOSTS: "dev, host1, host2"
+
+    networks:
+      - net
+
+networks:
+  net:
+  
+
