@@ -1,5 +1,6 @@
 <configuration version="16">
  <folder id="dvmxe-dvkvn" label="charger_source" path="/data/charger/" type="readwrite" rescanIntervalS="2" ignorePerms="false" autoNormalize="true">
+        <device id="4JB34NU-E7EEP3E-BKUDSOO-LKGUY6G-VQ4YHFM-YP7W4FN-IRB2GGM-QERXRA7"></device>
         <device id="X3XLQJP-TZACMEW-OAWLEKH-R3XGETZ-USBLSEV-YB43DY5-7UTSFYQ-XOETHAU"></device>
         <device id="ZS43R66-FM6YUU3-IWDJIFY-U3BK7B4-4KBN5K5-UGMCGPD-I5SAQZB-AUD4WQU"></device>
         <minDiskFreePct>1</minDiskFreePct>
@@ -16,6 +17,9 @@
         <disableSparseFiles>false</disableSparseFiles>
         <disableTempIndexes>false</disableTempIndexes>
     </folder>
+    <device id="4JB34NU-E7EEP3E-BKUDSOO-LKGUY6G-VQ4YHFM-YP7W4FN-IRB2GGM-QERXRA7" name="docker-dev" compression="metadata" introducer="false">
+        <address>dynamic</address>
+    </device>
     <device id="X3XLQJP-TZACMEW-OAWLEKH-R3XGETZ-USBLSEV-YB43DY5-7UTSFYQ-XOETHAU" name="charger" compression="metadata" introducer="false">
         <address>tcp4://192.168.178.111</address>
     </device>

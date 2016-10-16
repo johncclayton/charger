@@ -1,0 +1,17 @@
+version: '2'
+services:
+  runtime:
+    image: johncclayton/syncthing-dev
+    build:
+      context: ./
+    container_name: "syncthing-dev"
+
+    restart: unless-stopped
+
+    ports:
+      - "8384:8384"
+      - "22000:22000"
+      - "21027:21027"
+
+  
+

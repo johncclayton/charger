@@ -1,7 +1,6 @@
 #!/bin/bash
 
 if [ -d "/data/charger" ]; then
-	cd /data/charger 
-        export FLASK_DEBUG=1
+	cd /data/charger
 	python -u main.py
 fi
