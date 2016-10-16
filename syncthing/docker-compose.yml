@@ -12,9 +12,6 @@ services:
     ports:
       - "8384:8384"
 
-    environment:
-      KEY_HOSTS: "dev, host1, host2"
-
     networks:
       - net
 

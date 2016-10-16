@@ -6,6 +6,4 @@ ENV KEY_HOSTS="rpi3 dev1 dev2"
 COPY config/generate-identities.sh /
 RUN chmod +x /generate-identities.sh
 
-EXPOSE 8384 22000 21027
-
-CMD [ "/bin/sh" ]
+CMD [ "/generate-identities.sh" ]
