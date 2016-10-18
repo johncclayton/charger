@@ -12,3 +12,6 @@ main.pro.user
 3rdparty/zeromq-4.1.4*
 python/venc
 *.pyc
+syncthing/venc
+.idea
+.stfolder
