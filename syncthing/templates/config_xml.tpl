@@ -30,10 +30,10 @@
         <theme>dark</theme>
     </gui>
     <options>
-        <listenAddress>default</listenAddress>
+        <listenAddress>tcp4://0.0.0.0</listenAddress>
         <globalAnnounceServer>default</globalAnnounceServer>
-        <globalAnnounceEnabled>false</globalAnnounceEnabled>
-        <localAnnounceEnabled>false</localAnnounceEnabled>
+        <globalAnnounceEnabled>true</globalAnnounceEnabled>
+        <localAnnounceEnabled>true</localAnnounceEnabled>
         <localAnnouncePort>21027</localAnnouncePort>
         <localAnnounceMCAddr>[ff12::8384]:21027</localAnnounceMCAddr>
         <maxSendKbps>0</maxSendKbps>
@@ -41,7 +41,7 @@
         <reconnectionIntervalS>60</reconnectionIntervalS>
         <relaysEnabled>true</relaysEnabled>
         <relayReconnectIntervalM>10</relayReconnectIntervalM>
-        <startBrowser>true</startBrowser>
+        <startBrowser>false</startBrowser>
         <natEnabled>true</natEnabled>
         <natLeaseMinutes>60</natLeaseMinutes>
         <natRenewalMinutes>30</natRenewalMinutes>

@@ -1,11 +1,11 @@
 <configuration version="16">
  <folder id="dvmxe-dvkvn" label="charger_source" path="/data/charger/" type="readwrite" rescanIntervalS="2" ignorePerms="false" autoNormalize="true">
         
-        <device id="SYEWIA5-2GNW5VM-OGAMPCR-ANJ4LSH-TKOZBOW-FSMKAGB-CPJLKAZ-W2HQWQ4"></device>
+        <device id="DGKD7KP-FWNCSHX-BOQGTHN-DKNLMR3-SKUJELP-XP2BYVR-VYRVVCN-HZ277QO"></device>
         
-        <device id="ICOTCMJ-BT7IHGM-YEAY2KJ-MCLYA2W-SA5FLNT-7DNPNTX-2DFPWEN-A4SOMAL"></device>
+        <device id="EJDNHJN-WCQHKUI-657SWFB-MBCPUHG-GAVF4YU-4NR6Y5F-ILVEMWJ-JJHKSAL"></device>
         
-        <device id="SVWMVPF-Q2SPPU4-JYSPJTZ-ZHXA6OZ-WSLNP75-B3XUEKD-CG62U3F-4PJIYA4"></device>
+        <device id="4EAXT4D-2O6QMQG-DNMHA3P-FRYNYUF-WDZYL4C-44VOJKK-LAKMPML-SPJKSQ4"></device>
         
         <minDiskFreePct>1</minDiskFreePct>
         <versioning></versioning>
@@ -22,15 +22,15 @@
         <disableTempIndexes>false</disableTempIndexes>
     </folder>
     
-    <device id="SYEWIA5-2GNW5VM-OGAMPCR-ANJ4LSH-TKOZBOW-FSMKAGB-CPJLKAZ-W2HQWQ4" name="mac-dev" compression="metadata" introducer="false">
+    <device id="DGKD7KP-FWNCSHX-BOQGTHN-DKNLMR3-SKUJELP-XP2BYVR-VYRVVCN-HZ277QO" name="mac-dev" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     
-    <device id="ICOTCMJ-BT7IHGM-YEAY2KJ-MCLYA2W-SA5FLNT-7DNPNTX-2DFPWEN-A4SOMAL" name="rpi3" compression="metadata" introducer="false">
+    <device id="EJDNHJN-WCQHKUI-657SWFB-MBCPUHG-GAVF4YU-4NR6Y5F-ILVEMWJ-JJHKSAL" name="rpi3" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     
-    <device id="SVWMVPF-Q2SPPU4-JYSPJTZ-ZHXA6OZ-WSLNP75-B3XUEKD-CG62U3F-4PJIYA4" name="win-dev" compression="metadata" introducer="false">
+    <device id="4EAXT4D-2O6QMQG-DNMHA3P-FRYNYUF-WDZYL4C-44VOJKK-LAKMPML-SPJKSQ4" name="win-dev" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     
@@ -42,10 +42,10 @@
         <theme>dark</theme>
     </gui>
     <options>
-        <listenAddress>default</listenAddress>
+        <listenAddress>tcp4://0.0.0.0</listenAddress>
         <globalAnnounceServer>default</globalAnnounceServer>
-        <globalAnnounceEnabled>false</globalAnnounceEnabled>
-        <localAnnounceEnabled>false</localAnnounceEnabled>
+        <globalAnnounceEnabled>true</globalAnnounceEnabled>
+        <localAnnounceEnabled>true</localAnnounceEnabled>
         <localAnnouncePort>21027</localAnnouncePort>
         <localAnnounceMCAddr>[ff12::8384]:21027</localAnnounceMCAddr>
         <maxSendKbps>0</maxSendKbps>
@@ -53,7 +53,7 @@
         <reconnectionIntervalS>60</reconnectionIntervalS>
         <relaysEnabled>true</relaysEnabled>
         <relayReconnectIntervalM>10</relayReconnectIntervalM>
-        <startBrowser>true</startBrowser>
+        <startBrowser>false</startBrowser>
         <natEnabled>true</natEnabled>
         <natLeaseMinutes>60</natLeaseMinutes>
         <natRenewalMinutes>30</natRenewalMinutes>
