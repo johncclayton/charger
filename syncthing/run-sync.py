@@ -10,7 +10,7 @@ args = parser.parse_args()
 
 print("Using root: ", args.root)
 
-if args.image and args.name and args.root:
+if args.image and args.root:
     client = Client()
     container = client.create_container(image=args.image,
                                         name=args.name,
