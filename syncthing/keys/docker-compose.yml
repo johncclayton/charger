@@ -1,0 +1,68 @@
+version: '2'
+
+services:
+  
+
+  sync-mac-dev:
+    image: syncthing-mac-dev
+    build:
+      context: mac-dev
+
+    restart: unless-stopped
+
+    ports:
+      - "8384:8384"
+      - "22000:22000"
+      - "21027:21027"
+
+    networks:
+      - net
+
+    labels:
+      com.syncthing.platform: alpine
+
+  
+
+  sync-rpi3:
+    image: syncthing-rpi3
+    build:
+      context: rpi3
+
+    restart: unless-stopped
+
+    ports:
+      - "8384:8384"
+      - "22000:22000"
+      - "21027:21027"
+
+    networks:
+      - net
+
+    labels:
+      com.syncthing.platform: hypriot
+
+  
+
+  sync-win-dev:
+    image: syncthing-win-dev
+    build:
+      context: win-dev
+
+    restart: unless-stopped
+
+    ports:
+      - "8384:8384"
+      - "22000:22000"
+      - "21027:21027"
+
+    networks:
+      - net
+
+    labels:
+      com.syncthing.platform: alpine
+
+  
+
+networks:
+  net:
+

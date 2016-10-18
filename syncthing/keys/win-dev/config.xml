@@ -1,11 +1,11 @@
 <configuration version="16">
  <folder id="dvmxe-dvkvn" label="charger_source" path="/data/charger/" type="readwrite" rescanIntervalS="2" ignorePerms="false" autoNormalize="true">
         
-        <device id="CKJKXZ6-UCPFUS4-ROZ2VG4-DDDKY6A-GXBB77U-IPOUFQN-JXIDOOQ-OSMPRQY"></device>
+        <device id="SYEWIA5-2GNW5VM-OGAMPCR-ANJ4LSH-TKOZBOW-FSMKAGB-CPJLKAZ-W2HQWQ4"></device>
         
-        <device id="CA5O5B7-WMLVC3E-VKHNWPG-CET7B2S-Y7GH5VY-AIHXU5C-UJPG32Q-NKIDBQW"></device>
+        <device id="ICOTCMJ-BT7IHGM-YEAY2KJ-MCLYA2W-SA5FLNT-7DNPNTX-2DFPWEN-A4SOMAL"></device>
         
-        <device id="CSER4NI-YBNGUVE-RKB532E-JAJTDJF-FVPP2SO-FB7WTXY-XOHLYXM-DNMKPAK"></device>
+        <device id="SVWMVPF-Q2SPPU4-JYSPJTZ-ZHXA6OZ-WSLNP75-B3XUEKD-CG62U3F-4PJIYA4"></device>
         
         <minDiskFreePct>1</minDiskFreePct>
         <versioning></versioning>
@@ -22,15 +22,15 @@
         <disableTempIndexes>false</disableTempIndexes>
     </folder>
     
-    <device id="CKJKXZ6-UCPFUS4-ROZ2VG4-DDDKY6A-GXBB77U-IPOUFQN-JXIDOOQ-OSMPRQY" name="mac-dev" compression="metadata" introducer="false">
+    <device id="SYEWIA5-2GNW5VM-OGAMPCR-ANJ4LSH-TKOZBOW-FSMKAGB-CPJLKAZ-W2HQWQ4" name="mac-dev" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     
-    <device id="CA5O5B7-WMLVC3E-VKHNWPG-CET7B2S-Y7GH5VY-AIHXU5C-UJPG32Q-NKIDBQW" name="rpi3" compression="metadata" introducer="false">
+    <device id="ICOTCMJ-BT7IHGM-YEAY2KJ-MCLYA2W-SA5FLNT-7DNPNTX-2DFPWEN-A4SOMAL" name="rpi3" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     
-    <device id="CSER4NI-YBNGUVE-RKB532E-JAJTDJF-FVPP2SO-FB7WTXY-XOHLYXM-DNMKPAK" name="win-dev" compression="metadata" introducer="false">
+    <device id="SVWMVPF-Q2SPPU4-JYSPJTZ-ZHXA6OZ-WSLNP75-B3XUEKD-CG62U3F-4PJIYA4" name="win-dev" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     
