@@ -3,9 +3,9 @@
         
         <device id="C6QIHES-OIQGPUD-QU7W3B2-SZV3P7D-PE6X6GN-VYLUJK4-XQVMTFL-BTLX5AW"></device>
         
-        <device id="LNJOSQQ-DTEWMPV-IGWN4DZ-4HGDG4K-BDQVWQ4-VLF3RMB-IMOTSUE-E3JRKAS"></device>
+        <device id="C6QIHES-OIQGPUD-QU7W3B2-SZV3P7D-PE6X6GN-VYLUJK4-XQVMTFL-BTLX5AW"></device>
         
-        <device id="GKYSGIJ-HQB2RHG-FTWDE7S-JRHX47D-G3ZNLUA-NSS3HJZ-ZH3ZIC7-Q7PJNQP"></device>
+        <device id="C6QIHES-OIQGPUD-QU7W3B2-SZV3P7D-PE6X6GN-VYLUJK4-XQVMTFL-BTLX5AW"></device>
         
         <minDiskFreePct>1</minDiskFreePct>
         <versioning></versioning>
@@ -26,11 +26,11 @@
         <address>dynamic</address>
     </device>
     
-    <device id="LNJOSQQ-DTEWMPV-IGWN4DZ-4HGDG4K-BDQVWQ4-VLF3RMB-IMOTSUE-E3JRKAS" name="rpi3" compression="metadata" introducer="false">
+    <device id="C6QIHES-OIQGPUD-QU7W3B2-SZV3P7D-PE6X6GN-VYLUJK4-XQVMTFL-BTLX5AW" name="rpi3" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     
-    <device id="GKYSGIJ-HQB2RHG-FTWDE7S-JRHX47D-G3ZNLUA-NSS3HJZ-ZH3ZIC7-Q7PJNQP" name="win-dev" compression="metadata" introducer="false">
+    <device id="C6QIHES-OIQGPUD-QU7W3B2-SZV3P7D-PE6X6GN-VYLUJK4-XQVMTFL-BTLX5AW" name="win-dev" compression="metadata" introducer="false">
         <address>dynamic</address>
     </device>
     

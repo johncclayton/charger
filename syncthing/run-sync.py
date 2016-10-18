@@ -13,7 +13,7 @@ print("Using root: ", args.root)
 if args.image and args.root:
     client = Client()
     container = client.create_container(image=args.image,
-                                        name=args.name,
+                                        name=args.name if args.name is not None else "syncthing",
                                         volumes=['/data/charger'],
                                         ports=[22000, (21027, 'udp'), 8384],
                                         host_config=client.create_host_config(
@@ -24,6 +24,6 @@ if args.image and args.root:
                                                 8384: 8384
                                             }))
     client.start(container.get('Id'))
-    print("Container %s started" % (args.name,))
+    print("Container %s started" % (container.get('Names'),))
 else:
     print("You must specify an image name to start")

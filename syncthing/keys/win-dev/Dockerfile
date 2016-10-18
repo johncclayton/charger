@@ -12,6 +12,6 @@ COPY config.xml /syncthing/config/
 # copy the right keys into place
 COPY *.pem /syncthing/config/
 
-EXPOSE 8384 22000 21027
+EXPOSE 8384 22000 21027/udp
 
 CMD [ "/usr/bin/syncthing", "-home=/syncthing/config" ]

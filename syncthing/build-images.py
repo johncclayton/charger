@@ -2,6 +2,11 @@ from jinja2 import Environment, FileSystemLoader
 from docker import Client
 import os, shutil, tarfile, io
 import xml.etree.ElementTree as ET
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-u", "--update", action='store_true', help="force recreate the keys")
+args = parser.parse_args()
 
 client = Client()
 
@@ -12,27 +17,28 @@ HOSTS = {
 }
 
 # build/run the syncthing_cli image to get the configuration
-key_container = client.create_container("johncclayton/syncthing-cli", "/generate-identities.sh",
-                                        environment={
-                                            "KEY_HOSTS": " ".join(HOSTS.keys())
-                                        })
-print("Generating keys...")
-key_response = client.start(container=key_container.get('Id'))
-client.wait(container=key_container.get('Id'))
-
-# now copy the files from within the container to the local disk
 key_pathname = os.path.join(os.getcwd(), "keys")
-if os.path.exists(key_pathname):
-    shutil.rmtree(key_pathname)
 
-os.mkdir(key_pathname)
+if args.update:
+    key_container = client.create_container("johncclayton/syncthing-cli", "/generate-identities.sh",
+                                            environment={
+                                                "KEY_HOSTS": " ".join(HOSTS.keys())
+                                            })
+    print("Generating keys...")
+    key_response = client.start(container=key_container.get('Id'))
+    client.wait(container=key_container.get('Id'))
 
-print("Copying key data from container...")
-strm, stat = client.get_archive(key_container, "/keys")
-data = io.BytesIO(strm.read())
-tarobj = tarfile.open(fileobj=data)
-tarobj.extractall(path=os.getcwd())
+    # now copy the files from within the container to the local disk
+    if os.path.exists(key_pathname):
+        shutil.rmtree(key_pathname)
 
+    os.mkdir(key_pathname)
+
+    print("Copying key data from container...")
+    strm, stat = client.get_archive(key_container, "/keys")
+    data = io.BytesIO(strm.read())
+    tarobj = tarfile.open(fileobj=data)
+    tarobj.extractall(path=os.getcwd())
 
 # find the syncthing config.xml template and populate it with all the known device Ids.  This
 # file is then used within all the syncthing images to ensure that all hosts know about each other.
@@ -42,6 +48,7 @@ config_template = env.get_template('config_xml.tpl')
 devices = []
 
 print("Creating config.xml for each device...")
+
 # create a single config.xml file that has the ID values of every known key
 for subdir, dirs, files in os.walk(key_pathname):
     for d in dirs:

@@ -13,17 +13,11 @@ services:
     ports:
       - "8384:8384"
       - "22000:22000"
-      - "21027:21027"
-
-    networks:
-      - net
+      - "21027:21027/udp"
 
     labels:
       com.syncthing.platform: {{device.docker_type}}
 
   {% endfor %}
-
-networks:
-  net:
 
 

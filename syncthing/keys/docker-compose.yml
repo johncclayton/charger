@@ -13,10 +13,7 @@ services:
     ports:
       - "8384:8384"
       - "22000:22000"
-      - "21027:21027"
-
-    networks:
-      - net
+      - "21027:21027/udp"
 
     labels:
       com.syncthing.platform: alpine
@@ -33,10 +30,7 @@ services:
     ports:
       - "8384:8384"
       - "22000:22000"
-      - "21027:21027"
-
-    networks:
-      - net
+      - "21027:21027/udp"
 
     labels:
       com.syncthing.platform: hypriot
@@ -53,16 +47,10 @@ services:
     ports:
       - "8384:8384"
       - "22000:22000"
-      - "21027:21027"
-
-    networks:
-      - net
+      - "21027:21027/udp"
 
     labels:
       com.syncthing.platform: alpine
 
   
-
-networks:
-  net:
 
