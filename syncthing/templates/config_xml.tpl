@@ -41,7 +41,7 @@
         <reconnectionIntervalS>60</reconnectionIntervalS>
         <relaysEnabled>true</relaysEnabled>
         <relayReconnectIntervalM>10</relayReconnectIntervalM>
-        <startBrowser>false</startBrowser>
+        <startBrowser>true</startBrowser>
         <natEnabled>true</natEnabled>
         <natLeaseMinutes>60</natLeaseMinutes>
         <natRenewalMinutes>30</natRenewalMinutes>
