@@ -1,0 +1,13 @@
+(?d).DS_Store
+venv
+venc
+.git
+.idea
+/3rdparty
+/bonjour
+/charger_gui
+/client
+/messaging
+/service
+/spike
+/test_data
