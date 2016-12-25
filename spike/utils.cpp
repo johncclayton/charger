@@ -84,8 +84,8 @@ int icharger_usb::acquire() {
     return 0;    
 }
 
-void dump_ascii_hex(char* data, int len) {
-    printf("from addr: %d for %d bytes\r\n", data, len);
+void dump_ascii_hex(const char *msg, char* data, int len) {
+    printf("%s - from addr: %d for %d bytes\r\n", msg, data, len);
     for(int i = 0; i < len; ++i) {
         printf("%2d: %2x %c\r\n", i, data[i], data[i]);
     }
@@ -132,7 +132,7 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
 }
 
 ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, char *output) {
-    char data [HID_PACK_MAX];
+    char data [HID_PACK_MAX+1];
     memset(data, 0, sizeof(data));
     
     data[HID_PACK_TYPE] = 0x30;
@@ -155,10 +155,12 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
         data[HID_PACK_MODBUS + 1 + i] = input[i];
 
     // ask the iCharger to send back the registers
-    int r = usb_data_transfer(END_POINT_ADDRESS_WRITE, data, sizeof(data));
+    dump_ascii_hex("sending request", data, HID_PACK_MAX);
+    int r = usb_data_transfer(END_POINT_ADDRESS_WRITE, data, HID_PACK_MAX);
     if(r == 0) {
         memset(data, 0, sizeof(data));     
-        r = usb_data_transfer(END_POINT_ADDRESS_READ, (char *)&data, sizeof(data));
+        r = usb_data_transfer(END_POINT_ADDRESS_READ, (char *)&data, HID_PACK_MAX);
+        
         if(r == 0) {
             if(data[HID_PACK_LEN] > HID_PACK_MAX) {
                 return MB_ELEN;

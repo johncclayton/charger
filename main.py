@@ -5,6 +5,7 @@ from flask_restful import Api
 #
 # Goals:
 # - output the current status of the charger via a REST GET URL
+# - make it easy to run on the Pi!
 #
 try:
     flask_app = AppInterface()
