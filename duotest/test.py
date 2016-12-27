@@ -99,10 +99,8 @@ class USBSerialFacade:
     USBSerialFacade sets the active USB configuration and claims the interface,
     take note - this must be released when the instance is cleaned up / destroyed.  If
     the USB device cannot be found the facade does nothing.  If the kernel driver cannot
-    be detached that's more of a problem and right now the USBSerialFacade throws a big
-    exception from the constructor.
-
-
+    be detached that's more of a problem and right now the USBSerialFacade throws a big fat
+    exception from __init__.
     """
     def __init__(self, vendorId, productId):
         self._claimed = False
