@@ -49,75 +49,87 @@ void display_channel_status(icharger_usb_ptr device, Channel ch) {
     }
 }
 
-void display_stuff(icharger_usb_ptr device) {
-    struct device_only dev_only;
-    memset(&dev_only, 0, sizeof(device_only));
+void display_stuff(icharger_usb_ptr device,
+                   bool device_only = false,
+                   bool channel1 = false,
+                   bool channel2 = false,
+                   bool sys_storage_flag = false)
+{
+    if(device_only) {
+        struct device_only dev_only;
+        memset(&dev_only, 0, sizeof(device_only));
 
-    int r = device->get_device_only(&dev_only);
-    if(r == 0) {
-        printf("device id : %d\r\n", dev_only.device_id.value);
-        printf("device dn : %12s\r\n", dev_only.device_sn);
-        printf("sw_version: %d\r\n", dev_only.sw_version.value);
-        printf("hw_version: %d\r\n", dev_only.hw_version.value);
-        printf("sys length: %d\r\n", dev_only.system_length.value);
-        printf("mem length: %d\r\n", dev_only.memory_length.value);
-        printf("ch1 state : %d\r\n", dev_only.ch1_status.value);
-        printf("ch2 state : %d\r\n", dev_only.ch2_status.value);
+        int r = device->get_device_only(&dev_only);
+        if(r == 0) {
+            printf("device id : %d\r\n", dev_only.device_id.value);
+            printf("device dn : %12s\r\n", dev_only.device_sn);
+            printf("sw_version: %d\r\n", dev_only.sw_version.value);
+            printf("hw_version: %d\r\n", dev_only.hw_version.value);
+            printf("sys length: %d\r\n", dev_only.system_length.value);
+            printf("mem length: %d\r\n", dev_only.memory_length.value);
+            printf("ch1 state : %d\r\n", dev_only.ch1_status.value);
+            printf("ch2 state : %d\r\n", dev_only.ch2_status.value);
 
-    } else {
-        printf("got error code: %d\r\n", r);
+        } else {
+            printf("got error code: %d\r\n", r);
+        }
     }
 
-    display_channel_status(device, CHANNEL_1);
-    display_channel_status(device, CHANNEL_2);
-    
-    struct system_storage sys_storage;
-    memset(&sys_storage, 0, sizeof(sys_storage));
-    r = device->get_system_storage(&sys_storage);
-    if(r == 0) {
-        printf("System Storage\r\n");
-        printf("unit temp           : %d\r\n", sys_storage.temp_unit);	
-        printf("temp cut off        : %d\r\n", sys_storage.temp_cut_off);	
-        printf("temp fans on        : %d\r\n", sys_storage.temp_fans_on);	
-        printf("temp power reduce   : %d\r\n", sys_storage.temp_power_reduce);	
-        printf("fans off delay      : %d\r\n", sys_storage.fans_off_delay);	
-        printf("lcd_contrast        : %d\r\n", sys_storage.lcd_contrast);	
-        printf("backlight value     : %d\r\n", sys_storage.backlight_value);	
-        printf("calibration         : %d\r\n", sys_storage.calibration);	
-        printf("input source        : %d\r\n", sys_storage.input_source);	
-        
-        printf("dc input low volt   : %d\r\n", sys_storage.dc_input_low_volt);	
-        printf("dc input over volt  : %d\r\n", sys_storage.dc_input_over_volt);	
-        printf("dc input curr limit : %d\r\n", sys_storage.dc_input_current_limit);	
+    if(channel1)
+        display_channel_status(device, CHANNEL_1);
+    if(channel2)
+        display_channel_status(device, CHANNEL_2);
 
-        printf("bat input low volt  : %d\r\n", sys_storage.batt_input_low_volt);	
-        printf("bat input over volt : %d\r\n", sys_storage.batt_input_over_volt);	
-        printf("bat input curr limit: %d\r\n", sys_storage.batt_input_current_limit);	
+    if(sys_storage_flag) {
+        struct system_storage sys_storage;
+        memset(&sys_storage, 0, sizeof(sys_storage));
 
-        printf("regen enabled       : %d\r\n", sys_storage.regenerative_enable);
-        printf("regen volt limit    : %d\r\n", sys_storage.regenerative_volt_limit);
-        printf("regen curr limit    : %d\r\n", sys_storage.regenerative_current_limit);
+        int r = device->get_system_storage(&sys_storage);
+        if(r == 0) {
+            printf("System Storage\r\n");
+            printf("unit temp           : %d\r\n", sys_storage.temp_unit);
+            printf("temp cut off        : %d\r\n", sys_storage.temp_cut_off);
+            printf("temp fans on        : %d\r\n", sys_storage.temp_fans_on);
+            printf("temp power reduce   : %d\r\n", sys_storage.temp_power_reduce);
+            printf("fans off delay      : %d\r\n", sys_storage.fans_off_delay);
+            printf("lcd_contrast        : %d\r\n", sys_storage.lcd_contrast);
+            printf("backlight value     : %d\r\n", sys_storage.backlight_value);
+            printf("calibration         : %d\r\n", sys_storage.calibration);
+            printf("input source        : %d\r\n", sys_storage.input_source);
 
-        for(int i = 0; i < MODEL_MAX; ++i) {
-            printf("%d: charger power   : %d\r\n", i, sys_storage.charger_power[i]);
-            printf("%d: discharge powe  : %d\r\n", i, sys_storage.discharge_power[i]);
+            printf("dc input low volt   : %d\r\n", sys_storage.dc_input_low_volt);
+            printf("dc input over volt  : %d\r\n", sys_storage.dc_input_over_volt);
+            printf("dc input curr limit : %d\r\n", sys_storage.dc_input_current_limit);
+
+            printf("bat input low volt  : %d\r\n", sys_storage.batt_input_low_volt);
+            printf("bat input over volt : %d\r\n", sys_storage.batt_input_over_volt);
+            printf("bat input curr limit: %d\r\n", sys_storage.batt_input_current_limit);
+
+            printf("regen enabled       : %d\r\n", sys_storage.regenerative_enable);
+            printf("regen volt limit    : %d\r\n", sys_storage.regenerative_volt_limit);
+            printf("regen curr limit    : %d\r\n", sys_storage.regenerative_current_limit);
+
+            for(int i = 0; i < MODEL_MAX; ++i) {
+                printf("%d: charger power   : %d\r\n", i, sys_storage.charger_power[i]);
+                printf("%d: discharge powe  : %d\r\n", i, sys_storage.discharge_power[i]);
+            }
+
+            printf("power priority      : %d\r\n", sys_storage.power_priority);
+            printf("logging sample rate : %d\r\n", sys_storage.logging_sample_interval);
+            printf("logging save to sd  : %d\r\n", sys_storage.logging_save_to_sdcard);
+
+            printf("servo type          : %d\r\n", sys_storage.servo_type);
+            printf("servo user center   : %d\r\n", sys_storage.servo_user_center);
+            printf("servo user rate     : %d\r\n", sys_storage.servo_user_rate);
+            printf("servo user op angle : %d\r\n", sys_storage.servo_user_op_angle);
+
+            printf("modbus model        : %d\r\n", sys_storage.modbus_model);
+            printf("modbus serial addr  : %d\r\n", sys_storage.modbus_serial_addr);
+            printf("modbus server baud  : %d\r\n", sys_storage.modbus_serial_baud_rate);
+            printf("modbus serial parity: %d\r\n", sys_storage.modbus_serial_parity_bits);
+        } else {
+            printf("unable to fetch the system storage data\r\n");
         }
-
-        printf("power priority      : %d\r\n", sys_storage.power_priority);
-        printf("logging sample rate : %d\r\n", sys_storage.logging_sample_interval);
-        printf("logging save to sd  : %d\r\n", sys_storage.logging_save_to_sdcard);
-
-        printf("servo type          : %d\r\n", sys_storage.servo_type);
-        printf("servo user center   : %d\r\n", sys_storage.servo_user_center);
-        printf("servo user rate     : %d\r\n", sys_storage.servo_user_rate);
-        printf("servo user op angle : %d\r\n", sys_storage.servo_user_op_angle);
-         
-        printf("modbus model        : %d\r\n", sys_storage.modbus_model);
-        printf("modbus serial addr  : %d\r\n", sys_storage.modbus_serial_addr);
-        printf("modbus server baud  : %d\r\n", sys_storage.modbus_serial_baud_rate);
-        printf("modbus serial parity: %d\r\n", sys_storage.modbus_serial_parity_bits);
-    } else {
-        printf("unable to fetch the system storage data\r\n");
     }
 }
 
@@ -169,9 +181,10 @@ int main(int argc, char *argv[]) {
     
 		libusb_set_debug(ctx, 4);
 
-    		if(display_only)
-        		display_stuff(device);
-    		else {
+    		if(display_only) {
+    		printf("displaying device info");
+        		display_stuff(device, true);
+    		} else {
 			printf("command line: start/stop: %d, program: %d, channel: %d, mem index: %d\r\n",
 				oa,
 				pt,

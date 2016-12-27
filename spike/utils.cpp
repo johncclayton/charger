@@ -85,12 +85,12 @@ int icharger_usb::acquire() {
 }
 
 void dump_ascii_hex(const char *msg, char* data, int len) {
-    printf("%s - from addr: %d for %d bytes\r\n", msg, data, len);
+    printf("%s - from addr: %xd for %d bytes\r\n", msg, data, len);
     for(int i = 0; i < len; ++i) {
-        printf("%2d: %2x %c\r\n", i, data[i], data[i]);
+        printf("%2d: %2x %d %c\r\n", i, data[i], data[i], data[i]);
     }
+
     printf("----\r\n");
-    
 }
 
 /* same as the library version, but automatically handles retry on timeout */
@@ -119,6 +119,7 @@ int icharger_usb::usb_data_transfer(unsigned char endpoint_address,
                     timeout_ms);
         
         *total_transferred += transferred;
+        bytes_transferred += transferred;
         
         if(r == LIBUSB_ERROR_TIMEOUT) {
             //printf("retrying...\r\n");
@@ -155,7 +156,7 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
         data[HID_PACK_MODBUS + 1 + i] = input[i];
 
     // ask the iCharger to send back the registers
-    dump_ascii_hex("sending request", data, HID_PACK_MAX);
+    dump_ascii_hex("sending request", data, 7);
     int r = usb_data_transfer(END_POINT_ADDRESS_WRITE, data, HID_PACK_MAX);
     if(r == 0) {
         memset(data, 0, sizeof(data));     
@@ -166,7 +167,7 @@ ModbusRequestError icharger_usb::modbus_request(char func_code, char* input, cha
                 return MB_ELEN;
             }
             
-            //dump_ascii_hex(data, data[HID_PACK_LEN]);	
+            dump_ascii_hex("read reply data", data, data[HID_PACK_LEN]);
             
             if(data[HID_PACK_MODBUS] == func_code) {
                 switch(func_code) {
