@@ -3,6 +3,6 @@ docker-pycreds==0.2.1
 requests==2.10.0
 six==1.10.0
 websocket-client==0.37.0
-wheel==0.24.0
+wheel==0.38.1
 Jinja2==2.8
 MarkupSafe==0.23
